@@ -1,5 +1,4 @@
 class EM {
-
 	
 	// take a string and execute it after turning it into a script.
 	static executeScripts = async (eff, scripts) => {
@@ -11,12 +10,6 @@ class EM {
 		for(let scriptObj of Object.values(scripts)){
 			const body = `(${scriptObj.script})();`;
 			const fn = Function("token", "character", "actor", "scene", "origin", "effect", body);
-			
-		console.log("ACTOR", actor);
-		console.log("CHAR", character);
-		console.log("TOKEN", token);
-		console.log("SCENE", scene);
-		console.log("ORIGIN", origin);
 			
 			await fn.call(scriptObj, token, character, actor, scene, origin, effect);
 		}
@@ -48,7 +41,6 @@ class EM {
 		
 		return {actor, character, token, scene, origin, effect}
 	}
-	
 	
 }
 
@@ -111,6 +103,7 @@ class CHECKS {
 }
 
 export class API {
+	
 	// single method to flag an effect properly.
 	static flag_effect = async (effect) => {
 		const options = ["onCreate", "onDelete", "onToggle", "onEnable", "onDisable"].reduce((acc, e) => acc += `<option value=${e}>${e}</option>`, ``);
