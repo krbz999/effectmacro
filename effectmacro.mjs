@@ -173,30 +173,30 @@ Hooks.on("updateActiveEffect", (effect, update, context, userId) => {
 
 // onTurnStart/End is special and weird and has to do it all on its own, but we love him all the same.
 Hooks.on("updateCombat", async (combat, changes) => {
-    // no change in turns (this check needed for when adding combatants mid-combat).
-    if(changes.turn === undefined) return;
-    
-    // combat not started.
-    if(!combat.started) return;
-    
-    // we went back.
-    if(combat.current.round < combat.previous.round) return;
-    
-    // we went back.
-    if(combat.current.turn < combat.previous.turn && combat.current.round === combat.previous.round) return;
-    
-    // not active combat.
-    if(!combat.isActive) return;
+	// no change in turns (this check needed for when adding combatants mid-combat).
+	if(changes.turn === undefined) return;
+	
+	// combat not started.
+	if(!combat.started) return;
+	
+	// we went back.
+	if(combat.current.round < combat.previous.round) return;
+	
+	// we went back.
+	if(combat.current.turn < combat.previous.turn && combat.current.round === combat.previous.round) return;
+	
+	// not active combat.
+	if(!combat.isActive) return;
 	
 	// current and previous combatant index in turns.
-    const indexCurrent = combat.turns.indexOf(combat.combatant);
-    const indexPrevious = (combat.previous.round === 0) ? undefined : (indexCurrent === 0 ? (combat.turns.length - 1) : (indexCurrent - 1));
-    
-    // current and previous combatants:
+	const indexCurrent = combat.turns.indexOf(combat.combatant);
+	const indexPrevious = (combat.previous.round === 0) ? undefined : (indexCurrent === 0 ? (combat.turns.length - 1) : (indexCurrent - 1));
+	
+	// current and previous combatants:
 	const currentCombatant = combat.turns[indexCurrent];
 	const previousCombatant = combat.turns[indexPrevious];
 	
-    // current and previous ACTORS in combat.
+	// current and previous ACTORS in combat.
 	const actorCurrent = currentCombatant.token.actor;
 	const actorPrevious = previousCombatant?.token.actor;
 	
@@ -270,6 +270,6 @@ Hooks.on("renderActiveEffectConfig", async (dialog, html, data) => {
 
 // dont look too hard at this.
 Hooks.on("updateActiveEffect", async (effect) => {
-    await new Promise(resolve => {setTimeout(resolve, 5)});
-    Object.values(effect.apps)[0]?.element?.css("height", "auto");
+	await new Promise(resolve => {setTimeout(resolve, 5)});
+	Object.values(effect.apps)[0]?.element?.css("height", "auto");
 });
