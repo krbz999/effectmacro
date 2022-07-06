@@ -107,32 +107,32 @@ class CHECKS {
 class API {
 	
 	// call a specific type of script in an effect.
-	static callMacro = function(type = "onToggle", context = {}){
+	static callMacro = function(type = "never", context = {}){
 		const script = this.getFlag("effectmacro", type);
 		if(!script) return ui.notifications.warn("No such script embedded in effect.");
 		return EM.getScripts(this, [type], context);
 	}
 	
 	// return true or false if has macro of specific type.
-	static hasMacro = function(type = "onToggle"){
+	static hasMacro = function(type = "never"){
 		return !!this.getFlag("effectmacro", `${type}.script`);
 	}
 	
 	// remove a specific type of script in an effect.
-	static removeMacro = function(type = "onToggle"){
+	static removeMacro = function(type = "never"){
 		const script = this.getFlag("effectmacro", type);
 		if(!script) return ui.notifications.warn("No such script embedded in effect.");
 		return this.unsetFlag("effectmacro", type);
 	}
 	
 	// create a function on the effect.
-	static createMacro = function(type = "onToggle", script){
+	static createMacro = function(type = "never", script){
 		if(!script) return ui.notifications.warn("You did not provide a function.");
 		return this.setFlag("effectmacro", type, {script: script.toString()});
 	}
 	
 	// update a function on the effect.
-	static updateMacro = function(type = "onToggle", script){
+	static updateMacro = function(type = "never", script){
 		if(!script) return this.unsetFlag("effectmacro", type);
 		return this.setFlag("effectmacro", type, {script: script.toString()});
 	}
@@ -140,89 +140,133 @@ class API {
 	
 }
 
+Hooks.once("ready", () => {
+	// hooks to flag contexts.
+	Hooks.on("preDeleteActiveEffect", (effect, context) => {
+		if(!!CHECKS.hasMacroOfType(effect, "onDelete")) EM.primer(context, "onDelete");
+	});
+	Hooks.on("preCreateActiveEffect", (effect, effectData, context) => {
+		if(!!CHECKS.hasMacroOfType(effect, "onCreate")) EM.primer(context, "onCreate");
+	});
+	Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
+		if(!!CHECKS.hasMacroOfType(effect, "onToggle") && CHECKS.toggled(effect, update)) EM.primer(context, "onToggle");
+		if(!!CHECKS.hasMacroOfType(effect, "onEnable") && CHECKS.toggledOn(effect, update)) EM.primer(context, "onEnable");
+		if(!!CHECKS.hasMacroOfType(effect, "onDisable") && CHECKS.toggledOff(effect, update)) EM.primer(context, "onDisable");
+	});
 
-// hooks to flag contexts.
-Hooks.on("preDeleteActiveEffect", (effect, context) => {
-	if(!!CHECKS.hasMacroOfType(effect, "onDelete")) EM.primer(context, "onDelete");
-});
-Hooks.on("preCreateActiveEffect", (effect, effectData, context) => {
-	if(!!CHECKS.hasMacroOfType(effect, "onCreate")) EM.primer(context, "onCreate");
-});
-Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
-	if(!!CHECKS.hasMacroOfType(effect, "onToggle") && CHECKS.toggled(effect, update)) EM.primer(context, "onToggle");
-	if(!!CHECKS.hasMacroOfType(effect, "onEnable") && CHECKS.toggledOn(effect, update)) EM.primer(context, "onEnable");
-	if(!!CHECKS.hasMacroOfType(effect, "onDisable") && CHECKS.toggledOff(effect, update)) EM.primer(context, "onDisable");
-});
+	// hooks to execute scripts.
+	Hooks.on("deleteActiveEffect", (effect, context, userId) => {
+		if(userId !== game.user.id) return;
+		const types = context.effectmacro;
+		if(!!types && types.length > 0) EM.getScripts(effect, types);
+	});
+	Hooks.on("createActiveEffect", (effect, context, userId) => {
+		if(userId !== game.user.id) return;
+		const types = context.effectmacro;
+		if(!!types && types.length > 0) EM.getScripts(effect, types);
+	});
+	Hooks.on("updateActiveEffect", (effect, update, context, userId) => {
+		if(userId !== game.user.id) return;
+		const types = context.effectmacro;
+		if(!!types && types.length > 0) EM.getScripts(effect, types);
+	});
 
-// hooks to execute scripts.
-Hooks.on("deleteActiveEffect", (effect, context, userId) => {
-	if(userId !== game.user.id) return;
-	const types = context.effectmacro;
-	if(!!types && types.length > 0) EM.getScripts(effect, types);
-});
-Hooks.on("createActiveEffect", (effect, context, userId) => {
-	if(userId !== game.user.id) return;
-	const types = context.effectmacro;
-	if(!!types && types.length > 0) EM.getScripts(effect, types);
-});
-Hooks.on("updateActiveEffect", (effect, update, context, userId) => {
-	if(userId !== game.user.id) return;
-	const types = context.effectmacro;
-	if(!!types && types.length > 0) EM.getScripts(effect, types);
-});
-
-// onTurnStart/End is special and weird and has to do it all on its own, but we love him all the same.
-Hooks.on("updateCombat", async (combat, changes) => {
-	// no change in turns (this check needed for when adding combatants mid-combat).
-	if(changes.turn === undefined) return;
+	// onTurnStart/End is special and weird and has to do it all on its own, but we love him all the same.
+	Hooks.on("updateCombat", async (combat, changes) => {
+		// no change in turns (this check needed for when adding combatants mid-combat).
+		if(changes.turn === undefined) return;
+		
+		// combat not started.
+		if(!combat.started) return;
+		
+		// we went back.
+		if(combat.current.round < combat.previous.round) return;
+		
+		// we went back.
+		if(combat.current.turn < combat.previous.turn && combat.current.round === combat.previous.round) return;
+		
+		// not active combat.
+		if(!combat.isActive) return;
+		
+		// current and previous combatant index in turns.
+		const indexCurrent = combat.turns.indexOf(combat.combatant);
+		const indexPrevious = (combat.previous.round === 0) ? undefined : (indexCurrent === 0 ? (combat.turns.length - 1) : (indexCurrent - 1));
+		
+		// current and previous combatants:
+		const currentCombatant = combat.turns[indexCurrent];
+		const previousCombatant = combat.turns[indexPrevious];
+		
+		// current and previous ACTORS in combat.
+		const actorCurrent = currentCombatant.token.actor;
+		const actorPrevious = previousCombatant?.token.actor;
+		
+		// find active effects with onTurn triggers.
+		const effectsStart = actorCurrent.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnStart"));
+		const effectsEnd = actorPrevious?.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnEnd")) ?? [];
+		
+		// get active player who is owner of combatant.
+		const playerCurrent = currentCombatant.players.filter(i => i.active)[0];
+		const playerPrevious = previousCombatant?.players.filter(i => i.active)[0];
+		
+		// are you the player owner of current combatant? if not, are you gm?
+		if(!!currentCombatant){
+			if(game.user === playerCurrent) for(let eff of effectsStart) await eff.callMacro("onTurnStart");
+			else if(!playerCurrent && game.user.isGM) for(let eff of effectsStart) await eff.callMacro("onTurnStart");
+		}
+		
+		// are you the player owner of previous combatant? if not, are you gm?
+		if(!!previousCombatant){
+			if(game.user === playerPrevious) for(let eff of effectsEnd) await eff.callMacro("onTurnEnd");
+			else if(!playerPrevious && game.user.isGM) for(let eff of effectsEnd) await eff.callMacro("onTurnEnd");
+		}
+	});
 	
-	// combat not started.
-	if(!combat.started) return;
+	// slap button onto effect config dialog.
+	Hooks.on("renderActiveEffectConfig", async (dialog, html, data) => {
+		const effect = dialog.object;
+		
+		const appendWithin = html[0].querySelector("section[data-tab=details]");
+		
+		const options = ["never", "onCreate", "onDelete", "onToggle", "onEnable",
+		"onDisable", "onTurnStart", "onTurnEnd"].reduce((acc, e) => acc += `<option value="${e}">${e}</option>`, ``);
+		
+		const hr = document.createElement("hr");
+		const newElement = document.createElement("div");
+		newElement.setAttribute("class", "form-group");
+		newElement.innerHTML = `
+			<label>Effect Macros</label>
+			<div class="form-fields">
+				<select id="effectmacro-config-select">${options}</select>
+				<button type="button" style="width: 30px;" id="effectmacro-config-button"><i class="fas fa-arrow-right"></i></button>
+			</div>`;
+		appendWithin.appendChild(hr);
+		appendWithin.appendChild(newElement);
+		html.css("height", "auto");
+		const update_fas_fa = () => {
+			const has_macro = effect.hasMacro(html[0].querySelector("#effectmacro-config-select").value);
+			html[0].querySelector("#effectmacro-config-button > .fas").setAttribute("class", has_macro ? "fas fa-check" : "fas fa-arrow-right");
+			html[0].querySelector("#effectmacro-config-button > .fas").setAttribute("style", has_macro ? "color: #078907" : "");
+		}
+		update_fas_fa();
+		
+		html[0].querySelector("#effectmacro-config-select").addEventListener("change", update_fas_fa);
+		
+		html[0].querySelector("#effectmacro-config-button").addEventListener("click", () => {
+			const type = html[0].querySelector("#effectmacro-config-select").value;
+			EM.configureEffectMacro(effect, type);
+		});
+	});
 	
-	// we went back.
-	if(combat.current.round < combat.previous.round) return;
+	// dont look too hard at this.
+	Hooks.on("updateActiveEffect", async (effect) => {
+		await new Promise(resolve => {setTimeout(resolve, 5)});
+		Object.values(effect.apps)[0]?.element?.css("height", "auto");
+	});
 	
-	// we went back.
-	if(combat.current.turn < combat.previous.turn && combat.current.round === combat.previous.round) return;
-	
-	// not active combat.
-	if(!combat.isActive) return;
-	
-	// current and previous combatant index in turns.
-	const indexCurrent = combat.turns.indexOf(combat.combatant);
-	const indexPrevious = (combat.previous.round === 0) ? undefined : (indexCurrent === 0 ? (combat.turns.length - 1) : (indexCurrent - 1));
-	
-	// current and previous combatants:
-	const currentCombatant = combat.turns[indexCurrent];
-	const previousCombatant = combat.turns[indexPrevious];
-	
-	// current and previous ACTORS in combat.
-	const actorCurrent = currentCombatant.token.actor;
-	const actorPrevious = previousCombatant?.token.actor;
-	
-	// find active effects with onTurn triggers.
-	const effectsStart = actorCurrent.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnStart"));
-	const effectsEnd = actorPrevious?.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnEnd")) ?? [];
-	
-	// get active player who is owner of combatant.
-	const playerCurrent = currentCombatant.players.filter(i => i.active)[0];
-	const playerPrevious = previousCombatant?.players.filter(i => i.active)[0];
-	
-	// are you the player owner of current combatant? if not, are you gm?
-	if(!!currentCombatant){
-		if(game.user === playerCurrent) for(let eff of effectsStart) await eff.callMacro("onTurnStart");
-		else if(!playerCurrent && game.user.isGM) for(let eff of effectsStart) await eff.callMacro("onTurnStart");
-	}
-	
-	// are you the player owner of previous combatant? if not, are you gm?
-	if(!!previousCombatant){
-		if(game.user === playerPrevious) for(let eff of effectsEnd) await eff.callMacro("onTurnEnd");
-		else if(!playerPrevious && game.user.isGM) for(let eff of effectsEnd) await eff.callMacro("onTurnEnd");
-	}
 });
 
 // set up prototype functions.
-Hooks.on("setup", () => {
+Hooks.once("setup", () => {
 	ActiveEffect.prototype.callMacro = API.callMacro;
 	ActiveEffect.prototype.removeMacro = API.removeMacro;
 	ActiveEffect.prototype.createMacro = API.createMacro;
@@ -230,46 +274,4 @@ Hooks.on("setup", () => {
 	ActiveEffect.prototype.hasMacro = API.hasMacro;
 });
 
-// slap button onto effect config dialog.
-Hooks.on("renderActiveEffectConfig", async (dialog, html, data) => {
-	const effect = dialog.object;
-	
-	const appendWithin = html[0].querySelector("section[data-tab=details]");
-	
-	const options = ["onCreate", "onDelete",
-	"onToggle", "onEnable",
-	"onDisable", "onTurnStart",
-	"onTurnEnd"].reduce((acc, e) => acc += `<option value="${e}">${e}</option>`, ``);
-	
-	const hr = document.createElement("hr");
-	const newElement = document.createElement("div");
-	newElement.setAttribute("class", "form-group");
-	newElement.innerHTML = `
-		<label>Effect Macros</label>
-		<div class="form-fields">
-			<select id="effectmacro-config-select">${options}</select>
-			<button type="button" style="width: 30px;" id="effectmacro-config-button"><i class="fas fa-arrow-right"></i></button>
-		</div>`;
-	appendWithin.appendChild(hr);
-	appendWithin.appendChild(newElement);
-	html.css("height", "auto");
-	const update_fas_fa = () => {
-		const has_macro = effect.hasMacro(html[0].querySelector("#effectmacro-config-select").value);
-		html[0].querySelector("#effectmacro-config-button > .fas").setAttribute("class", has_macro ? "fas fa-check" : "fas fa-arrow-right");
-		html[0].querySelector("#effectmacro-config-button > .fas").setAttribute("style", has_macro ? "color: #078907" : "");
-	}
-	update_fas_fa();
-	
-	html[0].querySelector("#effectmacro-config-select").addEventListener("change", update_fas_fa);
-	
-	html[0].querySelector("#effectmacro-config-button").addEventListener("click", () => {
-		const type = html[0].querySelector("#effectmacro-config-select").value;
-		EM.configureEffectMacro(effect, type);
-	});
-});
 
-// dont look too hard at this.
-Hooks.on("updateActiveEffect", async (effect) => {
-	await new Promise(resolve => {setTimeout(resolve, 5)});
-	Object.values(effect.apps)[0]?.element?.css("height", "auto");
-});
