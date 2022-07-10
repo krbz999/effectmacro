@@ -1,0 +1,15 @@
+<form class="editable flexcol" autocomplete="off">
+	<header class="sheet-header">
+		<img src="{{img}}" title="{{name}}" height="64" width="64">
+		<h1><input name="name" type="text" value="{{name}}" placeholder=" Name" disabled></h1>
+	</header>
+	
+	<div class="form-group stacked command">
+		<label>{{command}}</label>
+		<textarea name="command">{{script}}</textarea>
+	</div>
+	
+	<footer class="sheet-footer flexrow">
+		<button type="submit"><i class="fas fa-save"></i> {{apply}}</button>
+	</footer>
+</form>

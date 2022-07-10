@@ -1,0 +1,13 @@
+{
+	"EffectMacro": {
+		"ApplyMacro": {
+			"Save": "Save Script",
+			"Command": "Command",
+			"EditImgError": "Error in edit image."
+		},
+		"Warning": {
+			"NoSuchScript": "No such script embedded in effect.",
+			"NoScriptProvided": "You did not provide a function."
+		}
+	}
+}
