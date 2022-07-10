@@ -14,7 +14,8 @@ An effect can have a macro of any of these types, not just one. There is also th
 ## How to
 Macros are added in the ActiveEffect config. Selecting the type of trigger and clicking the arrow (or green check if there is a preexisting macro) opens a macro editor. When an embedded macro is triggered, it is executed for the user who caused the trigger.
 
-<img>
+![effect-macro-dropdown](https://user-images.githubusercontent.com/50169243/178143073-d4f1ddaa-edb4-4ecb-b4b8-152f06e5db36.png)
+
 
 ### Added functions
 A set of functions have been added to active effects.
