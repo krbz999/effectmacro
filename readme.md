@@ -6,7 +6,7 @@ These macros are then called automatically when the appropriate trigger happens.
 * When an effect is created.
 * When an effect is deleted.
 * When an effect is toggled (on, off, or both).
-* When the actor who has the effect stats their turn.
+* When the actor who has the effect starts their turn.
 * When the actor who has the effect ends their turn.
 
 An effect can have a macro of any of these types, not just one. There is also the static 'never' type meant for being explicitly called by other scripts. This type is never called automatically.
