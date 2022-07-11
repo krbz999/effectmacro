@@ -16,7 +16,6 @@ Macros are added in the ActiveEffect config. Selecting the type of trigger and c
 
 ![effect-macro-dropdown](https://user-images.githubusercontent.com/50169243/178143073-d4f1ddaa-edb4-4ecb-b4b8-152f06e5db36.png)
 
-
 ### Added functions
 A set of functions have been added to active effects.
 * `ActiveEffect#callMacro(type = "never", context = {})` calls a macro embedded in the effect of the specific type. The `context` object can be used to pass additional parameters to the script, and can be referenced with `this`.

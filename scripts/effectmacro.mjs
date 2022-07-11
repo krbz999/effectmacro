@@ -45,16 +45,7 @@ class EM {
 
 class CONSTANT {
 	static MODULE = "effectmacro";
-	static TRIGGERS = {
-		never: "Never Automatically",
-		onCreate: "On Effect Creation",
-		onDelete: "On Effect Deletion",
-		onToggle: "On Effect Toggle (on or off)",
-		onEnable: "On Effect Toggle (on)",
-		onDisable: "On Effect Toggle (off)",
-		onTurnStart: "On Combat Turn Start",
-		onTurnEnd: "On Combat Turn End"
-	}
+	static TRIGGERS = ["never", "onCreate", "onDelete", "onToggle", "onEnable", "onDisable", "onTurnStart", "onTurnEnd"];
 }
 
 class CHECKS {
@@ -87,7 +78,7 @@ class CHECKS {
 	static hasMacroOfType = (effect, type) => {
 		// must be on an actor, and must be non-suppressed (in case of unequipped/unattuned items)
 		if(!this.verifyEffect(effect)) return false;
-		const embedded = effect.getFlag("effectmacro", `${type}.script`) ?? "";
+		const embedded = effect.getFlag(CONSTANT.MODULE, `${type}.script`) ?? "";
 		return embedded;
 	}
 	
@@ -97,33 +88,33 @@ class API {
 	
 	// call a specific type of script in an effect.
 	static callMacro = function(type = "never", context = {}){
-		const script = this.getFlag("effectmacro", type);
+		const script = this.getFlag(CONSTANT.MODULE, type);
 		if(!script) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoSuchScript"));
 		return EM.getScripts(this, [type], context);
 	}
 	
 	// return true or false if has macro of specific type.
 	static hasMacro = function(type = "never"){
-		return !!this.getFlag("effectmacro", `${type}.script`);
+		return !!this.getFlag(CONSTANT.MODULE, `${type}.script`);
 	}
 	
 	// remove a specific type of script in an effect.
 	static removeMacro = function(type = "never"){
-		const script = this.getFlag("effectmacro", type);
+		const script = this.getFlag(CONSTANT.MODULE, type);
 		if(!script) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoSuchScript"));
-		return this.unsetFlag("effectmacro", type);
+		return this.unsetFlag(CONSTANT.MODULE, type);
 	}
 	
 	// create a function on the effect.
 	static createMacro = function(type = "never", script){
 		if(!script) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoScriptProvided"));
-		return this.setFlag("effectmacro", type, {script: script.toString()});
+		return this.setFlag(CONSTANT.MODULE, type, {script: script.toString()});
 	}
 	
 	// update a function on the effect.
 	static updateMacro = function(type = "never", script){
-		if(!script) return this.unsetFlag("effectmacro", type);
-		return this.setFlag("effectmacro", type, {script: script.toString()});
+		if(!script) return this.unsetFlag(CONSTANT.MODULE, type);
+		return this.setFlag(CONSTANT.MODULE, type, {script: script.toString()});
 	}
 	
 	
@@ -151,7 +142,7 @@ class EffectMacroConfig extends MacroConfig {
 		data.name = this.object.data.label;
 		data.command = game.i18n.localize("EffectMacro.ApplyMacro.Command");
 		data.apply = game.i18n.localize("EffectMacro.ApplyMacro.Save");
-		data.script = this.object.getFlag("effectmacro", this.type)?.script || "";
+		data.script = this.object.getFlag(CONSTANT.MODULE, this.type)?.script || "";
 		return data;
 	}
 	
@@ -168,6 +159,12 @@ class EffectMacroConfig extends MacroConfig {
 	
 }
 
+// init msg.
+Hooks.once("init", () => {
+    console.log(`ZHELL | Initializing Effect Macro`);
+});
+
+// set up hooks.
 Hooks.once("ready", () => {
 	// hooks to flag contexts.
 	Hooks.on("preDeleteActiveEffect", (effect, context) => {
@@ -255,7 +252,10 @@ Hooks.once("ready", () => {
 		
 		const appendWithin = html[0].querySelector("section[data-tab=details]");
 		
-		const options = Object.entries(CONSTANT.TRIGGERS).reduce((acc, [key, label]) => acc += `<option value="${key}">${label}</option>`, ``);
+		const options = CONSTANT.TRIGGERS.reduce((acc, key) => {
+			const label = game.i18n.localize(`EffectMacro.Label.${key}`);
+			return acc + `<option value="${key}">${label}</option>`;
+		}, ``);
 		
 		const hr = document.createElement("hr");
 		const newElement = document.createElement("div");
@@ -284,7 +284,7 @@ Hooks.once("ready", () => {
 		});
 	});
 	
-	// dont look too hard at this.
+	// don't look too hard at this.
 	Hooks.on("updateActiveEffect", async (effect) => {
 		await new Promise(resolve => {setTimeout(resolve, 5)});
 		Object.values(effect.apps)[0]?.element?.css("height", "auto");

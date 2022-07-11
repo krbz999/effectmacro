@@ -2,7 +2,7 @@
 	"name": "effectmacro",
 	"title": "Effect Macro",
 	"description": "Grants the ability to add multiple scripts onto effects to execute at will or automatically.",
-	"version": "v0.1.1",
+	"version": "v1.0.0",
 	"authors": [{"name": "Zhell", "url": "https://github.com/krbz999", "discord": "Zhell#9201"}],
 	"minimumCoreVersion": "9",
 	"compatibleCoreVersion": "9",

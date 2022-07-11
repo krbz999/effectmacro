@@ -8,6 +8,16 @@
 		"Warning": {
 			"NoSuchScript": "No such script embedded in effect.",
 			"NoScriptProvided": "You did not provide a function."
+		},
+		"Label": {
+			"never": "Never Automatically",
+			"onCreate": "On Effect Creation",
+			"onDelete": "On Effect Deletion",
+			"onToggle": "On Effect Toggle (on or off)",
+			"onEnable": "On Effect Toggle (on)",
+			"onDisable": "On Effect Toggle (off)",
+			"onTurnStart": "On Combat Turn Start",
+			"onTurnEnd": "On Combat Turn End"
 		}
 	}
 }
