@@ -36,15 +36,9 @@ class EM {
 		let character = game.user.character ?? actor;
 		let token = actor.token?.object ?? actor.getActiveTokens()[0];
 		let scene = token?.scene ?? game.scenes.active;
-		let origin = effect.data.origin ? await fromUuid(effect.data.origin) : actor;
+		let origin = effect.origin ? await fromUuid(effect.origin) : actor;
 		
 		return {actor, character, token, scene, origin, effect}
-	}
-	
-	// return the last trigger for which the effect had a macro created.
-	static getLastUpdatedMacro = (effect) => {
-		const lastUpdated = effect.getFlag(CONSTANT.MODULE, "data.lastUpdated") ?? "never";
-		return lastUpdated;
 	}
 	
 }
@@ -63,14 +57,14 @@ class CHECKS {
 
 	// was this an effect that got toggled ON?
 	static toggledOn = (effect, update) => {
-		const wasOff = effect.data.disabled === true;
+		const wasOff = effect.disabled === true;
 		const isOn = update.disabled === false;
 		return (wasOff && isOn);
 	}
 	
 	// was this an effect that got toggled OFF?
 	static toggledOff = (effect, update) => {
-		const wasOn = effect.data.disabled === false;
+		const wasOn = effect.disabled === false;
 		const isOff = update.disabled === true;
 		return (wasOn && isOff);
 	}
@@ -81,16 +75,11 @@ class CHECKS {
 	}
 	
 	// does it have a script of a certain type?
-	static hasMacroOfType = (effect, type, verifySupression = true) => {
+	static hasMacroOfType = (effect, type) => {
 		// must be on an actor, and must be non-suppressed (in case of unequipped/unattuned items)
-		if(verifySupression && !this.verifyEffect(effect)) return false;
+		if(!this.verifyEffect(effect)) return false;
 		const embedded = effect.getFlag(CONSTANT.MODULE, `${type}.script`) ?? "";
 		return embedded;
-	}
-	
-	// is this effect active (not disabled)?
-	static isActive = (effect) => {
-		return !effect.data.disabled;
 	}
 	
 }
@@ -118,25 +107,14 @@ class API {
 	
 	// create a function on the effect.
 	static createMacro = function(type = "never", script){
-		if(!script){
-			return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoScriptProvided"));
-		}
-		else{
-			return this.update({
-				[`flags.${CONSTANT.MODULE}.${type}.script`]: script.toString(),
-				[`flags.${CONSTANT.MODULE}.data.lastUpdated`]: type
-			});
-		}
+		if(!script) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoScriptProvided"));
+		return this.setFlag(CONSTANT.MODULE, type, {script: script.toString()});
 	}
 	
 	// update a function on the effect.
 	static updateMacro = function(type = "never", script){
-		if(script.toString() !== this.getFlag(CONSTANT.MODULE, `${type}.script`)){
-			return this.update({
-				[`flags.${CONSTANT.MODULE}.${type}.script`]: script.toString(),
-				[`flags.${CONSTANT.MODULE}.data.lastUpdated`]: type
-			});
-		}
+		if(!script) return this.unsetFlag(CONSTANT.MODULE, type);
+		return this.setFlag(CONSTANT.MODULE, type, {script: script.toString()});
 	}
 	
 	
@@ -160,8 +138,8 @@ class EffectMacroConfig extends MacroConfig {
 	/* Override */
 	async getData(){
 		const data = super.getData();
-		data.img = this.object.data.icon;
-		data.name = this.object.data.label;
+		data.img = this.object.icon;
+		data.name = this.object.label;
 		data.command = game.i18n.localize("EffectMacro.ApplyMacro.Command");
 		data.apply = game.i18n.localize("EffectMacro.ApplyMacro.Save");
 		data.script = this.object.getFlag(CONSTANT.MODULE, this.type)?.script || "";
@@ -190,15 +168,15 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
 	// hooks to flag contexts.
 	Hooks.on("preDeleteActiveEffect", (effect, context) => {
-		if(!!CHECKS.hasMacroOfType(effect, "onDelete") && CHECKS.isActive(effect)) EM.primer(context, "onDelete");
+		if(!!CHECKS.hasMacroOfType(effect, "onDelete")) EM.primer(context, "onDelete");
 	});
 	Hooks.on("preCreateActiveEffect", (effect, effectData, context) => {
 		if(!!CHECKS.hasMacroOfType(effect, "onCreate")) EM.primer(context, "onCreate");
 	});
 	Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
 		if(!!CHECKS.hasMacroOfType(effect, "onToggle") && CHECKS.toggled(effect, update)) EM.primer(context, "onToggle");
-		else if(!!CHECKS.hasMacroOfType(effect, "onEnable") && CHECKS.toggledOn(effect, update)) EM.primer(context, "onEnable");
-		else if(!!CHECKS.hasMacroOfType(effect, "onDisable") && CHECKS.toggledOff(effect, update)) EM.primer(context, "onDisable");
+		if(!!CHECKS.hasMacroOfType(effect, "onEnable") && CHECKS.toggledOn(effect, update)) EM.primer(context, "onEnable");
+		if(!!CHECKS.hasMacroOfType(effect, "onDisable") && CHECKS.toggledOff(effect, update)) EM.primer(context, "onDisable");
 	});
 
 	// hooks to execute scripts.
@@ -248,8 +226,8 @@ Hooks.once("ready", () => {
 		const actorPrevious = previousCombatant?.token.actor;
 		
 		// find active effects with onTurn triggers.
-		const effectsStart = actorCurrent.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnStart") && CHECKS.isActive(eff));
-		const effectsEnd = actorPrevious?.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnEnd") && CHECKS.isActive(eff)) ?? [];
+		const effectsStart = actorCurrent.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnStart"));
+		const effectsEnd = actorPrevious?.effects.filter(eff => !!CHECKS.hasMacroOfType(eff, "onTurnEnd")) ?? [];
 		
 		// get active player who is owner of combatant.
 		const playerCurrent = currentCombatant.players.filter(i => i.active)[0];
@@ -275,9 +253,8 @@ Hooks.once("ready", () => {
 		const appendWithin = html[0].querySelector("section[data-tab=details]");
 		
 		const options = CONSTANT.TRIGGERS.reduce((acc, key) => {
-			const selected = EM.getLastUpdatedMacro(effect) === key && "selected";
 			const label = game.i18n.localize(`EffectMacro.Label.${key}`);
-			return acc + `<option value="${key}" ${selected}>${label}</option>`;
+			return acc + `<option value="${key}">${label}</option>`;
 		}, ``);
 		
 		const hr = document.createElement("hr");
