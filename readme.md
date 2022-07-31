@@ -8,6 +8,9 @@ These macros are then called automatically when the appropriate trigger happens.
 * When an effect is toggled (on, off, or both).
 * When the actor who has the effect starts their turn.
 * When the actor who has the effect ends their turn.
+* When the actor who has the effect is marked defeated in combat.
+* When combat is started.
+* When combat is ended.
 
 An effect can have a macro of any of these types, not just one. There is also the static 'never' type meant for being explicitly called by other scripts. This type is never called automatically.
 
@@ -18,11 +21,11 @@ Macros are added in the ActiveEffect config. Selecting the type of trigger and c
 
 ### Added functions
 A set of functions have been added to active effects.
-* `ActiveEffect#callMacro(type = "never", context = {})` calls a macro embedded in the effect of the specific type. The `context` object can be used to pass additional parameters to the script, and can be referenced with `this`.
-* `ActiveEffect#hasMacro(type = "never")` returns true or false whether or not an effect has a macro of the given type.
-* `ActiveEffect#removeMacro(type = "never")` removes a macro of the given type from the effect.
-* `ActiveEffect#createMacro(type = "never", script)` creates an embedded macro of the given type inside the effect. Identical to using the provided interface and writing a macro there. The provided script must be a string.
-* `ActiveEffect#updateMacro(type = "never", script)` updates a macro of the given type on an effect. In most cases functionally identical to `createMacro`, and will remove the embedded macro if no script is provided. The provided script must be a string.
+* `ActiveEffect#callMacro` calls a macro embedded in the effect of the specific type. The `context` object can be used to pass additional parameters to the script, and can be referenced with `this`.
+* `ActiveEffect#hasMacro` returns true or false whether or not an effect has a macro of the given type.
+* `ActiveEffect#removeMacro` removes a macro of the given type from the effect.
+* `ActiveEffect#createMacro` creates an embedded macro of the given type inside the effect. Identical to using the provided interface and writing a macro there. The provided script must be a string.
+* `ActiveEffect#updateMacro` updates a macro of the given type on an effect. In most cases functionally identical to `createMacro`, and will remove the embedded macro if no script is provided. The provided script must be a string.
 
 ### Script Helpers
 By default, these variables are pre-defined in any effect macro.
