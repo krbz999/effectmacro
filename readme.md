@@ -15,11 +15,13 @@ These macros are then called automatically when the appropriate trigger happens.
 An effect can have a macro of any of these types, not just one. There is also the static 'never' type meant for being explicitly called by other scripts. This type is never called automatically.
 
 ## How to
-Macros are added in the ActiveEffect config. Selecting the type of trigger and clicking the arrow (or green check if there is a preexisting macro) opens a macro editor. When an embedded macro is triggered, it is executed for the user who caused the trigger.
+Macros are added in the ActiveEffect config. Selecting the type of trigger and clicking the arrow (or green check if there is a preexisting macro) opens a macro editor.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/50169243/182044940-accad60f-89b1-4297-a7fd-507c4f3f5ce9.png"/>
 </p>
+
+When an embedded macro is triggered, it is executed for the one triggering the event, or in the case of combat events for the first active player owner found, otherwise as the GM.
 
 ### Added functions
 A set of functions have been added to active effects.

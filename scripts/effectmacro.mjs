@@ -359,6 +359,7 @@ Hooks.once("ready", () => {
 		const appendWithin = html[0].querySelector("section[data-tab=details]");
 		
 		const options = CONSTANT.TRIGGERS.reduce((acc, key) => {
+			const hasType = CHECKS.hasMacroOfType(effect, key, false);
 			const selected = foundry.utils.getProperty(dialog, `${CONSTANT.MODULE}.lastUpdated`) === key && "selected";
 			const label = game.i18n.localize(`EffectMacro.Label.${key}`);
 			return acc + `<option value="${key}" ${selected}>${label}</option>`;
