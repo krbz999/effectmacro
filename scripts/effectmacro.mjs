@@ -96,6 +96,17 @@ class CHECKS {
 		return !effect.disabled;
 	}
 	
+	// get first active player (id) who owns the actor.
+	static firstPlayerOwner = (actor) => {
+		if(!actor.hasPlayerOwner) return false;
+		const active_players = game.users.filter(i => !i.isGM && i.active);
+		const {OWNER} = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+		for(let p of active_players){
+			if(actor.testUserPermission(p, OWNER)) return p.id;
+		}
+		return false;
+	}
+	
 }
 
 class API {
@@ -199,20 +210,47 @@ Hooks.once("ready", () => {
 	});
 
 	// hooks to execute scripts.
-	Hooks.on("deleteActiveEffect", (effect, context, userId) => {
-		if(userId !== game.user.id) return;
+	Hooks.on("deleteActiveEffect", (effect, context) => {
+		// is it flagged?
 		const types = context.effectmacro;
-		if(!!types && types.length > 0) EM.getScripts(effect, types);
+		if(!types) return;
+		
+		// first player; if not you, then only for GM.
+		const userId = CHECKS.firstPlayerOwner(effect.parent);
+		
+		// if you are the player owner, or if no player owner and if you are GM...
+		if((userId === game.user.id) || (!userId && game.user.isGM)){
+			if(!!types && types.length > 0) EM.getScripts(effect, types);
+		}
+		else return;
 	});
-	Hooks.on("createActiveEffect", (effect, context, userId) => {
-		if(userId !== game.user.id) return;
+	Hooks.on("createActiveEffect", (effect, context) => {
+		// is it flagged?
 		const types = context.effectmacro;
-		if(!!types && types.length > 0) EM.getScripts(effect, types);
+		if(!types) return;
+		
+		// first player; if not you, then only for GM.
+		const userId = CHECKS.firstPlayerOwner(effect.parent);
+		
+		// if you are the player owner, or if no player owner and if you are GM...
+		if((userId === game.user.id) || (!userId && game.user.isGM)){
+			if(!!types && types.length > 0) EM.getScripts(effect, types);
+		}
+		else return;
 	});
-	Hooks.on("updateActiveEffect", (effect, update, context, userId) => {
-		if(userId !== game.user.id) return;
+	Hooks.on("updateActiveEffect", (effect, _, context) => {
+		// is it flagged?
 		const types = context.effectmacro;
-		if(!!types && types.length > 0) EM.getScripts(effect, types);
+		if(!types) return;
+		
+		// first player; if not you, then only for GM.
+		const userId = CHECKS.firstPlayerOwner(effect.parent);
+		
+		// if you are the player owner, or if no player owner and if you are GM...
+		if((userId === game.user.id) || (!userId && game.user.isGM)){
+			if(!!types && types.length > 0) EM.getScripts(effect, types);
+		}
+		else return;
 	});
 
 	// onTurnStart/End is special and weird and has to do it all on its own, but we love him all the same.
