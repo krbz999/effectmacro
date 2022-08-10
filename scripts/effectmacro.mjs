@@ -404,7 +404,7 @@ Hooks.once("ready", () => {
 		
 		const hr = document.createElement("hr");
 		const newElement = document.createElement("div");
-		newElement.setAttribute("class", "form-group");
+		newElement.classList.add("form-group");
 		newElement.innerHTML = `
 			<label>Effect Macro</label>
 			<div class="form-fields">
@@ -413,7 +413,6 @@ Hooks.once("ready", () => {
 			</div>`;
 		appendWithin.appendChild(hr);
 		appendWithin.appendChild(newElement);
-		html.css("height", "auto");
 		const update_fas_fa = () => {
 			const has_macro = effect.hasMacro(html[0].querySelector("#effectmacro-config-select").value);
 			html[0].querySelector("#effectmacro-config-button > .fas").setAttribute("class", has_macro ? "fas fa-check" : "fas fa-arrow-right");
