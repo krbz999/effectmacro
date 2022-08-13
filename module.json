@@ -11,7 +11,7 @@
 	}],
 	"minimumCoreVersion": "10",
 	"compatibility": {"minimum": "10"},
-	"esmodules": ["./scripts/effectmacro.mjs"],
+	"esmodules": ["./setup.js"],
 	"languages": [{
 		"lang": "en",
 		"name": "English",
