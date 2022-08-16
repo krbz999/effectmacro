@@ -20,6 +20,6 @@
 		"description": "Grants the ability to add multiple scripts onto effects to execute at will or automatically."
 	}],
 	"url": "https://github.com/krbz999/effectmacro",
-	"manifest": "https://github.com/krbz999/effectmacro/releases/latest/download/module.json",
-	"download": "https://github.com/krbz999/effectmacro/releases/latest/download/module.zip"
+	"manifest": "https://github.com/krbz999/effectmacro/releases/download/v2.0.0-beta1/module.json",
+	"download": "https://github.com/krbz999/effectmacro/releases/download/v2.0.0-beta1/module.zip"
 }
