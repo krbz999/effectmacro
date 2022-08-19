@@ -2,7 +2,7 @@
 	"id": "effectmacro",
 	"name": "effectmacro",
 	"title": "Effect Macro",
-	"version": "v2.0.0-beta",
+	"version": "v2.0.0",
 	"authors": [{
 		"name": "Zhell",
 		"url": "https://github.com/krbz999",
@@ -12,6 +12,7 @@
 	"minimumCoreVersion": "10",
 	"compatibility": {"minimum": "10"},
 	"esmodules": ["./setup.js"],
+	"styles": ["./styles/styles.css"],
 	"languages": [{
 		"lang": "en",
 		"name": "English",
