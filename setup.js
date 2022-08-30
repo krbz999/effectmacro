@@ -14,10 +14,9 @@ Hooks.once("setup", () => {
 
 // init msg.
 Hooks.once("init", () => {
-    console.log(`ZHELL | Initializing Effect Macro`);
+    console.log("ZHELL | Initializing Effect Macro");
 
 	registerMacroConfig();
 	registerCombatTriggers();
 	registerEffectTriggers();
 });
-

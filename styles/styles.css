@@ -1,13 +1,3 @@
-.effectmacro-config-button {
-    width: 30px;
-}
-.effectmacro-config-button .fas.fa-check {
-    color: #078907;
-}
-/*.effectmacro-option-has-macro {
-    font-weight: 900;
-}*/
-.effectmacro-option-no-macro {
-    font-style: italic;
-    font-size: 12px;
-}
+.effectmacro-config-button { width: 30px; }
+.effectmacro-config-button .fas.fa-check { color: #078907; }
+.effectmacro-option-no-macro { font-style: italic; font-size: 12px; }

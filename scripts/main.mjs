@@ -4,12 +4,12 @@ export class EM {
 	
 	// take a string and execute it after turning it into a script.
 	static executeScripts = async (eff, scripts, context = {}) => {
-		if(scripts.size < 1) return;
+		if ( scripts.size < 1 ) return;
 		
 		// define helper variables.
 		let {actor, character, token, scene, origin, effect} = await this.getHelperVariables(eff);
 		
-		for(let {script} of Object.values(scripts)){
+		for ( let {script} of Object.values(scripts) ) {
 			const body = `(async()=>{
 				${script}
 			})();`;
@@ -21,14 +21,14 @@ export class EM {
 	
 	// prime context to execute script (in pre hooks).
 	static primer = (context, type) => {
-		if(!context.effectmacro) context.effectmacro = [type];
+		if ( !context.effectmacro ) context.effectmacro = [type];
 		else context.effectmacro.push(type);
 	}
 	
 	// get the scripts.
 	static getScripts = (effect, types, context) => {
 		const scripts = {};
-		for(let type of types){
+		for ( let type of types ) {
 			scripts[type] = effect.getFlag("effectmacro", type);
 		}
 		return this.executeScripts(effect, scripts, context);
@@ -42,7 +42,7 @@ export class EM {
 		let scene = token?.scene ?? game.scenes.active;
 		let origin = effect.origin ? await fromUuid(effect.origin) : actor;
 		
-		return {actor, character, token, scene, origin, effect}
+		return {actor, character, token, scene, origin, effect};
 	}
 	
 }
@@ -51,21 +51,21 @@ export class CHECKS {
 	
 	// does effect have actor parent and is it NOT suppressed?
 	static verifyEffect = (effect) => {
-		return (effect.parent instanceof Actor) && (effect.isSuppressed === false);
+		return ( effect.parent instanceof Actor ) && ( effect.isSuppressed === false );
 	}
 
 	// was this an effect that got toggled ON?
 	static toggledOn = (effect, update) => {
 		const wasOff = effect.disabled === true;
 		const isOn = update.disabled === false;
-		return (wasOff && isOn);
+		return ( wasOff && isOn );
 	}
 	
 	// was this an effect that got toggled OFF?
 	static toggledOff = (effect, update) => {
 		const wasOn = effect.disabled === false;
 		const isOff = update.disabled === true;
-		return (wasOn && isOff);
+		return ( wasOn && isOff );
 	}
 	
 	// was this an effect that got toggled?
@@ -76,7 +76,7 @@ export class CHECKS {
 	// does it have a script of a certain type?
 	static hasMacroOfType = (effect, type, verifySupression = true) => {
 		// must be on an actor, and must be non-suppressed (in case of unequipped/unattuned items)
-		if(verifySupression && !this.verifyEffect(effect)) return false;
+		if ( verifySupression && !this.verifyEffect(effect) ) return false;
 		const embedded = effect.getFlag(MODULE, `${type}.script`) ?? "";
 		return embedded;
 	}
@@ -88,11 +88,11 @@ export class CHECKS {
 	
 	// get first active player (id) who owns the actor.
 	static firstPlayerOwner = (actor) => {
-		if(!actor.hasPlayerOwner) return false;
+		if ( !actor.hasPlayerOwner ) return false;
 		const active_players = game.users.filter(i => !i.isGM && i.active);
 		const {OWNER} = CONST.DOCUMENT_OWNERSHIP_LEVELS;
-		for(let p of active_players){
-			if(actor.testUserPermission(p, OWNER)) return p.id;
+		for ( let p of active_players ) {
+			if ( actor.testUserPermission(p, OWNER) ) return p.id;
 		}
 		return false;
 	}
@@ -104,7 +104,7 @@ export class API {
 	// call a specific type of script in an effect.
 	static callMacro = function(type = "never", context = {}){
 		const script = this.getFlag(MODULE, type);
-		if(!script) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoSuchScript"));
+		if ( !script ) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoSuchScript"));
 		return EM.getScripts(this, [type], context);
 	}
 	
@@ -116,28 +116,26 @@ export class API {
 	// remove a specific type of script in an effect.
 	static removeMacro = function(type = "never"){
 		const script = this.getFlag(MODULE, type);
-		if(!script) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoSuchScript"));
+		if ( !script ) return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoSuchScript"));
 		return this.unsetFlag(MODULE, type);
 	}
 	
 	// create a function on the effect.
 	static createMacro = function(type = "never", script){
-		if(!script){
+		if ( !script ) {
 			return ui.notifications.warn(game.i18n.localize("EffectMacro.Warning.NoScriptProvided"));
 		}
-		else{
+		else {
 			return this.setFlag(MODULE, `${type}.script`, script.toString());
 		}
 	}
 	
 	// update a function on the effect.
 	static updateMacro = function(type = "never", script){
-		if(script.toString() !== this.getFlag(MODULE, `${type}.script`)){
+		if ( script.toString() !== this.getFlag(MODULE, `${type}.script`) ) {
 			return this.setFlag(MODULE, `${type}.script`, script.toString());
 		}
 	}
-	
-	
 }
 
 export class EffectMacroConfig extends MacroConfig {
@@ -160,9 +158,7 @@ export class EffectMacroConfig extends MacroConfig {
 		const data = super.getData();
 		data.img = this.object.icon;
 		data.name = this.object.label;
-		data.command = game.i18n.localize("EffectMacro.ApplyMacro.Command");
-		data.apply = game.i18n.localize("EffectMacro.ApplyMacro.Save");
-		data.script = this.object.getFlag(MODULE, this.type)?.script || "";
+		data.script = this.object.getFlag(MODULE, this.type)?.script ?? "";
 		return data;
 	}
 	
@@ -176,5 +172,4 @@ export class EffectMacroConfig extends MacroConfig {
 		const type = this.type;
 		await this.object.updateMacro(type, formData.command);
 	}
-	
 }

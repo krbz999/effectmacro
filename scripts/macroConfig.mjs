@@ -15,7 +15,7 @@ export function registerMacroConfig(){
             const label = game.i18n.localize(`EffectMacro.Label.${key}`);
             const optionClass = effect.hasMacro(key) ? "effectmacro-option-has-macro" : "effectmacro-option-no-macro";
             return {key, selected, label, optionClass};
-        }).sort((a,b) => {
+        }).sort((a, b) => {
             return effect.hasMacro(b.key) - effect.hasMacro(a.key);
         });
         
@@ -29,8 +29,8 @@ export function registerMacroConfig(){
 
             const button = html[0].querySelector(".effectmacro-config-button > .fas");
             
-            if( has_macro ) button.classList.replace(arrow, check);
-            if(!has_macro ) button.classList.replace(check, arrow);
+            if ( has_macro ) button.classList.replace(arrow, check);
+            if ( !has_macro ) button.classList.replace(check, arrow);
         }
         update_fas_fa();
         
