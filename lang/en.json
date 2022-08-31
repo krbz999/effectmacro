@@ -16,8 +16,11 @@
 			"onToggle": "On Effect Toggle (on or off)",
 			"onEnable": "On Effect Toggle (on)",
 			"onDisable": "On Effect Toggle (off)",
-			"onTurnStart": "On Combat Turn Start",
-			"onTurnEnd": "On Combat Turn End"
+			"onTurnStart": "On Combat Turn Starting",
+			"onTurnEnd": "On Combat Turn Ending",
+			"onCombatStart": "On Combat Starting",
+			"onCombatEnd": "On Combat Ending",
+			"onCombatantDefeated": "On Combatant Marked Defeated"
 		}
 	}
 }

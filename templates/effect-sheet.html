@@ -1,0 +1,13 @@
+<div class="form-group">
+    <label>Effect Macro</label>
+    <div class="form-fields">
+        <select class="effectmacro-config-select">
+            {{#each options as |opt|}}
+            <option class="{{opt.optionClass}}" value="{{opt.key}}" {{opt.selected}}>{{opt.label}}</option>
+            {{/each}}
+        </select>
+        <button type="button" class="effectmacro-config-button">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</div>
