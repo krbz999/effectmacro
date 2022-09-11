@@ -12,7 +12,7 @@ export function registerMacroConfig(){
 
         const options = TRIGGERS.map(key => {
             const selected = foundry.utils.getProperty(dialog, `${MODULE}.lastUpdated`) === key && "selected";
-            const label = game.i18n.localize(`EffectMacro.Label.${key}`);
+            const label = game.i18n.localize(`EFFECTMACRO.LABEL.${key}`);
             const optionClass = effect.hasMacro(key) ? "effectmacro-option-has-macro" : "effectmacro-option-no-macro";
             return {key, selected, label, optionClass};
         }).sort((a, b) => {
@@ -39,9 +39,9 @@ export function registerMacroConfig(){
         html[0].querySelector(".effectmacro-config-button").addEventListener("click", () => {
             const type = html[0].querySelector(".effectmacro-config-select").value;
             foundry.utils.setProperty(dialog, `${MODULE}.lastUpdated`, type);
-            new EffectMacroConfig(dialog.document, {type}).render(true);
+            new EffectMacroConfig(dialog.document, { type }).render(true);
         });
         
-        dialog.element.css("height", "auto");
+        dialog.setPosition();
     });
 }

@@ -1,73 +1,54 @@
+import { MODULE } from "../constants.mjs";
 import { CHECKS } from "../main.mjs";
 
-
-
 export function registerCombatTriggers(){
-    // onTurnStart/End is special and weird and has to do it all on its own, but we love him all the same.
-    Hooks.on("updateCombat", async (combat, changes) => {
+    // helper hook to get previous combatant.
+    Hooks.on("preUpdateCombat", (combat, _, context) => {
+        const previousId = combat.combatant?.id;
+        foundry.utils.setProperty(context, `${MODULE}.previousCombatant`, previousId);
+    });
+    // onTurnStart/End is no longer so special and weird and doesn't have to do it all on its own
+    // yet we still love him all the same.
+    Hooks.on("updateCombat", async (combat, changes, context) => {
         // no change in turns nor rounds.
         if ( changes.turn === undefined && changes.round === undefined ) return;
-        
         // combat not started.
         if ( !combat.started ) return;
-        
         // not active combat.
         if ( !combat.isActive ) return;
-        
         // we went back.
         if ( combat.current.round < combat.previous.round ) return;
-        
         // we went back.
         if ( combat.current.turn < combat.previous.turn && combat.current.round === combat.previous.round ) return;
         
-        // current and previous combatant ids.
-        const currentId = combat.current.combatantId;
-        const previousId = combat.previous.combatantId;
-        
-        // current and previous combatants:
-        const currentCombatant = combat.combatants.get(currentId);
+        // retrieve combatants.
+        const currentCombatant = combat.combatant;
+        const previousId = context[MODULE].previousCombatant;
         const previousCombatant = combat.combatants.get(previousId);
         
-        // current and previous ACTORS in combat.
-        const actorCurrent = currentCombatant.token.actor;
-        const actorPrevious = previousCombatant?.token.actor;
-        
         // find active effects with onTurn triggers.
-        const effectsStart = actorCurrent.effects.filter(eff => {
-            return !!CHECKS.hasMacroOfType(eff, "onTurnStart") && CHECKS.isActive(eff);
+        const effectsStart = currentCombatant.token.actor.effects.filter(eff => {
+            return CHECKS.hasMacroOfType(eff, "onTurnStart") && CHECKS.isActive(eff);
         });
-        const effectsEnd = actorPrevious?.effects.filter(eff => {
-            return !!CHECKS.hasMacroOfType(eff, "onTurnEnd") && CHECKS.isActive(eff);
+        const effectsEnd = previousCombatant?.token.actor?.effects.filter(eff => {
+            return CHECKS.hasMacroOfType(eff, "onTurnEnd") && CHECKS.isActive(eff);
         }) ?? [];
         
-        // get active player who is owner of combatant.
-        const playerCurrent = currentCombatant.players.filter(i => i.active)[0];
-        const playerPrevious = previousCombatant?.players.filter(i => i.active)[0];
-        
-        // are you the player owner of current combatant? if not, are you gm?
-        if ( !!currentCombatant ) {
-            if ( game.user === playerCurrent ) for ( let eff of effectsStart ) await eff.callMacro("onTurnStart");
-            else if ( !playerCurrent && game.user.isGM ) for ( let eff of effectsStart ) await eff.callMacro("onTurnStart");
+        // call scripts.
+        if ( currentCombatant ) {
+            if ( game.user === getFirstPlayerOwner(currentCombatant) ) {
+                for ( const eff of effectsStart ) await eff.callMacro("onTurnStart");
+            }
         }
-        
-        // are you the player owner of previous combatant? if not, are you gm?
-        if ( !!previousCombatant ) {
-            if ( game.user === playerPrevious ) for ( let eff of effectsEnd ) await eff.callMacro("onTurnEnd");
-            else if ( !playerPrevious && game.user.isGM ) for ( let eff of effectsEnd ) await eff.callMacro("onTurnEnd");
+        if ( previousCombatant ) {
+            if ( game.user === getFirstPlayerOwner(previousCombatant) ) {
+                for ( const eff of effectsEnd ) await eff.callMacro("onTurnEnd");
+            }
         }
     });
 
     // onCombatStart
-    Hooks.on("updateCombat", async (combat, update) => {
-        // current must be round1, turn0.
-        if ( combat.current.round !== 1 || combat.current.turn !== 0 ) return;
-        // previous turn must be round0, turn null.
-        if ( combat.previous.round !== 0 || combat.previous.turn !== null ) return;
-        // must be active combat now.
-        if ( !combat.isActive ) return;
-        // must be a started combat.
-        if ( !combat.started ) return;
-        
+    Hooks.on("combatStart", async (combat) => {
         // all combatants that have 'onCombatStart' effects.
         const combatants = combat.combatants.reduce((acc, c) => {
             const effects = c.actor.effects.filter(e => {
@@ -80,13 +61,10 @@ export function registerCombatTriggers(){
         }, []);
         
         // for each eligible combatant...
-        for ( let [combatant, effects] of combatants ) {
-            // get active player who is owner of combatant.
-            const owner = combatant.players.filter(i => i.active)[0];
-            // if there is an active player, and that's you, you call this.
-            if ( owner === game.user) for ( let eff of effects ) await eff.callMacro("onCombatStart");
-            // else the gm calls it.
-            else if ( !owner && game.user.isGM ) for ( let eff of effects ) await eff.callMacro("onCombatStart");
+        for ( const [combatant, effects] of combatants ) {
+            // compare against the user who should call these scripts.
+            if ( game.user !== getFirstPlayerOwner(combatant) ) continue;
+            for ( const eff of effects ) await eff.callMacro("onCombatStart");
         }
     });
 
@@ -109,13 +87,10 @@ export function registerCombatTriggers(){
         }, []);
         
         // for each eligible combatant...
-        for ( let [combatant, effects] of combatants ) {
-            // get active player who is owner of combatant.
-            const owner = combatant.players.filter(i => i.active)[0];
-            // if there is an active player, and that's you, you call this.
-            if ( owner === game.user ) for ( let eff of effects ) await eff.callMacro("onCombatEnd");
-            // else the gm calls it.
-            else if ( !owner && game.user.isGM ) for ( let eff of effects ) await eff.callMacro("onCombatEnd");
+        for ( const [combatant, effects] of combatants ) {
+            // compare against the user who should call these scripts.
+            if ( game.user !== getFirstPlayerOwner(combatant) ) continue;
+            for ( const eff of effects ) await eff.callMacro("onCombatEnd");
         }
     });
 
@@ -129,13 +104,20 @@ export function registerCombatTriggers(){
             return !!CHECKS.hasMacroOfType(eff, "onCombatantDefeated") && CHECKS.isActive(eff);
         });
         if ( !effects.length ) return;
-        
-        // get first active player who is owner of combatant.
-        const owner = combatant.players.filter(i => i.active)[0];
-        
-        // if there is an active player, and that's you, you call this.
-        if ( owner === game.user ) for ( let eff of effects ) await eff.callMacro("onCombatantDefeated");
-        // else the gm calls it.
-        else if ( !owner && game.user.isGM ) for ( let eff of effects ) await eff.callMacro("onCombatantDefeated");
+
+        // compare against the user who should call these scripts.
+        if ( game.user !== getFirstPlayerOwner(combatant) ) return;
+        for ( const eff of effects ) await eff.callMacro("onCombatantDefeated");
     });
+}
+
+// helper function to get the first active player owner, otherwise returns the GM.
+function getFirstPlayerOwner(combatant){
+    const playerOwner = combatant.players.filter(i => i.active)[0];
+    // if the combatant has an active player owner, use that.
+    if ( playerOwner ) return playerOwner;
+
+    // return the first active GM found.
+    const masterOwner = game.users.filter(i => i.isGM && i.active)[0];
+    return masterOwner;
 }

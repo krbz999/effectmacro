@@ -1,26 +1,26 @@
 {
-	"EffectMacro": {
-		"ApplyMacro": {
-			"Save": "Save Script",
-			"Command": "Command",
-			"EditImgError": "Error in edit image."
-		},
-		"Warning": {
-			"NoSuchScript": "No such script embedded in effect.",
-			"NoScriptProvided": "You did not provide a function."
-		},
-		"Label": {
-			"never": "Never Automatically",
-			"onCreate": "On Effect Creation",
-			"onDelete": "On Effect Deletion",
-			"onToggle": "On Effect Toggle (on or off)",
-			"onEnable": "On Effect Toggle (on)",
-			"onDisable": "On Effect Toggle (off)",
-			"onTurnStart": "On Combat Turn Starting",
-			"onTurnEnd": "On Combat Turn Ending",
-			"onCombatStart": "On Combat Starting",
-			"onCombatEnd": "On Combat Ending",
-			"onCombatantDefeated": "On Combatant Marked Defeated"
-		}
-	}
+    "EFFECTMACRO": {
+        "APPLYMACRO": {
+            "SAVE": "Save Script",
+            "COMMAND": "Command",
+            "EDIT_IMGE_RROR": "Error in edit image."
+        },
+        "WARNING": {
+            "NO_SUCH_SCRIPT": "No such script embedded in effect.",
+            "NO_SCRIPT_PROVIDED": "You did not provide a function."
+        },
+        "LABEL": {
+            "never": "Never Automatically",
+            "onCreate": "On Effect Creation",
+            "onDelete": "On Effect Deletion",
+            "onToggle": "On Effect Toggle (on or off)",
+            "onEnable": "On Effect Toggle (on)",
+            "onDisable": "On Effect Toggle (off)",
+            "onTurnStart": "On Combat Turn Starting",
+            "onTurnEnd": "On Combat Turn Ending",
+            "onCombatStart": "On Combat Starting",
+            "onCombatEnd": "On Combat Ending",
+            "onCombatantDefeated": "On Combatant Marked Defeated"
+        }
+    }
 }
