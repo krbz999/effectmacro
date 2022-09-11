@@ -126,6 +126,11 @@ export class API {
             return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNNG.NO_SCRIPT_PROVIDED"));
         }
         else {
+            if ( script instanceof Function ) {
+                return this.setFlag(MODULE, `${type}.script`, `(
+                    ${script.toString()}
+                )()`);
+            }
             return this.setFlag(MODULE, `${type}.script`, script.toString());
         }
     }

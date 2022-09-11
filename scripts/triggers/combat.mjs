@@ -1,8 +1,6 @@
 import { MODULE } from "../constants.mjs";
 import { CHECKS } from "../main.mjs";
 
-
-
 export function registerCombatTriggers(){
     // helper hook to get previous combatant.
     Hooks.on("preUpdateCombat", (combat, _, context) => {
