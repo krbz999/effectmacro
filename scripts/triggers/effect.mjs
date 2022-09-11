@@ -3,15 +3,25 @@ import { CHECKS, EM } from "../main.mjs";
 export function registerEffectTriggers(){
     // hooks to flag contexts.
     Hooks.on("preDeleteActiveEffect", (effect, context) => {
-        if ( !!CHECKS.hasMacroOfType(effect, "onDelete") && CHECKS.isActive(effect) ) EM.primer(context, "onDelete");
+        if ( CHECKS.hasMacroOfType(effect, "onDelete") && CHECKS.isActive(effect) ) {
+            EM.primer(context, "onDelete");
+        }
     });
-    Hooks.on("preCreateActiveEffect", (effect, effectData, context) => {
-        if ( !!CHECKS.hasMacroOfType(effect, "onCreate") ) EM.primer(context, "onCreate");
+    Hooks.on("preCreateActiveEffect", (effect, _, context) => {
+        if ( CHECKS.hasMacroOfType(effect, "onCreate") ) {
+            EM.primer(context, "onCreate");
+        }
     });
     Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
-        if ( !!CHECKS.hasMacroOfType(effect, "onToggle") && CHECKS.toggled(effect, update) ) EM.primer(context, "onToggle");
-        else if ( !!CHECKS.hasMacroOfType(effect, "onEnable") && CHECKS.toggledOn(effect, update) ) EM.primer(context, "onEnable");
-        else if ( !!CHECKS.hasMacroOfType(effect, "onDisable") && CHECKS.toggledOff(effect, update) ) EM.primer(context, "onDisable");
+        if ( CHECKS.hasMacroOfType(effect, "onToggle") && CHECKS.toggled(effect, update) ) {
+            EM.primer(context, "onToggle");
+        }
+        if ( CHECKS.hasMacroOfType(effect, "onEnable") && CHECKS.toggledOn(effect, update) ) {
+            EM.primer(context, "onEnable");
+        }
+        if ( CHECKS.hasMacroOfType(effect, "onDisable") && CHECKS.toggledOff(effect, update) ) {
+            EM.primer(context, "onDisable");
+        }
     });
 
     // hooks to execute scripts.
