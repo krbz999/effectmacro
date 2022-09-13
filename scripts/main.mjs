@@ -102,9 +102,9 @@ export class CHECKS {
 export class API {
     
     // call a specific type of script in an effect.
-    static callMacro = function(type = "never", context = {}){
+    static callMacro = async function(type = "never", context = {}){
         const script = this.getFlag(MODULE, type);
-        if ( !script ) return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNNG.NO_SUCH_SCRIPT"));
+        if ( !script ) return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNING.NO_SUCH_SCRIPT"));
         return EM.getScripts(this, [type], context);
     }
     
@@ -114,16 +114,16 @@ export class API {
     }
     
     // remove a specific type of script in an effect.
-    static removeMacro = function(type = "never"){
+    static removeMacro = async function(type = "never"){
         const script = this.getFlag(MODULE, type);
-        if ( !script ) return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNNG.NO_SUCH_SCRIPT"));
+        if ( !script ) return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNING.NO_SUCH_SCRIPT"));
         return this.unsetFlag(MODULE, type);
     }
     
     // create a function on the effect.
-    static createMacro = function(type = "never", script){
+    static createMacro = async function(type = "never", script){
         if ( !script ) {
-            return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNNG.NO_SCRIPT_PROVIDED"));
+            return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNING.NO_SCRIPT_PROVIDED"));
         }
         else {
             if ( script instanceof Function ) {
@@ -136,9 +136,10 @@ export class API {
     }
     
     // update a function on the effect.
-    static updateMacro = function(type = "never", script){
-        if ( script.toString() !== this.getFlag(MODULE, `${type}.script`) ) {
-            return this.setFlag(MODULE, `${type}.script`, script.toString());
+    static updateMacro = async function(type = "never", script){
+        if ( !script ) return this.removeMacro(type);
+        else if ( script.toString() !== this.getFlag(MODULE, `${type}.script`) ) {
+            return this.createMacro(type, script);
         }
     }
 }
