@@ -37,5 +37,5 @@ A set of functions have been added to active effects.
 * `ActiveEffect#callMacro` calls a macro embedded in the effect of the specific type. The `context` object can be used to pass additional parameters to the script, and can be referenced with `this`.
 * `ActiveEffect#hasMacro` returns true or false whether or not an effect has a macro of the given type.
 * `ActiveEffect#removeMacro` removes a macro of the given type from the effect.
-* `ActiveEffect#createMacro` creates an embedded macro of the given type inside the effect. Identical to using the provided interface and writing a macro there. The provided script must be a string.
-* `ActiveEffect#updateMacro` updates a macro of the given type on an effect. In most cases functionally identical to `createMacro`, and will remove the embedded macro if no script is provided. The provided script must be a string.
+* `ActiveEffect#createMacro` creates an embedded macro of the given type inside the effect. Identical to using the provided interface and writing a macro there. The provided script can be a function or a string.
+* `ActiveEffect#updateMacro` updates a macro of the given type on an effect. In most cases functionally identical to `createMacro`, and will remove the embedded macro if no script is provided. The provided script can be a function or a string.
