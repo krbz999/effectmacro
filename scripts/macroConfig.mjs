@@ -14,18 +14,20 @@ export function registerMacroConfig(){
             const selected = foundry.utils.getProperty(dialog, `${MODULE}.lastUpdated`) === key && "selected";
             const label = game.i18n.localize(`EFFECTMACRO.LABEL.${key}`);
             const optionClass = effect.hasMacro(key) ? "effectmacro-option-has-macro" : "effectmacro-option-no-macro";
-            return {key, selected, label, optionClass};
+            return { key, selected, label, optionClass };
         }).sort((a, b) => {
             return effect.hasMacro(b.key) - effect.hasMacro(a.key);
         });
         
         const hr = document.createElement("HR");
         const div = document.createElement("DIV");
-        div.innerHTML = await renderTemplate("modules/effectmacro/templates/effect-sheet.html", {options});
+        const template = "modules/effectmacro/templates/effect-sheet.html";
+        div.innerHTML = await renderTemplate(template, { options });
         appendWithin.appendChild(hr);
         appendWithin.appendChild(div.firstChild);
         const update_fas_fa = () => {
-            const has_macro = effect.hasMacro(html[0].querySelector(".effectmacro-config-select").value);
+            const macroType = html[0].querySelector(".effectmacro-config-select").value;
+            const has_macro = effect.hasMacro(macroType);
 
             const button = html[0].querySelector(".effectmacro-config-button > .fas");
             

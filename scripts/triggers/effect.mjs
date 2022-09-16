@@ -1,3 +1,4 @@
+import { MODULE } from "../constants.mjs";
 import { CHECKS, EM } from "../main.mjs";
 
 export function registerEffectTriggers(){
@@ -27,7 +28,7 @@ export function registerEffectTriggers(){
     // hooks to execute scripts.
     Hooks.on("deleteActiveEffect", (effect, context) => {
         // is it flagged?
-        const types = context.effectmacro;
+        const types = context[MODULE];
         if ( !types ) return;
         
         // first player; if not you, then only for GM.
@@ -41,7 +42,7 @@ export function registerEffectTriggers(){
     });
     Hooks.on("createActiveEffect", (effect, context) => {
         // is it flagged?
-        const types = context.effectmacro;
+        const types = context[MODULE];
         if ( !types ) return;
         
         // first player; if not you, then only for GM.
@@ -55,7 +56,7 @@ export function registerEffectTriggers(){
     });
     Hooks.on("updateActiveEffect", (effect, _, context) => {
         // is it flagged?
-        const types = context.effectmacro;
+        const types = context[MODULE];
         if ( !types ) return;
         
         // first player; if not you, then only for GM.

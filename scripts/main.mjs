@@ -21,15 +21,15 @@ export class EM {
     
     // prime context to execute script (in pre hooks).
     static primer = (context, type) => {
-        if ( !context.effectmacro ) context.effectmacro = [type];
-        else context.effectmacro.push(type);
+        if ( !context[MODULE] ) context[MODULE] = [type];
+        else context[MODULE].push(type);
     }
     
     // get the scripts.
     static getScripts = (effect, types, context) => {
         const scripts = {};
         for ( let type of types ) {
-            scripts[type] = effect.getFlag("effectmacro", type);
+            scripts[type] = effect.getFlag(MODULE, type);
         }
         return this.executeScripts(effect, scripts, context);
     }
@@ -146,7 +146,7 @@ export class API {
 
 export class EffectMacroConfig extends MacroConfig {
     constructor(doc, options){
-        super(doc, {});
+        super(doc, options);
         this.type = options.type;
     }
     
@@ -170,7 +170,10 @@ export class EffectMacroConfig extends MacroConfig {
     
     /* Override */
     _onEditImage(event){
-        return ui.notifications.error(game.i18n.localize("EFFECTMACRO.APPLYMACRO.EDIT_IMG_ERROR"));
+        const warning = "EFFECTMACRO.APPLYMACRO.EDIT_IMG_ERROR";
+        const locale = game.i18n.localize(warning);
+        ui.notifications.error(locale);
+        return null;
     }
     
     /* Override */
