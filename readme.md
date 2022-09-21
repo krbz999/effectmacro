@@ -1,27 +1,22 @@
 # Effect Macro
 
 A module that allows users to embed macros directly into effects.
-
 These macros are then called automatically when the appropriate trigger happens. The options are:
-* When an effect is created.
-* When an effect is deleted.
-* When an effect is toggled (on, off, or both).
-* When the actor who has the effect starts their turn.
-* When the actor who has the effect ends their turn.
-* When the actor who has the effect is marked defeated in combat.
-* When combat is started.
-* When combat is ended.
+
+- When an effect is created.
+- When an effect is deleted.
+- When an effect is toggled (on, off, or both).
+- When the actor who has the effect starts their turn.
+- When the actor who has the effect ends their turn.
+- When the actor who has the effect is marked defeated in combat.
+- When combat is started.
+- When combat is ended.
 
 An effect can have a macro of any of these types, not just one. There is also the static 'never' type meant for being explicitly called by other scripts. This type is never called automatically.
 
 ## How to
-Macros are added in the ActiveEffect config. Selecting the type of trigger and clicking the arrow (or green check if there is a preexisting macro) opens a macro editor.
-
-<p align="center">
-    <img src="https://i.imgur.com/zK1LFHA.png"/>
-</p>
-
-When an embedded macro is triggered, it is executed for the one triggering the event, or in the case of combat events for the first active player owner found, otherwise as the GM.
+Macros are added in the ActiveEffect config. Selecting the type of trigger and clicking 'Add Macro' (or 'Edit Macro' for an existing macro) opens a macro editor.
+When an embedded macro is triggered, it is executed for the owner of the actor who has the effect. If no such owner, then it is executed as if by the GM.
 
 ## Script Helpers
 By default, these variables are pre-defined in any effect macro.
