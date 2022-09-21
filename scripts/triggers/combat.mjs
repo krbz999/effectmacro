@@ -7,9 +7,14 @@ export function registerCombatTriggers(){
         const previousId = combat.combatant?.id;
         foundry.utils.setProperty(context, `${MODULE}.previousCombatant`, previousId);
     });
-    // onTurnStart/End is no longer so special and weird and doesn't have to do it all on its own
-    // yet we still love him all the same.
+
+    // onTurnStart/End
     Hooks.on("updateCombat", async (combat, changes, context) => {
+        const cTurn = combat.current.turn;
+        const pTurn = combat.previous.turn;
+        const cRound = combat.current.round;
+        const pRound = combat.previous.round;
+
         // no change in turns nor rounds.
         if ( changes.turn === undefined && changes.round === undefined ) return;
         // combat not started.
@@ -17,9 +22,9 @@ export function registerCombatTriggers(){
         // not active combat.
         if ( !combat.isActive ) return;
         // we went back.
-        if ( combat.current.round < combat.previous.round ) return;
+        if ( cRound < pRound ) return;
         // we went back.
-        if ( combat.current.turn < combat.previous.turn && combat.current.round === combat.previous.round ) return;
+        if ( cTurn < pTurn && cRound === pRound ) return;
         
         // retrieve combatants.
         const currentCombatant = combat.combatant;
@@ -52,7 +57,7 @@ export function registerCombatTriggers(){
         // all combatants that have 'onCombatStart' effects.
         const combatants = combat.combatants.reduce((acc, c) => {
             const effects = c.actor.effects.filter(e => {
-                if ( !CHECKS.hasMacroOfType(e, "onCombatStart")) return false;
+                if ( !CHECKS.hasMacroOfType(e, "onCombatStart") ) return false;
                 if ( !CHECKS.isActive(e) ) return false;
                 return true;
             });

@@ -8,11 +8,13 @@ export function registerEffectTriggers(){
             EM.primer(context, "onDelete");
         }
     });
+
     Hooks.on("preCreateActiveEffect", (effect, _, context) => {
-        if ( CHECKS.hasMacroOfType(effect, "onCreate") ) {
+        if ( CHECKS.hasMacroOfType(effect, "onCreate") && CHECKS.isActive(effect) ) {
             EM.primer(context, "onCreate");
         }
     });
+
     Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
         if ( CHECKS.hasMacroOfType(effect, "onToggle") && CHECKS.toggled(effect, update) ) {
             EM.primer(context, "onToggle");
@@ -40,6 +42,7 @@ export function registerEffectTriggers(){
         }
         else return;
     });
+
     Hooks.on("createActiveEffect", (effect, context) => {
         // is it flagged?
         const types = context[MODULE];
@@ -54,6 +57,7 @@ export function registerEffectTriggers(){
         }
         else return;
     });
+
     Hooks.on("updateActiveEffect", (effect, _, context) => {
         // is it flagged?
         const types = context[MODULE];

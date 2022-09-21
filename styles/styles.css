@@ -1,12 +1,4 @@
-.effectmacro-config-button {
-    width: 30px;
-}
-
-.effectmacro-config-button .fas.fa-check {
-    color: #078907;
-}
-
-.effectmacro-option-no-macro {
-    font-style: italic;
-    font-size: 12px;
+button#effectmacro-unusedOption, button#effectmacro-usedOption {
+    white-space: nowrap;
+    min-width: 100px;
 }

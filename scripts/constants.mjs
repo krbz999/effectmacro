@@ -1,6 +1,5 @@
 export const MODULE = "effectmacro";
 export const TRIGGERS = [
-    "never",
     "onCreate",
     "onDelete",
     "onToggle",
@@ -10,5 +9,6 @@ export const TRIGGERS = [
     "onTurnEnd",
     "onCombatStart",
     "onCombatEnd",
-    "onCombatantDefeated"
+    "onCombatantDefeated",
+    "never"
 ];

@@ -2,48 +2,61 @@ import { MODULE, TRIGGERS } from "./constants.mjs";
 import { EffectMacroConfig } from "./main.mjs";
 
 export function registerMacroConfig(){
-    // slap button onto effect config dialog.
-    Hooks.on("renderActiveEffectConfig", async (dialog, html, data) => {
-        const effect = dialog.object;
-        
+    // slap button onto effect config.
+    Hooks.on("renderActiveEffectConfig", async (config, html, data) => {
         const appendWithin = html[0].querySelector("section[data-tab=details]");
-        const arrow = "fa-arrow-right";
-        const check = "fa-check";
 
-        const options = TRIGGERS.map(key => {
-            const selected = foundry.utils.getProperty(dialog, `${MODULE}.lastUpdated`) === key && "selected";
-            const label = game.i18n.localize(`EFFECTMACRO.LABEL.${key}`);
-            const optionClass = effect.hasMacro(key) ? "effectmacro-option-has-macro" : "effectmacro-option-no-macro";
-            return { key, selected, label, optionClass };
-        }).sort((a, b) => {
-            return effect.hasMacro(b.key) - effect.hasMacro(a.key);
+        // set up config[MODULE] and the array for the template.
+        const usedOptions = setUsedOptions(config).map(key => {
+            const label = `EFFECTMACRO.LABEL.${key}`;
+            return { key, label };
         });
+        const remainingOptions = getRemainingOptions(config).reduce((acc, key) => {
+            const label = game.i18n.localize(`EFFECTMACRO.LABEL.${key}`);
+            return acc + `<option value="${key}">${label}</option>`;
+        }, "");
         
         const hr = document.createElement("HR");
         const div = document.createElement("DIV");
         const template = "modules/effectmacro/templates/effect-sheet.html";
-        div.innerHTML = await renderTemplate(template, { options });
+
+        div.innerHTML = await renderTemplate(template, {
+            remainingOptions,
+            usedOptions
+        });
         appendWithin.appendChild(hr);
         appendWithin.appendChild(div.firstChild);
-        const update_fas_fa = () => {
-            const macroType = html[0].querySelector(".effectmacro-config-select").value;
-            const has_macro = effect.hasMacro(macroType);
-
-            const button = html[0].querySelector(".effectmacro-config-button > .fas");
-            
-            if ( has_macro ) button.classList.replace(arrow, check);
-            if ( !has_macro ) button.classList.replace(check, arrow);
-        }
-        update_fas_fa();
         
-        html[0].querySelector(".effectmacro-config-select").addEventListener("change", update_fas_fa);
-        
-        html[0].querySelector(".effectmacro-config-button").addEventListener("click", () => {
-            const type = html[0].querySelector(".effectmacro-config-select").value;
-            foundry.utils.setProperty(dialog, `${MODULE}.lastUpdated`, type);
-            new EffectMacroConfig(dialog.document, { type }).render(true);
+        html[0].addEventListener("click", (event) => {
+            const unusedButton = event.target.closest("#effectmacro-unusedOption");
+            const usedButton = event.target.closest("#effectmacro-usedOption");
+            let key;
+            if ( unusedButton ) {
+                key = html[0].querySelector("#effectmacro-unusedOption-select").value;
+            } else if ( usedButton ) {
+                key = usedButton.dataset.key;
+            } else return;
+            new EffectMacroConfig(config.document, { type: key }).render(true);
         });
         
-        dialog.setPosition();
+        config.setPosition();
     });
+}
+
+function getRemainingOptions(config){
+    return TRIGGERS.filter(key => {
+        return !config[MODULE].includes(key);
+    });
+}
+
+function setUsedOptions(config){
+    const current = new Set(config[MODULE] ?? []);
+    for ( const key of TRIGGERS ) {
+        if ( !config.object.hasMacro(key) ) {
+            current.delete(key);
+        } else current.add(key);
+    }
+    
+    config[MODULE] = Array.from(current);
+    return config[MODULE];
 }
