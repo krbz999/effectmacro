@@ -1,3 +1,4 @@
+import { MODULE } from "../constants.mjs";
 import { CHECKS, EM } from "../main.mjs";
 
 export function registerEffectTriggers(){
@@ -7,11 +8,13 @@ export function registerEffectTriggers(){
             EM.primer(context, "onDelete");
         }
     });
+
     Hooks.on("preCreateActiveEffect", (effect, _, context) => {
-        if ( CHECKS.hasMacroOfType(effect, "onCreate") ) {
+        if ( CHECKS.hasMacroOfType(effect, "onCreate") && CHECKS.isActive(effect) ) {
             EM.primer(context, "onCreate");
         }
     });
+
     Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
         if ( CHECKS.hasMacroOfType(effect, "onToggle") && CHECKS.toggled(effect, update) ) {
             EM.primer(context, "onToggle");
@@ -27,7 +30,7 @@ export function registerEffectTriggers(){
     // hooks to execute scripts.
     Hooks.on("deleteActiveEffect", (effect, context) => {
         // is it flagged?
-        const types = context.effectmacro;
+        const types = context[MODULE];
         if ( !types ) return;
         
         // first player; if not you, then only for GM.
@@ -39,9 +42,10 @@ export function registerEffectTriggers(){
         }
         else return;
     });
+
     Hooks.on("createActiveEffect", (effect, context) => {
         // is it flagged?
-        const types = context.effectmacro;
+        const types = context[MODULE];
         if ( !types ) return;
         
         // first player; if not you, then only for GM.
@@ -53,9 +57,10 @@ export function registerEffectTriggers(){
         }
         else return;
     });
+
     Hooks.on("updateActiveEffect", (effect, _, context) => {
         // is it flagged?
-        const types = context.effectmacro;
+        const types = context[MODULE];
         if ( !types ) return;
         
         // first player; if not you, then only for GM.

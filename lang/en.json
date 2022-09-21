@@ -3,7 +3,10 @@
         "APPLYMACRO": {
             "SAVE": "Save Script",
             "COMMAND": "Command",
-            "EDIT_IMGE_RROR": "Error in edit image."
+            "EDIT_IMG_ERROR": "Error in edit image.",
+            "EDIT_THIS": "Edit Macro",
+            "ADD_THIS": "Add Macro",
+            "NEW_TRIGGER": "Add another:"
         },
         "WARNING": {
             "NO_SUCH_SCRIPT": "No such script embedded in effect.",

@@ -3,13 +3,18 @@ import { MODULE } from "./constants.mjs";
 export class EM {
     
     // take a string and execute it after turning it into a script.
-    static executeScripts = async (eff, scripts, context = {}) => {
-        if ( scripts.size < 1 ) return;
+    static executeScripts = async (eff, scripts={}, context={}) => {
+        const length = Object.keys(scripts).length;
+        if ( !length ) return;
         
         // define helper variables.
-        let {actor, character, token, scene, origin, effect} = await this.getHelperVariables(eff);
+        let {
+            actor, character, token,
+            scene, origin, effect
+        } = await this.getHelperVariables(eff);
         
-        for ( let {script} of Object.values(scripts) ) {
+        for ( const {script} of Object.values(scripts) ) {
+            if ( !script ) continue;
             const body = `(async()=>{
                 ${script}
             })();`;
@@ -21,15 +26,15 @@ export class EM {
     
     // prime context to execute script (in pre hooks).
     static primer = (context, type) => {
-        if ( !context.effectmacro ) context.effectmacro = [type];
-        else context.effectmacro.push(type);
+        if ( !context[MODULE] ) context[MODULE] = [type];
+        else context[MODULE].push(type);
     }
     
     // get the scripts.
     static getScripts = (effect, types, context) => {
         const scripts = {};
-        for ( let type of types ) {
-            scripts[type] = effect.getFlag("effectmacro", type);
+        for ( const type of types ) {
+            scripts[type] = effect.getFlag(MODULE, type);
         }
         return this.executeScripts(effect, scripts, context);
     }
@@ -42,7 +47,15 @@ export class EM {
         let scene = token?.scene ?? game.scenes.active;
         let origin = effect.origin ? await fromUuid(effect.origin) : actor;
         
-        return {actor, character, token, scene, origin, effect};
+        return { actor, character, token, scene, origin, effect };
+    }
+
+    // warning helper function, returns null.
+    static displayWarning(string){
+        const preLocale = `EFFECTMACRO.WARNING.${string}`;
+        const locale = game.i18n.localize(preLocale);
+        ui.notifications.warn(locale);
+        return null;
     }
     
 }
@@ -51,7 +64,9 @@ export class CHECKS {
     
     // does effect have actor parent and is it NOT suppressed?
     static verifyEffect = (effect) => {
-        return ( effect.parent instanceof Actor ) && ( effect.isSuppressed === false );
+        const isActor = effect.parent instanceof Actor;
+        const isSuppressed = effect.isSuppressed === false;
+        return isActor && isSuppressed;
     }
 
     // was this an effect that got toggled ON?
@@ -70,13 +85,17 @@ export class CHECKS {
     
     // was this an effect that got toggled?
     static toggled = (effect, update) => {
-        return this.toggledOn(effect, update) || this.toggledOff(effect, update);
+        const isToggleOn = this.toggledOn(effect, update);
+        const isToggleOff = this.toggledOff(effect, update);
+        return isToggleOn || isToggleOff;
     }
     
     // does it have a script of a certain type?
     static hasMacroOfType = (effect, type, verifySupression = true) => {
-        // must be on an actor, and must be non-suppressed (in case of unequipped/unattuned items)
-        if ( verifySupression && !this.verifyEffect(effect) ) return false;
+        // must be on an actor, and must be non-suppressed
+        if ( verifySupression && !this.verifyEffect(effect) ) {
+            return false;
+        }
         const embedded = effect.getFlag(MODULE, `${type}.script`) ?? "";
         return embedded;
     }
@@ -89,9 +108,11 @@ export class CHECKS {
     // get first active player (id) who owns the actor.
     static firstPlayerOwner = (actor) => {
         if ( !actor.hasPlayerOwner ) return false;
-        const active_players = game.users.filter(i => !i.isGM && i.active);
-        const {OWNER} = CONST.DOCUMENT_OWNERSHIP_LEVELS;
-        for ( let p of active_players ) {
+        const active_players = game.users.filter(i => {
+            return !i.isGM && i.active;
+        });
+        const { OWNER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+        for ( const p of active_players ) {
             if ( actor.testUserPermission(p, OWNER) ) return p.id;
         }
         return false;
@@ -104,7 +125,9 @@ export class API {
     // call a specific type of script in an effect.
     static callMacro = async function(type = "never", context = {}){
         const script = this.getFlag(MODULE, type);
-        if ( !script ) return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNING.NO_SUCH_SCRIPT"));
+        if ( !script ) {
+            return EM.displayWarning("NO_SUCH_SCRIPT");
+        }
         return EM.getScripts(this, [type], context);
     }
     
@@ -116,14 +139,16 @@ export class API {
     // remove a specific type of script in an effect.
     static removeMacro = async function(type = "never"){
         const script = this.getFlag(MODULE, type);
-        if ( !script ) return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNING.NO_SUCH_SCRIPT"));
+        if ( !script ) {
+            return null;
+        }
         return this.unsetFlag(MODULE, type);
     }
     
     // create a function on the effect.
     static createMacro = async function(type = "never", script){
         if ( !script ) {
-            return ui.notifications.warn(game.i18n.localize("EFFECTMACRO.WARNING.NO_SCRIPT_PROVIDED"));
+            return EM.displayWarning("NO_SCRIPT_PROVIDED");
         }
         else {
             if ( script instanceof Function ) {
@@ -146,31 +171,39 @@ export class API {
 
 export class EffectMacroConfig extends MacroConfig {
     constructor(doc, options){
-        super(doc, {});
+        super(doc, options);
         this.type = options.type;
     }
     
     /* Override */
     static get defaultOptions(){
         return foundry.utils.mergeObject(super.defaultOptions, {
-            id: "effectmacro-menu",
+            //id: "effectmacro-menu",
             template: "modules/effectmacro/templates/macro-menu.html",
-            classes: ["macro-sheet", "sheet"]
+            classes: ["macro-sheet", "sheet"],
         });
+    }
+
+    get id(){
+        return `effectmacro-menu-${this.type}`;
     }
     
     /* Override */
     async getData(){
-        const data = super.getData();
+        const data = await super.getData();
         data.img = this.object.icon;
         data.name = this.object.label;
         data.script = this.object.getFlag(MODULE, this.type)?.script ?? "";
+        data.localeKey = `EFFECTMACRO.LABEL.${this.type}`;
         return data;
     }
     
     /* Override */
     _onEditImage(event){
-        return ui.notifications.error(game.i18n.localize("EFFECTMACRO.APPLYMACRO.EDIT_IMG_ERROR"));
+        const warning = "EFFECTMACRO.APPLYMACRO.EDIT_IMG_ERROR";
+        const locale = game.i18n.localize(warning);
+        ui.notifications.error(locale);
+        return null;
     }
     
     /* Override */
