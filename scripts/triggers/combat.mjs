@@ -1,5 +1,5 @@
 import { MODULE } from "../constants.mjs";
-import { CHECKS } from "../main.mjs";
+import { should_I_run_this } from "../helpers.mjs";
 
 export function registerCombatTriggers(){
     // helper hook to get previous combatant.
@@ -33,32 +33,50 @@ export function registerCombatTriggers(){
         
         // find active effects with onTurn triggers.
         const effectsStart = currentCombatant.token.actor.effects.filter(eff => {
-            return CHECKS.hasMacroOfType(eff, "onTurnStart") && CHECKS.isActive(eff);
+            const hasMacro = eff.hasMacro("onTurnStart");
+            if ( !hasMacro ) return false;
+            const isOn = eff.modifiesActor;
+            if ( !isOn ) return false;
+            return true;
         });
         const effectsEnd = previousCombatant?.token.actor?.effects.filter(eff => {
-            return CHECKS.hasMacroOfType(eff, "onTurnEnd") && CHECKS.isActive(eff);
+            const hasMacro = eff.hasMacro("onTurnEnd");
+            if ( !hasMacro ) return false;
+            const isOn = eff.modifiesActor;
+            if ( !isOn ) return false;
+            return true;
         }) ?? [];
         
         // call scripts.
         if ( currentCombatant ) {
-            if ( game.user === getFirstPlayerOwner(currentCombatant) ) {
+            const run = should_I_run_this(currentCombatant.token.actor);
+            if ( run ) {
                 for ( const eff of effectsStart ) await eff.callMacro("onTurnStart");
             }
         }
         if ( previousCombatant ) {
-            if ( game.user === getFirstPlayerOwner(previousCombatant) ) {
+            const run = should_I_run_this(previousCombatant.token.actor);
+            if ( run ) {
                 for ( const eff of effectsEnd ) await eff.callMacro("onTurnEnd");
             }
         }
     });
 
     // onCombatStart
-    Hooks.on("combatStart", async (combat) => {
+    Hooks.on("updateCombat", async (combat) => {
+        const r = combat.current.round === 1;
+        const t = combat.current.turn === 0;
+        const p = combat.previous.round === 0;
+        const q = combat.previous.turn === null;
+        if ( !r || !t || !p || !q ) return; // this is not combatStart.
+        
         // all combatants that have 'onCombatStart' effects.
         const combatants = combat.combatants.reduce((acc, c) => {
-            const effects = c.actor.effects.filter(e => {
-                if ( !CHECKS.hasMacroOfType(e, "onCombatStart") ) return false;
-                if ( !CHECKS.isActive(e) ) return false;
+            const effects = c.actor.effects.filter(eff => {
+                const hasMacro = eff.hasMacro("onCombatStart");
+                if ( !hasMacro ) return false;
+                const isOn = eff.modifiesActor;
+                if ( !isOn ) return false;
                 return true;
             });
             if ( effects.length ) acc.push([c, effects]);
@@ -67,8 +85,9 @@ export function registerCombatTriggers(){
         
         // for each eligible combatant...
         for ( const [combatant, effects] of combatants ) {
-            // compare against the user who should call these scripts.
-            if ( game.user !== getFirstPlayerOwner(combatant) ) continue;
+            const run = should_I_run_this(combatant.token.actor);
+            if ( !run ) continue;
+
             for ( const eff of effects ) await eff.callMacro("onCombatStart");
         }
     });
@@ -82,9 +101,11 @@ export function registerCombatTriggers(){
         
         // all combatants that have 'onCombatEnd' effects.
         const combatants = combat.combatants.reduce((acc, c) => {
-            const effects = c.actor.effects.filter(e => {
-                if ( !CHECKS.hasMacroOfType(e, "onCombatEnd") ) return false;
-                if ( !CHECKS.isActive(e) ) return false;
+            const effects = c.actor.effects.filter(eff => {
+                const hasMacro = eff.hasMacro("onCombatEnd");
+                if ( !hasMacro ) return false;
+                const isOn = eff.modifiesActor;
+                if ( !isOn ) return false;
                 return true;
             });
             if ( effects.length ) acc.push([c, effects]);
@@ -93,8 +114,9 @@ export function registerCombatTriggers(){
         
         // for each eligible combatant...
         for ( const [combatant, effects] of combatants ) {
-            // compare against the user who should call these scripts.
-            if ( game.user !== getFirstPlayerOwner(combatant) ) continue;
+            const run = should_I_run_this(combatant.token.actor);
+            if ( !run ) continue;
+
             for ( const eff of effects ) await eff.callMacro("onCombatEnd");
         }
     });
@@ -106,23 +128,17 @@ export function registerCombatTriggers(){
         
         // find effects that are "onCombatantDefeated".
         const effects = combatant.actor.effects.filter(eff => {
-            return !!CHECKS.hasMacroOfType(eff, "onCombatantDefeated") && CHECKS.isActive(eff);
+            const hasMacro = eff.hasMacro("onCombatantDefeated");
+            if ( !hasMacro ) return false;
+            const isOn = eff.modifiesActor;
+            if ( !isOn ) return false;
+            return true;
         });
         if ( !effects.length ) return;
 
-        // compare against the user who should call these scripts.
-        if ( game.user !== getFirstPlayerOwner(combatant) ) return;
+        const run = should_I_run_this(combatant.token.actor);
+        if ( !run ) return;
+
         for ( const eff of effects ) await eff.callMacro("onCombatantDefeated");
     });
-}
-
-// helper function to get the first active player owner, otherwise returns the GM.
-function getFirstPlayerOwner(combatant){
-    const playerOwner = combatant.players.filter(i => i.active)[0];
-    // if the combatant has an active player owner, use that.
-    if ( playerOwner ) return playerOwner;
-
-    // return the first active GM found.
-    const masterOwner = game.users.filter(i => i.isGM && i.active)[0];
-    return masterOwner;
 }

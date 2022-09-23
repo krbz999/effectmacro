@@ -13,7 +13,7 @@ export class EM {
             scene, origin, effect
         } = await this.getHelperVariables(eff);
         
-        for ( const {script} of Object.values(scripts) ) {
+        for ( const { script } of Object.values(scripts) ) {
             if ( !script ) continue;
             const body = `(async()=>{
                 ${script}
@@ -22,12 +22,6 @@ export class EM {
             await fn.call(context, token, character, actor, scene, origin, effect);
         }
         
-    }
-    
-    // prime context to execute script (in pre hooks).
-    static primer = (context, type) => {
-        if ( !context[MODULE] ) context[MODULE] = [type];
-        else context[MODULE].push(type);
     }
     
     // get the scripts.
@@ -56,66 +50,6 @@ export class EM {
         const locale = game.i18n.localize(preLocale);
         ui.notifications.warn(locale);
         return null;
-    }
-    
-}
-
-export class CHECKS {
-    
-    // does effect have actor parent and is it NOT suppressed?
-    static verifyEffect = (effect) => {
-        const isActor = effect.parent instanceof Actor;
-        const isSuppressed = effect.isSuppressed === false;
-        return isActor && isSuppressed;
-    }
-
-    // was this an effect that got toggled ON?
-    static toggledOn = (effect, update) => {
-        const wasOff = effect.disabled === true;
-        const isOn = update.disabled === false;
-        return ( wasOff && isOn );
-    }
-    
-    // was this an effect that got toggled OFF?
-    static toggledOff = (effect, update) => {
-        const wasOn = effect.disabled === false;
-        const isOff = update.disabled === true;
-        return ( wasOn && isOff );
-    }
-    
-    // was this an effect that got toggled?
-    static toggled = (effect, update) => {
-        const isToggleOn = this.toggledOn(effect, update);
-        const isToggleOff = this.toggledOff(effect, update);
-        return isToggleOn || isToggleOff;
-    }
-    
-    // does it have a script of a certain type?
-    static hasMacroOfType = (effect, type, verifySupression = true) => {
-        // must be on an actor, and must be non-suppressed
-        if ( verifySupression && !this.verifyEffect(effect) ) {
-            return false;
-        }
-        const embedded = effect.getFlag(MODULE, `${type}.script`) ?? "";
-        return embedded;
-    }
-    
-    // is this effect active (not disabled)?
-    static isActive = (effect) => {
-        return !effect.disabled;
-    }
-    
-    // get first active player (id) who owns the actor.
-    static firstPlayerOwner = (actor) => {
-        if ( !actor.hasPlayerOwner ) return false;
-        const active_players = game.users.filter(i => {
-            return !i.isGM && i.active;
-        });
-        const { OWNER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
-        for ( const p of active_players ) {
-            if ( actor.testUserPermission(p, OWNER) ) return p.id;
-        }
-        return false;
     }
     
 }

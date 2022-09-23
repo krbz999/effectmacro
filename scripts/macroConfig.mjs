@@ -38,8 +38,7 @@ export function registerMacroConfig(){
             } else return;
             new EffectMacroConfig(config.document, { type: key }).render(true);
         });
-        
-        config.setPosition();
+        config.setPosition({height: "auto"});
     });
 }
 
