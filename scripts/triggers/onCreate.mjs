@@ -2,6 +2,8 @@ import { should_I_run_this } from "../helpers.mjs";
 
 export function onEffectCreated(){
     Hooks.on("createActiveEffect", (effect) => {
+        if ( effect.parent instanceof Item ) return;
+        
         const run = should_I_run_this(effect.parent);
         if ( !run ) return;
 

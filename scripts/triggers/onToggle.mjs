@@ -3,10 +3,13 @@ import { should_I_run_this } from "../helpers.mjs";
 
 export function onEffectToggled(){
     Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
+        if ( effect.parent instanceof Item ) return;
         foundry.utils.setProperty(context, `${MODULE}.${effect.id}.wasOn`, effect.modifiesActor);
     });
 
     Hooks.on("updateActiveEffect", async (effect, update, context) => {
+        if ( effect.parent instanceof Item ) return;
+        
         const run = should_I_run_this(effect.parent);
         if ( !run ) return false;
 
@@ -25,6 +28,8 @@ export function onEffectToggled(){
     });
 
     Hooks.on("preUpdateItem", (item, update, context) => {
+        if ( !item.parent ) return;
+
         const effects = item.parent.effects.filter(eff => {
             return eff.origin === item.uuid;
         });
@@ -33,6 +38,8 @@ export function onEffectToggled(){
         }
     });
     Hooks.on("updateItem", async (item, update, context) => {
+        if ( !item.parent ) return;
+
         const run = should_I_run_this(item.parent);
         if ( !run ) return;
 
