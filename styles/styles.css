@@ -1,4 +1,5 @@
-button#effectmacro-unusedOption, button#effectmacro-usedOption {
-    white-space: nowrap;
-    min-width: 100px;
+button#effectmacro-unusedOption,
+button#effectmacro-usedOption {
+  white-space: nowrap;
+  min-width: 100px;
 }
