@@ -10,12 +10,12 @@ export class EffectMacroConfig extends MacroConfig {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: "modules/effectmacro/templates/macro-menu.hbs",
-      classes: ["macro-sheet", "sheet"],
+      classes: ["macro-sheet", "sheet"]
     });
   }
 
   get id() {
-    return `effectmacro-menu-${this.type}`;
+    return `effectmacro-menu-${this.type}-${this.object.id}`;
   }
 
   /* Override */
@@ -38,7 +38,7 @@ export class EffectMacroConfig extends MacroConfig {
 
   /* Override */
   async _updateObject(event, formData) {
-    const type = this.type;
-    return this.object.updateMacro(type, formData.command);
+    await this.object.updateMacro(this.type, formData.command);
+    return this.close();
   }
 }

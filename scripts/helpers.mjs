@@ -1,4 +1,4 @@
-import { MODULE, TRIGGERS } from "./constants.mjs";
+import { MODULE, TRIGGERS, TRIGGERS_DND5E } from "./constants.mjs";
 import { EffectMacroConfig } from "./macroConfig.mjs";
 
 // return true or false if you, the user, should run the scripts on this actor.
@@ -66,14 +66,14 @@ export function registerMacroConfig() {
 }
 
 function getRemainingOptions(config) {
-  return TRIGGERS.filter(key => {
+  return _getTriggers().filter(key => {
     return !config[MODULE].includes(key);
   });
 }
 
 function setUsedOptions(config) {
   const current = new Set(config[MODULE] ?? []);
-  for (const key of TRIGGERS) {
+  for (const key of _getTriggers()) {
     if (!config.object.hasMacro(key)) {
       current.delete(key);
     } else current.add(key);
@@ -81,4 +81,11 @@ function setUsedOptions(config) {
 
   config[MODULE] = Array.from(current);
   return config[MODULE];
+}
+
+function _getTriggers() {
+  const triggers = TRIGGERS;
+  if (game.system.id === "dnd5e") {
+    return triggers.concat(TRIGGERS_DND5E);
+  }
 }

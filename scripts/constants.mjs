@@ -12,3 +12,8 @@ export const TRIGGERS = [
   "onCombatantDefeated",
   "never"
 ];
+export const TRIGGERS_DND5E = [
+  "dnd5e.rollAttack",
+  "dnd5e.rollAbilitySave",
+  "dnd5e.rollAbilityTest"
+];

@@ -23,7 +23,12 @@
       "onTurnEnd": "On Combat Turn Ending",
       "onCombatStart": "On Combat Starting",
       "onCombatEnd": "On Combat Ending",
-      "onCombatantDefeated": "On Combatant Marked Defeated"
+      "onCombatantDefeated": "On Combatant Marked Defeated",
+      "dnd5e": {
+        "rollAttack": "(dnd5e) On Attack Rolls",
+        "rollAbilitySave": "(dnd5e) On Saving Throws",
+        "rollAbilityTest": "(dnd5e) On Ability Checks"
+      }
     }
   }
 }

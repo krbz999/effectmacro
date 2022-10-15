@@ -4,6 +4,7 @@ import { registerCombatTriggers } from "./scripts/triggers/combat.mjs";
 import { onEffectToggled } from "./scripts/triggers/onToggle.mjs";
 import { onEffectCreated } from "./scripts/triggers/onCreate.mjs";
 import { onEffectDeleted } from "./scripts/triggers/onDelete.mjs";
+import { dnd5eTriggers } from "./scripts/triggers/systems/dnd5e.mjs";
 
 // set up prototype functions.
 Hooks.once("setup", () => {
@@ -23,4 +24,5 @@ Hooks.once("init", () => {
   onEffectToggled();
   onEffectCreated();
   onEffectDeleted();
+  if (game.system.id === "dnd5e") dnd5eTriggers();
 });
