@@ -1,29 +1,34 @@
 {
-    "EFFECTMACRO": {
-        "APPLYMACRO": {
-            "SAVE": "Save Script",
-            "COMMAND": "Command",
-            "EDIT_IMG_ERROR": "Error in edit image.",
-            "EDIT_THIS": "Edit Macro",
-            "ADD_THIS": "Add Macro",
-            "NEW_TRIGGER": "Add another:"
-        },
-        "WARNING": {
-            "NO_SUCH_SCRIPT": "No such script embedded in effect.",
-            "NO_SCRIPT_PROVIDED": "You did not provide a function."
-        },
-        "LABEL": {
-            "never": "Never Automatically",
-            "onCreate": "On Effect Creation",
-            "onDelete": "On Effect Deletion",
-            "onToggle": "On Effect Toggle (on or off)",
-            "onEnable": "On Effect Toggle (on)",
-            "onDisable": "On Effect Toggle (off)",
-            "onTurnStart": "On Combat Turn Starting",
-            "onTurnEnd": "On Combat Turn Ending",
-            "onCombatStart": "On Combat Starting",
-            "onCombatEnd": "On Combat Ending",
-            "onCombatantDefeated": "On Combatant Marked Defeated"
-        }
+  "EFFECTMACRO": {
+    "APPLYMACRO": {
+      "SAVE": "Save Script",
+      "COMMAND": "Command",
+      "EDIT_IMG_ERROR": "Error in edit image.",
+      "EDIT_THIS": "Edit Macro",
+      "ADD_THIS": "Add Macro",
+      "NEW_TRIGGER": "Add another:"
+    },
+    "WARNING": {
+      "NO_SUCH_SCRIPT": "No such script embedded in effect.",
+      "NO_SCRIPT_PROVIDED": "You did not provide a function."
+    },
+    "LABEL": {
+      "never": "Never Automatically",
+      "onCreate": "On Effect Creation",
+      "onDelete": "On Effect Deletion",
+      "onToggle": "On Effect Toggle (on or off)",
+      "onEnable": "On Effect Toggle (on)",
+      "onDisable": "On Effect Toggle (off)",
+      "onTurnStart": "On Combat Turn Starting",
+      "onTurnEnd": "On Combat Turn Ending",
+      "onCombatStart": "On Combat Starting",
+      "onCombatEnd": "On Combat Ending",
+      "onCombatantDefeated": "On Combatant Marked Defeated",
+      "dnd5e": {
+        "rollAttack": "(dnd5e) On Attack Rolls",
+        "rollAbilitySave": "(dnd5e) On Saving Throws",
+        "rollAbilityTest": "(dnd5e) On Ability Checks"
+      }
     }
+  }
 }

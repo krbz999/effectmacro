@@ -1,0 +1,26 @@
+<form class="editable flexcol" autocomplete="off">
+  <header class="sheet-header">
+    <img src="{{img}}" title="{{name}}" height="64" width="64">
+    <h1>
+      <input name="name" type="text" value="{{name}}" disabled>
+    </h1>
+  </header>
+
+  <!-- temporary fix for monaco editor -->
+  <div class="form-group" style="display: none;">
+    <select name="type" disabled></select>
+  </div>
+
+  <div class="form-group stacked command">
+    <label>
+      {{localize "EFFECTMACRO.APPLYMACRO.COMMAND"}}: {{localize localeKey}}
+    </label>
+    <textarea name="command">{{script}}</textarea>
+  </div>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit">
+      <i class="fa-solid fa-save"></i> {{localize "EFFECTMACRO.APPLYMACRO.SAVE"}}
+    </button>
+  </footer>
+</form>

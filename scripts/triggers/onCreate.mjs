@@ -1,15 +1,17 @@
 import { should_I_run_this } from "../helpers.mjs";
 
-export function onEffectCreated(){
-    Hooks.on("createActiveEffect", (effect) => {
-        if ( effect.parent instanceof Item ) return;
-        
-        const run = should_I_run_this(effect.parent);
-        if ( !run ) return;
+export function onEffectCreated() {
+  Hooks.on("createActiveEffect", (effect) => {
+    if (effect.parent instanceof Item) return;
 
-        const isOn = effect.modifiesActor;
-        if ( !isOn ) return;
+    const run = should_I_run_this(effect.parent);
+    if (!run) return;
 
-        if ( effect.hasMacro("onCreate") ) effect.callMacro("onCreate");
-    });
+    const isOn = effect.modifiesActor;
+    if (!isOn) return;
+
+    if (effect.hasMacro("onCreate")) {
+      effect.callMacro("onCreate");
+    }
+  });
 }

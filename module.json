@@ -1,37 +1,37 @@
 {
-    "id": "effectmacro",
-    "title": "Effect Macro",
-    "version": "10.0.6",
-    "authors": [
-        {
-            "name": "Zhell",
-            "url": "https://github.com/krbz999",
-            "discord": "Zhell#9201",
-            "ko-fi": "https://ko-fi.com/zhell"
-        }
-    ],
-    "compatibility": {
-        "minimum": "10",
-        "maximum": "10",
-        "verified": "10.286"
-    },
-    "esmodules": [
-        "setup.js"
-    ],
-    "styles": [
-        "styles/styles.css"
-    ],
-    "languages": [
-        {
-            "lang": "en",
-            "name": "English",
-            "path": "lang/en.json",
-            "flags": {}
-        }
-    ],
-    "url": "https://github.com/krbz999/effectmacro",
-    "manifest": "https://github.com/krbz999/effectmacro/releases/latest/download/module.json",
-    "download": "https://github.com/krbz999/effectmacro/releases/download/v10.0.6/module.zip",
-    "name": "effectmacro",
-    "minimumCoreVersion": "10"
+  "id": "effectmacro",
+  "title": "Effect Macro",
+  "version": "10.0.7",
+  "authors": [
+    {
+      "name": "Zhell",
+      "url": "https://github.com/krbz999",
+      "discord": "Zhell#9201",
+      "ko-fi": "https://ko-fi.com/zhell"
+    }
+  ],
+  "compatibility": {
+    "minimum": "10",
+    "maximum": "10",
+    "verified": "10.288"
+  },
+  "esmodules": [
+    "setup.js"
+  ],
+  "styles": [
+    "styles/styles.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json",
+      "flags": {}
+    }
+  ],
+  "url": "https://github.com/krbz999/effectmacro",
+  "manifest": "https://github.com/krbz999/effectmacro/releases/latest/download/module.json",
+  "download": "https://github.com/krbz999/effectmacro/releases/download/v10.0.7/module.zip",
+  "name": "effectmacro",
+  "minimumCoreVersion": "10"
 }
