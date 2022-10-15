@@ -84,8 +84,8 @@ function setUsedOptions(config) {
 }
 
 function _getTriggers() {
-  const triggers = TRIGGERS;
   if (game.system.id === "dnd5e") {
-    return triggers.concat(TRIGGERS_DND5E);
+    return TRIGGERS.concat(TRIGGERS_DND5E);
   }
+  return TRIGGERS;
 }
