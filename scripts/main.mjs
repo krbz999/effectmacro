@@ -19,7 +19,12 @@ export class EM {
         ${script}
       })();`;
       const fn = Function("token", "character", "actor", "scene", "origin", "effect", body);
-      await fn.call(context, token, character, actor, scene, origin, effect);
+      try {
+        await fn.call(context, token, character, actor, scene, origin, effect);
+      } catch (err) {
+        console.error(err);
+        return null;
+      }
     }
 
   }

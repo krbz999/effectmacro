@@ -2,19 +2,22 @@ import { MODULE } from "../constants.mjs";
 import { should_I_run_this } from "../helpers.mjs";
 
 export function registerCombatTriggers() {
-  // helper hook to get previous combatant.
+  // helper hook to get previous combatant and previous turn/round.
   Hooks.on("preUpdateCombat", (combat, _, context) => {
     const previousId = combat.combatant?.id;
     const path = `${MODULE}.previousCombatant`;
     foundry.utils.setProperty(context, path, previousId);
+    const prevPath = `${MODULE}.previousTR`;
+    const prevTR = { T: combat.turn, R: combat.round };
+    foundry.utils.setProperty(context, prevPath, prevTR);
   });
 
   // onTurnStart/End
   Hooks.on("updateCombat", async (combat, changes, context) => {
     const cTurn = combat.current.turn;
-    const pTurn = combat.previous.turn;
+    const pTurn = foundry.utils.getProperty(context, `${MODULE}.previousTR.T`);
     const cRound = combat.current.round;
-    const pRound = combat.previous.round;
+    const pRound = foundry.utils.getProperty(context, `${MODULE}.previousTR.R`);
 
     // no change in turns nor rounds.
     if (changes.turn === undefined && changes.round === undefined) return;
@@ -68,11 +71,11 @@ export function registerCombatTriggers() {
   });
 
   // onCombatStart
-  Hooks.on("updateCombat", async (combat) => {
+  Hooks.on("updateCombat", async (combat, _, context) => {
     const r = combat.current.round === 1;
     const t = combat.current.turn === 0;
-    const p = combat.previous.round === 0;
-    const q = combat.previous.turn === null;
+    const p = foundry.utils.getProperty(context, `${MODULE}.previousTR.R`) === 0;
+    const q = !foundry.utils.getProperty(context, `${MODULE}.previousTR.T`);
     if (!r || !t || !p || !q) return; // this is not combatStart.
 
     // all combatants that have 'onCombatStart' effects.
