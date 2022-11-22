@@ -32,23 +32,18 @@ export function onEffectToggled() {
     if (toggled && effect.hasMacro("onToggle")) {
       await effect.callMacro("onToggle");
     }
-    return true;
   });
 
-  Hooks.on("preUpdateItem", (item, update, context) => {
-    if (!item.parent) return;
-
-    const effects = item.parent.effects.filter(eff => {
+  Hooks.on("preUpdateItem", (item, _, context) => {
+    item.parent?.effects.filter(eff => {
       return eff.origin === item.uuid;
+    }).forEach(e => {
+      const path = `${MODULE}.${e.id}.wasOn`;
+      foundry.utils.setProperty(context, path, e.modifiesActor);
     });
-    for (const effect of effects) {
-      const path = `${MODULE}.${effect.id}.wasOn`;
-      foundry.utils.setProperty(context, path, effect.modifiesActor);
-    }
   });
-  Hooks.on("updateItem", async (item, update, context) => {
-    if (!item.parent) return;
 
+  Hooks.on("updateItem", async (item, update, context) => {
     const run = should_I_run_this(item.parent);
     if (!run) return;
 

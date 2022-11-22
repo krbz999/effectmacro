@@ -1,11 +1,11 @@
 <div class="effectmacro">
-  <label>Effect Macro</label>
+  <label class="title">Effect Macro</label>
   {{#each usedOptions as |option|}}
   <div class="form-group">
     <label></label>
     <div class="form-fields">
-      <span class="trigger-name">{{localize option.label}}</span>
-      <button type="button" data-key="{{option.key}}" id="effectmacro-usedOption">
+      <span>{{localize option.label}}</span>
+      <button type="button" class="option" data-key="{{option.key}}" id="effectmacro-usedOption">
         <i class="fa-solid fa-edit"></i> {{localize "EFFECTMACRO.APPLYMACRO.EDIT_THIS"}}
       </button>
     </div>
@@ -15,10 +15,10 @@
   <div class="form-group">
     <label>{{localize "EFFECTMACRO.APPLYMACRO.NEW_TRIGGER"}}</label>
     <div class="form-fields">
-      <select class="effectmacro-config-select" id="effectmacro-unusedOption-select">
+      <select class="option" id="effectmacro-unusedOption-select">
         {{{remainingOptions}}}
       </select>
-      <button type="button" id="effectmacro-unusedOption">
+      <button type="button" class="option" id="effectmacro-unusedOption">
         <i class="fa-solid fa-plus"></i> {{localize "EFFECTMACRO.APPLYMACRO.ADD_THIS"}}
       </button>
     </div>

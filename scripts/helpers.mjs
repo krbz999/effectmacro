@@ -3,6 +3,7 @@ import { EffectMacroConfig } from "./macroConfig.mjs";
 
 // return true or false if you, the user, should run the scripts on this actor.
 export function should_I_run_this(actor) {
+  if (!actor) return false;
   let user;
   const { OWNER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
 

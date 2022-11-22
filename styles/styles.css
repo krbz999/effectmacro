@@ -1,5 +1,17 @@
-button#effectmacro-unusedOption,
-button#effectmacro-usedOption {
+.effectmacro .option {
   white-space: nowrap;
-  min-width: 100px;
+  min-width: 8em;
+  height: var(--form-field-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.effectmacro .title {
+  position: absolute;
+  font-weight: bold;
+}
+
+form .effectmacro .form-group .form-fields {
+  flex: 5;
 }

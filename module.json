@@ -1,7 +1,7 @@
 {
   "id": "effectmacro",
   "title": "Effect Macro",
-  "version": "10.0.9",
+  "version": "10.0.10",
   "authors": [
     {
       "name": "Zhell",
@@ -31,7 +31,7 @@
   ],
   "url": "https://github.com/krbz999/effectmacro",
   "manifest": "https://github.com/krbz999/effectmacro/releases/latest/download/module.json",
-  "download": "https://github.com/krbz999/effectmacro/releases/download/v10.0.9/module.zip",
+  "download": "https://github.com/krbz999/effectmacro/releases/download/v10.0.10/module.zip",
   "name": "effectmacro",
   "minimumCoreVersion": "10"
 }
