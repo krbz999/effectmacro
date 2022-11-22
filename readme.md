@@ -8,6 +8,7 @@ These macros are then called automatically when the appropriate trigger happens.
 - When an effect is toggled (on, off, or both).
 - When the actor who has the effect starts their turn.
 - When the actor who has the effect ends their turn.
+- At the start of any combatant's turn.
 - When the actor who has the effect is marked defeated in combat.
 - When combat is started.
 - When combat is ended.

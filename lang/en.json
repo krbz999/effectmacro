@@ -21,13 +21,18 @@
       "onDisable": "On Effect Toggle (off)",
       "onTurnStart": "On Combat Turn Starting",
       "onTurnEnd": "On Combat Turn Ending",
+      "onEachTurn": "On Each Combat Turn",
       "onCombatStart": "On Combat Starting",
       "onCombatEnd": "On Combat Ending",
       "onCombatantDefeated": "On Combatant Marked Defeated",
       "dnd5e": {
         "rollAttack": "(dnd5e) On Attack Rolls",
+        "rollDamage": "(dnd5e) On Damage Rolls",
         "rollAbilitySave": "(dnd5e) On Saving Throws",
-        "rollAbilityTest": "(dnd5e) On Ability Checks"
+        "rollDeathSave": "(dnd5e) On Death Saving Throws",
+        "rollAbilityTest": "(dnd5e) On Ability Checks",
+        "rollSkill": "(dnd5e) On Skill Checks",
+        "rollToolCheck": "(dnd5e) On Tool Checks"
       }
     }
   }

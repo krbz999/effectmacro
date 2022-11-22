@@ -12,7 +12,7 @@ export function registerCombatTriggers() {
     foundry.utils.setProperty(context, prevPath, prevTR);
   });
 
-  // onTurnStart/End
+  // onTurnStart/End/Each
   Hooks.on("updateCombat", async (combat, changes, context) => {
     const cTurn = combat.current.turn;
     const pTurn = foundry.utils.getProperty(context, `${MODULE}.previousTR.T`);
@@ -35,21 +35,31 @@ export function registerCombatTriggers() {
     const previousId = context[MODULE].previousCombatant;
     const previousCombatant = combat.combatants.get(previousId);
 
-    // find active effects with onTurn triggers.
-    const effectsStart = currentCombatant.token.actor.effects.filter(eff => {
+    // find active effects with relevant triggers.
+    const effectsStart = currentCombatant?.token.actor?.effects.filter(eff => {
       const hasMacro = eff.hasMacro("onTurnStart");
-      if (!hasMacro) return false;
       const isOn = eff.modifiesActor;
-      if (!isOn) return false;
-      return true;
-    });
+      return hasMacro && isOn;
+    }) ?? [];
     const effectsEnd = previousCombatant?.token.actor?.effects.filter(eff => {
       const hasMacro = eff.hasMacro("onTurnEnd");
-      if (!hasMacro) return false;
       const isOn = eff.modifiesActor;
-      if (!isOn) return false;
-      return true;
+      return hasMacro && isOn;
     }) ?? [];
+
+    // call all 'each turn' scripts.
+    for (const combatant of combat.combatants) {
+      if (!combatant?.token.actor) continue;
+      if (!should_I_run_this(combatant.token.actor)) continue;
+      const effects = combatant.token.actor.effects.filter(eff => {
+        const hasMacro = eff.hasMacro("onEachTurn");
+        const isOn = eff.modifiesActor;
+        return hasMacro && isOn;
+      });
+      for (const eff of effects) {
+        await eff.callMacro("onEachTurn");
+      }
+    }
 
     // call scripts.
     if (currentCombatant) {
@@ -82,10 +92,8 @@ export function registerCombatTriggers() {
     const combatants = combat.combatants.reduce((acc, c) => {
       const effects = c.actor.effects.filter(eff => {
         const hasMacro = eff.hasMacro("onCombatStart");
-        if (!hasMacro) return false;
         const isOn = eff.modifiesActor;
-        if (!isOn) return false;
-        return true;
+        return hasMacro && isOn;
       });
       if (effects.length) acc.push([c, effects]);
       return acc;
@@ -113,10 +121,8 @@ export function registerCombatTriggers() {
     const combatants = combat.combatants.reduce((acc, c) => {
       const effects = c.actor.effects.filter(eff => {
         const hasMacro = eff.hasMacro("onCombatEnd");
-        if (!hasMacro) return false;
         const isOn = eff.modifiesActor;
-        if (!isOn) return false;
-        return true;
+        return hasMacro && isOn;
       });
       if (effects.length) acc.push([c, effects]);
       return acc;
@@ -141,10 +147,8 @@ export function registerCombatTriggers() {
     // find effects that are "onCombatantDefeated".
     const effects = combatant.actor.effects.filter(eff => {
       const hasMacro = eff.hasMacro("onCombatantDefeated");
-      if (!hasMacro) return false;
       const isOn = eff.modifiesActor;
-      if (!isOn) return false;
-      return true;
+      return hasMacro && isOn;
     });
     if (!effects.length) return;
 
