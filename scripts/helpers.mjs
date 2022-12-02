@@ -60,7 +60,12 @@ export function registerMacroConfig() {
       } else if (usedButton) {
         key = usedButton.dataset.key;
       } else return;
-      new EffectMacroConfig(config.document, { type: key }).render(true);
+
+      const [_, emConfig] = Object.entries(config.document.apps).find(([appId, app]) => {
+        return app.id === _effectMacroConfigId(config.document, key);
+      }) ?? [];
+      if (emConfig) emConfig.render(true);
+      else new EffectMacroConfig(config.document, { type: key }).render(true);
     });
     config.setPosition({ height: "auto" });
   });
@@ -89,4 +94,8 @@ function _getTriggers() {
     return TRIGGERS.concat(TRIGGERS_DND5E);
   }
   return TRIGGERS;
+}
+
+export function _effectMacroConfigId(object, type) {
+  return `${MODULE}-${type}-${object.uuid.replaceAll(".", "-")}`;
 }

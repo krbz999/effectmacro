@@ -1,4 +1,5 @@
 import { MODULE } from "./constants.mjs";
+import { _effectMacroConfigId } from "./helpers.mjs";
 
 export class EffectMacroConfig extends MacroConfig {
   constructor(doc, options) {
@@ -6,19 +7,17 @@ export class EffectMacroConfig extends MacroConfig {
     this.type = options.type;
   }
 
-  /* Override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: "modules/effectmacro/templates/macro-menu.hbs",
-      classes: ["macro-sheet", "sheet"]
+      classes: ["macro-sheet", "sheet", MODULE]
     });
   }
 
   get id() {
-    return `effectmacro-menu-${this.type}-${this.object.id}`;
+    return _effectMacroConfigId(this.object, this.type);
   }
 
-  /* Override */
   async getData() {
     const data = await super.getData();
     data.img = this.object.icon;
@@ -31,14 +30,18 @@ export class EffectMacroConfig extends MacroConfig {
   /* Override */
   _onEditImage(event) {
     const warning = "EFFECTMACRO.APPLYMACRO.EDIT_IMG_ERROR";
-    const locale = game.i18n.localize(warning);
-    ui.notifications.error(locale);
+    ui.notifications.error(warning, { localize: true });
     return null;
   }
 
-  /* Override */
   async _updateObject(event, formData) {
-    await this.object.updateMacro(this.type, formData.command);
-    return this.close();
+    return this.object.updateMacro(this.type, formData.command);
+  }
+
+  async close(options = {}) {
+    Object.entries(this.object.apps).forEach(([appId, config]) => {
+      if (config.id === this.id) delete this.object.apps[appId];
+    });
+    return super.close(options);
   }
 }
