@@ -15,7 +15,7 @@ export class EM {
 
     for (const { script } of Object.values(scripts)) {
       if (!script) continue;
-      const body = `(async()=>{
+      const body = `return (async()=>{
         ${script}
       })();`;
       const fn = Function("token", "character", "actor", "scene", "origin", "effect", body);

@@ -30,8 +30,7 @@ export class API {
   static createMacro = async function (type = "never", script) {
     if (!script) {
       return EM.displayWarning("NO_SCRIPT_PROVIDED");
-    }
-    else {
+    } else {
       if (script instanceof Function) {
         return this.setFlag(MODULE, `${type}.script`, `(
           ${script.toString()}
