@@ -29,12 +29,11 @@ export class EffectMacroConfig extends MacroConfig {
 
   /* Override */
   _onEditImage(event) {
-    const warning = "EFFECTMACRO.APPLYMACRO.EDIT_IMG_ERROR";
-    ui.notifications.error(warning, { localize: true });
     return null;
   }
 
   async _updateObject(event, formData) {
+    await this.object.sheet?.submit({ preventClose: true });
     return this.object.updateMacro(this.type, formData.command);
   }
 

@@ -16,7 +16,7 @@ export function should_I_run_this(actor) {
   });
   if (user) return user === game.user;
 
-  // find a GM who is active and owner of the actor.
+  // find a GM who is active.
   user = game.users.find(i => {
     const a = i.isGM;
     const b = i.active;
@@ -44,21 +44,23 @@ export function registerMacroConfig() {
     const div = document.createElement("DIV");
     const template = "modules/effectmacro/templates/effect-sheet.hbs";
 
-    div.innerHTML = await renderTemplate(template, {
-      remainingOptions,
-      usedOptions
-    });
+    div.innerHTML = await renderTemplate(template, { remainingOptions, usedOptions });
     appendWithin.appendChild(hr);
     appendWithin.appendChild(div.firstChild);
 
-    html[0].addEventListener("click", (event) => {
-      const unusedButton = event.target.closest("#effectmacro-unusedOption");
-      const usedButton = event.target.closest("#effectmacro-usedOption");
+    html[0].addEventListener("click", async (event) => {
+      const unusedButton = event.target.closest("[data-action='macro-add']");
+      const usedButton = event.target.closest("[data-action='macro-edit']");
+      const deleteButton = event.target.closest("[data-action='macro-delete']");
       let key;
       if (unusedButton) {
-        key = html[0].querySelector("#effectmacro-unusedOption-select").value;
+        key = html[0].querySelector(".unused-option").value;
       } else if (usedButton) {
         key = usedButton.dataset.key;
+      } else if (deleteButton) {
+        key = deleteButton.dataset.key;
+        await config.submit({ preventClose: true });
+        return config.document.removeMacro(key);
       } else return;
 
       const [_, emConfig] = Object.entries(config.document.apps).find(([appId, app]) => {

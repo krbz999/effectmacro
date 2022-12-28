@@ -51,9 +51,7 @@ export class EM {
 
   // warning helper function, returns null.
   static displayWarning(string) {
-    const preLocale = `EFFECTMACRO.WARNING.${string}`;
-    const locale = game.i18n.localize(preLocale);
-    ui.notifications.warn(locale);
+    ui.notifications.warn(`EFFECTMACRO.WARNING.${string}`, { localize: true });
     return null;
   }
 }

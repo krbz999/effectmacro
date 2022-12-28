@@ -1,7 +1,7 @@
-.effectmacro .option {
+form .effectmacro .form-group .form-fields [data-action='macro-add'] {
   white-space: nowrap;
   min-width: 8em;
-  height: var(--form-field-height);
+  height: calc(2px + var(--form-field-height));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,4 +13,16 @@
 
 form .effectmacro .form-group .form-fields {
   flex: 5;
+  line-height: 20px;
+  padding: 0 5px;
+}
+
+form .effectmacro .form-group .form-fields > a {
+  flex: 0;
+  margin: 3px;
+}
+
+form .effectmacro > .used-option:nth-child(even) > .form-fields {
+  background-color: #c0c0c080;
+  border-radius: 5px;
 }
