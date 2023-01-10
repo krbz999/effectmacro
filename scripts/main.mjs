@@ -26,7 +26,6 @@ export class EM {
         return null;
       }
     }
-
   }
 
   // get the scripts.
@@ -51,7 +50,7 @@ export class EM {
 
   // warning helper function, returns null.
   static displayWarning(string) {
-    ui.notifications.warn(`EFFECTMACRO.WARNING.${string}`, { localize: true });
+    ui.notifications.warn(`EFFECTMACRO.${string}`, { localize: true });
     return null;
   }
 }

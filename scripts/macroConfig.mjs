@@ -23,7 +23,7 @@ export class EffectMacroConfig extends MacroConfig {
     data.img = this.object.icon;
     data.name = this.object.label;
     data.script = this.object.getFlag(MODULE, this.type)?.script ?? "";
-    data.localeKey = `EFFECTMACRO.LABEL.${this.type}`;
+    data.localeKey = `EFFECTMACRO.${this.type}`;
     return data;
   }
 

@@ -75,4 +75,16 @@ export function dnd5eTriggers() {
       await effect.callMacro("dnd5e.rollToolcheck", { item, roll });
     }
   });
+
+  Hooks.on("dnd5e.restCompleted", async (actor, data) => {
+    const hook = data.longRest ? "dnd5e.longRest" : "dnd5e.shortRest";
+    const effects = actor.effects.filter(effect => {
+      const hasMacro = effect.hasMacro(hook);
+      const isOn = effect.modifiesActor;
+      return hasMacro && isOn;
+    });
+    for (const effect of effects) {
+      await effect.callMacro(hook, { data });
+    }
+  });
 }

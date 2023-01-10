@@ -20,5 +20,7 @@ export const TRIGGERS_DND5E = [
   "dnd5e.rollDeathSave",
   "dnd5e.rollAbilityTest",
   "dnd5e.rollSkill",
-  "dnd5e.rollToolCheck"
+  "dnd5e.rollToolCheck",
+  "dnd5e.shortRest",
+  "dnd5e.longRest"
 ];

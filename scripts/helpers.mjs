@@ -32,11 +32,11 @@ export function registerMacroConfig() {
 
     // set up config[MODULE] and the array for the template.
     const usedOptions = setUsedOptions(config).map(key => {
-      const label = `EFFECTMACRO.LABEL.${key}`;
+      const label = `EFFECTMACRO.${key}`;
       return { key, label };
     });
     const remainingOptions = getRemainingOptions(config).reduce((acc, key) => {
-      const label = game.i18n.localize(`EFFECTMACRO.LABEL.${key}`);
+      const label = game.i18n.localize(`EFFECTMACRO.${key}`);
       return acc + `<option value="${key}">${label}</option>`;
     }, "");
 

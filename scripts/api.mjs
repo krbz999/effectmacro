@@ -7,7 +7,7 @@ export class API {
   static callMacro = async function (type = "never", context = {}) {
     const script = this.getFlag(MODULE, type);
     if (!script) {
-      return EM.displayWarning("NO_SUCH_SCRIPT");
+      return EM.displayWarning("NoSuchScript");
     }
     return EM.getScripts(this, [type], context);
   }
@@ -29,7 +29,7 @@ export class API {
   // create a function on the effect.
   static createMacro = async function (type = "never", script) {
     if (!script) {
-      return EM.displayWarning("NO_SCRIPT_PROVIDED");
+      return EM.displayWarning("NoScriptProvided");
     } else {
       if (script instanceof Function) {
         return this.setFlag(MODULE, `${type}.script`, `(

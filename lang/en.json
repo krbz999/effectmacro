@@ -1,35 +1,29 @@
 {
-  "EFFECTMACRO": {
-    "APPLYMACRO": {
-      "ADD_THIS": "Add Macro",
-      "NEW_TRIGGER": "Add another:"
-    },
-    "WARNING": {
-      "NO_SUCH_SCRIPT": "No such script embedded in effect.",
-      "NO_SCRIPT_PROVIDED": "You did not provide a function."
-    },
-    "LABEL": {
-      "never": "Never Automatically",
-      "onCreate": "On Effect Creation",
-      "onDelete": "On Effect Deletion",
-      "onToggle": "On Effect Toggle (on or off)",
-      "onEnable": "On Effect Toggle (on)",
-      "onDisable": "On Effect Toggle (off)",
-      "onTurnStart": "On Combat Turn Starting",
-      "onTurnEnd": "On Combat Turn Ending",
-      "onEachTurn": "On Each Combat Turn",
-      "onCombatStart": "On Combat Starting",
-      "onCombatEnd": "On Combat Ending",
-      "onCombatantDefeated": "On Combatant Marked Defeated",
-      "dnd5e": {
-        "rollAttack": "(dnd5e) On Attack Rolls",
-        "rollDamage": "(dnd5e) On Damage Rolls",
-        "rollAbilitySave": "(dnd5e) On Saving Throws",
-        "rollDeathSave": "(dnd5e) On Death Saving Throws",
-        "rollAbilityTest": "(dnd5e) On Ability Checks",
-        "rollSkill": "(dnd5e) On Skill Checks",
-        "rollToolCheck": "(dnd5e) On Tool Checks"
-      }
-    }
+  "EFFECTMACRO.AddMacro": "Add Macro",
+  "EFFECTMACRO.AddAnother": "Add another:",
+  "EFFECTMACRO.NoSuchScript": "No such script embedded in effect.",
+  "EFFECTMACRO.NoScriptProvided": "You did not provide a function.",
+  "EFFECTMACRO.never": "Never Automatically",
+  "EFFECTMACRO.onCreate": "On Effect Creation",
+  "EFFECTMACRO.onDelete": "On Effect Deletion",
+  "EFFECTMACRO.onToggle": "On Effect Toggle (on or off)",
+  "EFFECTMACRO.onEnable": "On Effect Toggle (on)",
+  "EFFECTMACRO.onDisable": "On Effect Toggle (off)",
+  "EFFECTMACRO.onTurnStart": "On Combat Turn Starting",
+  "EFFECTMACRO.onTurnEnd": "On Combat Turn Ending",
+  "EFFECTMACRO.onEachTurn": "On Each Combat Turn",
+  "EFFECTMACRO.onCombatStart": "On Combat Starting",
+  "EFFECTMACRO.onCombatEnd": "On Combat Ending",
+  "EFFECTMACRO.onCombatantDefeated": "On Combatant Marked Defeated",
+  "EFFECTMACRO.dnd5e": {
+    "rollAttack": "(dnd5e) On Attack Rolls",
+    "rollDamage": "(dnd5e) On Damage Rolls",
+    "rollAbilitySave": "(dnd5e) On Saving Throws",
+    "rollDeathSave": "(dnd5e) On Death Saving Throws",
+    "rollAbilityTest": "(dnd5e) On Ability Checks",
+    "rollSkill": "(dnd5e) On Skill Checks",
+    "rollToolCheck": "(dnd5e) On Tool Checks",
+    "shortRest": "(dnd5e) On Short Rests",
+    "longRest": "(dnd5e) On Long Rests"
   }
 }

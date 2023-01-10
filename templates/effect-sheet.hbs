@@ -12,13 +12,13 @@
   {{/each}}
   {{#if remainingOptions.length}}
   <div class="form-group">
-    <label>{{localize "EFFECTMACRO.APPLYMACRO.NEW_TRIGGER"}}</label>
+    <label>{{localize "EFFECTMACRO.AddAnother"}}</label>
     <div class="form-fields">
       <select class="unused-option">
         {{{remainingOptions}}}
       </select>
       <button type="button" data-action="macro-add">
-        <i class="fa-solid fa-plus"></i> {{localize "EFFECTMACRO.APPLYMACRO.ADD_THIS"}}
+        <i class="fa-solid fa-plus"></i> {{localize "EFFECTMACRO.AddMacro"}}
       </button>
     </div>
   </div>
