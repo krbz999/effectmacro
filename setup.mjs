@@ -5,6 +5,7 @@ import { onEffectToggled } from "./scripts/triggers/onToggle.mjs";
 import { onEffectCreated } from "./scripts/triggers/onCreate.mjs";
 import { onEffectDeleted } from "./scripts/triggers/onDelete.mjs";
 import { dnd5eTriggers } from "./scripts/triggers/systems/dnd5e.mjs";
+import { registerSettings } from "./scripts/settings.mjs";
 
 // set up prototype functions.
 Hooks.once("setup", () => {
@@ -19,7 +20,8 @@ Hooks.once("setup", () => {
 Hooks.once("init", () => {
   console.log("ZHELL | Initializing Effect Macro");
 
-  registerMacroConfig();
+  registerSettings();
+  Hooks.once("ready", registerMacroConfig);
   registerCombatTriggers();
   onEffectToggled();
   onEffectCreated();

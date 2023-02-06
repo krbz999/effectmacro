@@ -26,6 +26,7 @@ export function should_I_run_this(actor) {
 }
 
 export function registerMacroConfig() {
+  if (game.settings.get(MODULE, "restrictPermissions") && !game.user.isGM) return;
   // slap button onto effect config.
   Hooks.on("renderActiveEffectConfig", async (config, html, data) => {
     const appendWithin = html[0].querySelector("section[data-tab=details]");
