@@ -6,7 +6,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollAttack", { item, roll, ammoUpdate });
+      await effect.callMacro("dnd5e.rollAttack", {item, roll, ammoUpdate});
     }
   });
 
@@ -17,7 +17,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollAbilitySave", { roll, abilityId });
+      await effect.callMacro("dnd5e.rollAbilitySave", {roll, abilityId});
     }
   });
 
@@ -28,7 +28,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollDeathSave", { roll, updates });
+      await effect.callMacro("dnd5e.rollDeathSave", {roll, updates});
     }
   });
 
@@ -39,7 +39,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollAbilityTest", { roll, abilityId });
+      await effect.callMacro("dnd5e.rollAbilityTest", {roll, abilityId});
     }
   });
 
@@ -50,7 +50,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollSkill", { roll, skillId });
+      await effect.callMacro("dnd5e.rollSkill", {roll, skillId});
     }
   });
 
@@ -61,7 +61,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollDamage", { item, roll });
+      await effect.callMacro("dnd5e.rollDamage", {item, roll});
     }
   });
 
@@ -72,7 +72,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollToolcheck", { item, roll });
+      await effect.callMacro("dnd5e.rollToolcheck", {item, roll});
     }
   });
 
@@ -84,7 +84,7 @@ export function dnd5eTriggers() {
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro(hook, { data });
+      await effect.callMacro(hook, {data});
     }
   });
 }

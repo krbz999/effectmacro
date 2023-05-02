@@ -1,10 +1,10 @@
-import { MODULE } from "./constants.mjs";
-import { EM } from "./main.mjs";
+import {MODULE} from "./constants.mjs";
+import {EM} from "./main.mjs";
 
 export class API {
 
   // call a specific type of script in an effect.
-  static callMacro = async function (type = "never", context = {}) {
+  static callMacro = async function(type = "never", context = {}) {
     const script = this.getFlag(MODULE, type);
     if (!script) {
       return EM.displayWarning("NoSuchScript");
@@ -13,12 +13,12 @@ export class API {
   }
 
   // return true or false if has macro of specific type.
-  static hasMacro = function (type = "never") {
+  static hasMacro = function(type = "never") {
     return !!this.getFlag(MODULE, `${type}.script`);
   }
 
   // remove a specific type of script in an effect.
-  static removeMacro = async function (type = "never") {
+  static removeMacro = async function(type = "never") {
     const script = this.getFlag(MODULE, type);
     if (!script) {
       return null;
@@ -27,7 +27,7 @@ export class API {
   }
 
   // create a function on the effect.
-  static createMacro = async function (type = "never", script) {
+  static createMacro = async function(type = "never", script) {
     if (!script) {
       return EM.displayWarning("NoScriptProvided");
     } else {
@@ -41,7 +41,7 @@ export class API {
   }
 
   // update a function on the effect.
-  static updateMacro = async function (type = "never", script) {
+  static updateMacro = async function(type = "never", script) {
     if (!script) return this.removeMacro(type);
     else if (script.toString() !== this.getFlag(MODULE, `${type}.script`)) {
       return this.createMacro(type, script);

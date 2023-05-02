@@ -1,5 +1,5 @@
-import { MODULE } from "../constants.mjs";
-import { should_I_run_this } from "../helpers.mjs";
+import {MODULE} from "../constants.mjs";
+import {should_I_run_this} from "../helpers.mjs";
 
 export function onEffectToggled() {
   Hooks.on("preUpdateActiveEffect", (effect, update, context) => {

@@ -1,4 +1,4 @@
-import { MODULE } from "./constants.mjs";
+import {MODULE} from "./constants.mjs";
 
 export class EM {
 
@@ -13,7 +13,7 @@ export class EM {
       scene, origin, effect
     } = await this.getHelperVariables(eff);
 
-    for (const { script } of Object.values(scripts)) {
+    for (const {script} of Object.values(scripts)) {
       if (!script) continue;
       const body = `return (async()=>{
         ${script}
@@ -45,12 +45,12 @@ export class EM {
     let scene = token?.scene ?? game.scenes.active;
     let origin = effect.origin ? await fromUuid(effect.origin) : actor;
 
-    return { actor, character, token, scene, origin, effect };
+    return {actor, character, token, scene, origin, effect};
   }
 
   // warning helper function, returns null.
   static displayWarning(string) {
-    ui.notifications.warn(`EFFECTMACRO.${string}`, { localize: true });
+    ui.notifications.warn(`EFFECTMACRO.${string}`, {localize: true});
     return null;
   }
 }

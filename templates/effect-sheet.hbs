@@ -1,26 +1,26 @@
-<div class="effectmacro">
-  <label class="title">Effect Macro</label>
-  {{#each usedOptions as |option|}}
+<fieldset class="effectmacro">
+  <legend>Effect Macro</legend>
+
+  {{#each usedOptions}}
   <div class="form-group used-option">
-    <label></label>
     <div class="form-fields">
-      <span>{{localize option.label}}</span>
-      <a data-action="macro-edit" data-key="{{option.key}}"><i class="fa-solid fa-edit"></i></a>
-      <a data-action="macro-delete" data-key="{{option.key}}"><i class="fa-solid fa-trash"></i></a>
+      <span class="label">{{localize label}}</span>
+      <a data-action="macro-edit" data-key="{{key}}"><i class="fa-solid fa-edit"></i></a>
+      <a data-action="macro-delete" data-key="{{key}}"><i class="fa-solid fa-trash"></i></a>
     </div>
   </div>
   {{/each}}
   {{#if remainingOptions.length}}
   <div class="form-group">
-    <label>{{localize "EFFECTMACRO.AddAnother"}}</label>
+    <span class="label">{{localize "EFFECTMACRO.AddAnother"}}</span>
     <div class="form-fields">
       <select class="unused-option">
         {{{remainingOptions}}}
       </select>
-      <button type="button" data-action="macro-add">
-        <i class="fa-solid fa-plus"></i> {{localize "EFFECTMACRO.AddMacro"}}
-      </button>
+      <a type="button" data-action="macro-add"><i class="fa-solid fa-plus"></i></a>
     </div>
   </div>
   {{/if}}
-</div>
+  </div>
+
+</fieldset>

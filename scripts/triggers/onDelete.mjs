@@ -1,4 +1,4 @@
-import { should_I_run_this } from "../helpers.mjs";
+import {should_I_run_this} from "../helpers.mjs";
 
 export function onEffectDeleted() {
   Hooks.on("deleteActiveEffect", (effect) => {

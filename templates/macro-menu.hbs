@@ -1,15 +1,11 @@
 <form class="editable flexcol" autocomplete="off">
   <header class="sheet-header">
-    <img src="{{img}}" title="{{name}}" height="64" width="64">
-    <h1>
-      <input name="name" type="text" value="{{name}}" disabled>
-    </h1>
+    <img src="{{img}}" data-tooltip="{{name}}" height="64" width="64">
+    <h1><input type="text" value="{{name}}" disabled></h1>
   </header>
 
   <div class="form-group stacked command">
-    <label>
-      {{localize "Command"}}: {{localize localeKey}}
-    </label>
+    <label>{{localize "Command"}}: {{localize localeKey}}</label>
     <textarea name="command">{{script}}</textarea>
   </div>
 

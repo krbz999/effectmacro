@@ -1,5 +1,5 @@
-import { MODULE } from "../constants.mjs";
-import { should_I_run_this } from "../helpers.mjs";
+import {MODULE} from "../constants.mjs";
+import {should_I_run_this} from "../helpers.mjs";
 
 export function registerCombatTriggers() {
   // helper hook to get previous combatant and previous turn/round.
@@ -9,7 +9,7 @@ export function registerCombatTriggers() {
     foundry.utils.setProperty(context, path, previousId);
 
     const prevPath = `${MODULE}.previousTR`;
-    const prevTR = { T: combat.turn, R: combat.round };
+    const prevTR = {T: combat.turn, R: combat.round};
     foundry.utils.setProperty(context, prevPath, prevTR);
 
     const startedPath = `${MODULE}.started`;
