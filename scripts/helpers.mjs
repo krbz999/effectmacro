@@ -1,27 +1,20 @@
 import {MODULE, TRIGGERS, TRIGGERS_DND5E} from "./constants.mjs";
 import {EffectMacroConfig} from "./macroConfig.mjs";
 
-// return true or false if you, the user, should run the scripts on this actor.
+/**
+ * Get whether you, the user, should run the scripts on this actor.
+ * @param {Actor} actor     The actor who has the effects.
+ * @returns {boolean}       Whether you are the proper user to execute the scripts.
+ */
 export function should_I_run_this(actor) {
   if (!actor) return false;
-  let user;
-  const {OWNER} = CONST.DOCUMENT_OWNERSHIP_LEVELS;
 
   // find a non-GM who is active and owner of the actor.
-  user = game.users.find(i => {
-    const a = !i.isGM;
-    const b = i.active;
-    const c = actor.testUserPermission(i, OWNER);
-    return a && b && c;
-  });
+  let user = game.users.find(i => !i.isGM && i.active && actor.testUserPermission(i, "OWNER"));
   if (user) return user === game.user;
 
   // find a GM who is active.
-  user = game.users.find(i => {
-    const a = i.isGM;
-    const b = i.active;
-    return a && b;
-  });
+  user = game.users.find(i => i.isGM && i.active);
   return user === game.user;
 }
 
