@@ -25,14 +25,9 @@ export class EffectMacroConfig extends MacroConfig {
     const data = await super.getData();
     data.img = this.object.icon;
     data.name = this.object.name;
-    data.script = this.object.flags[MODULE]?.[this.type]?.script ?? "";
+    data.script = this.object.getFlag(MODULE, `${this.type}.script`) || "";
     data.localeKey = `EFFECTMACRO.${this.type}`;
     return data;
-  }
-
-  /** @override */
-  _onEditImage(event) {
-    return null;
   }
 
   /** @override */
