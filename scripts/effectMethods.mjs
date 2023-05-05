@@ -1,5 +1,4 @@
 import {MODULE} from "./constants.mjs";
-import {EM} from "./main.mjs";
 
 export class AppendedActiveEffectMethods {
   /**
@@ -10,7 +9,17 @@ export class AppendedActiveEffectMethods {
   static callMacro = async function(type = "never", context = {}) {
     const script = this.getFlag(MODULE, `${type}.script`);
     if (!script) return ui.notifications.warn("EFFECTMACRO.NoSuchScript", {localize: true});
-    return EM.executeScripts(this, script, context);
+    const variables = AppendedActiveEffectMethods._getHelperVariables(this);
+    const body = `return (async()=>{
+      ${script}
+    })();`;
+    const fn = Function(...Object.keys(variables), body);
+    try {
+      await fn.call(context, ...Object.values(variables));
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
   }
 
   /**
@@ -73,5 +82,20 @@ export class AppendedActiveEffectMethods {
     ActiveEffect.prototype.createMacro = AppendedActiveEffectMethods.createMacro;
     ActiveEffect.prototype.updateMacro = AppendedActiveEffectMethods.updateMacro;
     ActiveEffect.prototype.hasMacro = AppendedActiveEffectMethods.hasMacro;
+  }
+
+  /**
+   * Get helper variables for the script call.
+   * @param {ActiveEffect} effect     The effect having a macro called.
+   * @returns {object}                Object of helper variables.
+   */
+  static _getHelperVariables(effect) {
+    let actor = effect.parent;
+    let character = game.user.character ?? null;
+    let token = actor.token?.object ?? actor.getActiveTokens()[0];
+    let scene = token?.scene ?? game.scenes.active;
+    let origin = effect.origin ? fromUuidSync(effect.origin) : actor;
+    let speaker = ChatMessage.getSpeaker({actor});
+    return {token, character, actor, speaker, scene, origin, effect};
   }
 }
