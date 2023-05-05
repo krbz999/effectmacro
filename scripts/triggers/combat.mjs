@@ -1,5 +1,5 @@
 import {MODULE} from "../constants.mjs";
-import {should_I_run_this} from "../helpers.mjs";
+import {AppendedActiveEffectMethods} from "../effectMethods.mjs";
 
 export function registerCombatTriggers() {
   // helper hook to get previous combatant and previous turn/round.
@@ -52,7 +52,7 @@ export function registerCombatTriggers() {
     // call all 'each turn' scripts.
     for (const combatant of combat.combatants) {
       if (combatant.isDefeated) continue;
-      if (!should_I_run_this(combatant.token?.actor)) continue;
+      if (!AppendedActiveEffectMethods.isExecutor(combatant.token?.actor)) continue;
       const effects = combatant.token.actor.effects.filter(eff => {
         const hasMacro = eff.hasMacro("onEachTurn");
         const isOn = eff.modifiesActor;
@@ -65,7 +65,7 @@ export function registerCombatTriggers() {
 
     // call scripts.
     if (previousCombatant && !previousCombatant.isDefeated) {
-      const run = should_I_run_this(previousCombatant.token?.actor);
+      const run = AppendedActiveEffectMethods.isExecutor(previousCombatant.token?.actor);
       if (run) {
         for (const eff of effectsEnd) {
           await eff.callMacro("onTurnEnd");
@@ -73,7 +73,7 @@ export function registerCombatTriggers() {
       }
     }
     if (currentCombatant && !currentCombatant.isDefeated) {
-      const run = should_I_run_this(currentCombatant.token?.actor);
+      const run = AppendedActiveEffectMethods.isExecutor(currentCombatant.token?.actor);
       if (run) {
         for (const eff of effectsStart) {
           await eff.callMacro("onTurnStart");
@@ -102,7 +102,7 @@ export function registerCombatTriggers() {
 
     // for each eligible combatant...
     for (const [combatant, effects] of combatants) {
-      const run = should_I_run_this(combatant.token?.actor);
+      const run = AppendedActiveEffectMethods.isExecutor(combatant.token?.actor);
       if (!run) continue;
 
       for (const eff of effects) {
@@ -130,7 +130,7 @@ export function registerCombatTriggers() {
 
     // for each eligible combatant...
     for (const [combatant, effects] of combatants) {
-      const run = should_I_run_this(combatant.token?.actor);
+      const run = AppendedActiveEffectMethods.isExecutor(combatant.token?.actor);
       if (!run) continue;
 
       for (const eff of effects) {
@@ -152,7 +152,7 @@ export function registerCombatTriggers() {
     }) ?? [];
     if (!effects.length) return;
 
-    const run = should_I_run_this(combatant.token?.actor);
+    const run = AppendedActiveEffectMethods.isExecutor(combatant.token?.actor);
     if (!run) return;
 
     for (const eff of effects) {
