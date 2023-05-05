@@ -1,6 +1,6 @@
 <fieldset class="effectmacro">
-  <legend>Effect Macro</legend>
-  {{#each usedOptions}}
+  <legend>{{localize "EFFECTMACRO.ModuleTitle"}}</legend>
+  {{#each used}}
   <div class="form-group used-option">
     <div class="form-fields">
       <span class="label">{{localize label}}</span>
@@ -9,12 +9,12 @@
     </div>
   </div>
   {{/each}}
-  {{#if remainingOptions.length}}
+  {{#if unused}}
   <div class="form-group">
     <span class="label">{{localize "EFFECTMACRO.AddAnother"}}</span>
     <div class="form-fields">
       <select class="unused-option">
-        {{{remainingOptions}}}
+        {{selectOptions unused localize=true nameAttr="key" labelAttr="label"}}
       </select>
       <a data-action="macro-add"><i class="fa-solid fa-plus"></i></a>
     </div>

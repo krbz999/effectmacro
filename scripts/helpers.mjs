@@ -1,4 +1,4 @@
-import {MODULE, TRIGGERS, TRIGGERS_DND5E} from "./constants.mjs";
+import {MODULE, TRIGGERS} from "./constants.mjs";
 import {EffectMacroConfig} from "./macroConfig.mjs";
 
 /**
@@ -18,28 +18,27 @@ export function should_I_run_this(actor) {
   return user === game.user;
 }
 
+/**
+ * Inject the html elements into the macro config.
+ */
 export function registerMacroConfig() {
   if (game.settings.get(MODULE, "restrictPermissions") && !game.user.isGM) return;
-  // slap button onto effect config.
   Hooks.on("renderActiveEffectConfig", async (config, html, data) => {
-    const appendWithin = html[0].querySelector("section[data-tab=details]");
+    const keys = TRIGGERS.agnostic.concat(TRIGGERS[game.system.id] ?? []);
 
-    // set up config[MODULE] and the array for the template.
-    const usedOptions = setUsedOptions(config).map(key => ({key, label: `EFFECTMACRO.${key}`}));
-    const remainingOptions = getRemainingOptions(config).reduce((acc, key) => {
-      const label = game.i18n.localize(`EFFECTMACRO.${key}`);
-      return acc + `<option value="${key}">${label}</option>`;
-    }, "");
-
+    const templateData = keys.reduce((acc, key) => {
+      const label = `EFFECTMACRO.${key}`;
+      if (config.document.hasMacro(key)) acc.used.push({key, label});
+      else acc.unused.push({key, label});
+      return acc;
+    }, {used: [], unused: []});
     const div = document.createElement("DIV");
     const template = "modules/effectmacro/templates/effect-sheet.hbs";
-
-    div.innerHTML = await renderTemplate(template, {remainingOptions, usedOptions});
-    appendWithin.appendChild(div.firstElementChild);
-
-    html[0].querySelector("[data-action='macro-add']").addEventListener("click", _onClickMacroAdd.bind(config));
-    html[0].querySelectorAll("[data-action='macro-edit']").forEach(n => n.addEventListener("click", _onClickMacroEdit.bind(config)));
-    html[0].querySelectorAll("[data-action='macro-delete']").forEach(n => n.addEventListener("click", _onClickMacroDelete.bind(config)));
+    div.innerHTML = await renderTemplate(template, templateData);
+    div.querySelector("[data-action='macro-add']").addEventListener("click", _onClickMacroAdd.bind(config));
+    div.querySelectorAll("[data-action='macro-edit']").forEach(n => n.addEventListener("click", _onClickMacroEdit.bind(config)));
+    div.querySelectorAll("[data-action='macro-delete']").forEach(n => n.addEventListener("click", _onClickMacroDelete.bind(config)));
+    html[0].querySelector("section[data-tab='details']").appendChild(div.firstElementChild);
     config.setPosition({height: "auto"});
   });
 }
@@ -81,31 +80,6 @@ function _onClickMacroAdd(event) {
   });
   if (existingApp) return existingApp.render(true);
   else return new EffectMacroConfig(this.document, {type: key}).render(true);
-}
-
-function getRemainingOptions(config) {
-  return _getTriggers().filter(key => {
-    return !config[MODULE].includes(key);
-  });
-}
-
-function setUsedOptions(config) {
-  const current = new Set(config[MODULE] ?? []);
-  for (const key of _getTriggers()) {
-    if (!config.object.hasMacro(key)) {
-      current.delete(key);
-    } else current.add(key);
-  }
-
-  config[MODULE] = Array.from(current);
-  return config[MODULE];
-}
-
-function _getTriggers() {
-  if (game.system.id === "dnd5e") {
-    return TRIGGERS.concat(TRIGGERS_DND5E);
-  }
-  return TRIGGERS;
 }
 
 export function _effectMacroConfigId(object, type) {

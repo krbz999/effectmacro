@@ -10,6 +10,7 @@
   "EFFECTMACRO.dnd5e.rollSkill": "(dnd5e) On Skill Checks",
   "EFFECTMACRO.dnd5e.rollToolCheck": "(dnd5e) On Tool Checks",
   "EFFECTMACRO.dnd5e.shortRest": "(dnd5e) On Short Rests",
+  "EFFECTMACRO.ModuleTitle": "Effect Macro",
   "EFFECTMACRO.never": "Never Automatically",
   "EFFECTMACRO.NoScriptProvided": "You did not provide a function.",
   "EFFECTMACRO.NoSuchScript": "No such script embedded in effect.",
