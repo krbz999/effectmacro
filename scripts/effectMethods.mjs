@@ -1,6 +1,6 @@
 import {MODULE} from "./constants.mjs";
 
-export class AppendedActiveEffectMethods {
+export class EffectMethods {
   /**
    * Call a specific type of script in an effect.
    * @param {string} type         The trigger of the script (default "never").
@@ -9,7 +9,7 @@ export class AppendedActiveEffectMethods {
   static callMacro = async function(type = "never", context = {}) {
     const script = this.getFlag(MODULE, `${type}.script`);
     if (!script) return ui.notifications.warn("EFFECTMACRO.NoSuchScript", {localize: true});
-    const variables = AppendedActiveEffectMethods._getHelperVariables(this);
+    const variables = EffectMethods._getHelperVariables(this);
     const body = `return (async()=>{
       ${script}
     })();`;
@@ -77,11 +77,11 @@ export class AppendedActiveEffectMethods {
    * Append the new ActiveEffect methods to the prototype.
    */
   static _appendMethods() {
-    ActiveEffect.prototype.callMacro = AppendedActiveEffectMethods.callMacro;
-    ActiveEffect.prototype.removeMacro = AppendedActiveEffectMethods.removeMacro;
-    ActiveEffect.prototype.createMacro = AppendedActiveEffectMethods.createMacro;
-    ActiveEffect.prototype.updateMacro = AppendedActiveEffectMethods.updateMacro;
-    ActiveEffect.prototype.hasMacro = AppendedActiveEffectMethods.hasMacro;
+    ActiveEffect.prototype.callMacro = EffectMethods.callMacro;
+    ActiveEffect.prototype.removeMacro = EffectMethods.removeMacro;
+    ActiveEffect.prototype.createMacro = EffectMethods.createMacro;
+    ActiveEffect.prototype.updateMacro = EffectMethods.updateMacro;
+    ActiveEffect.prototype.hasMacro = EffectMethods.hasMacro;
   }
 
   /**

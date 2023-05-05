@@ -5,10 +5,10 @@ import {onEffectDeleted} from "./scripts/triggers/onDelete.mjs";
 import {dnd5eTriggers} from "./scripts/triggers/systems/dnd5e.mjs";
 import {registerSettings} from "./scripts/settings.mjs";
 import {EffectConfigHandler} from "./scripts/macroConfig.mjs";
-import {AppendedActiveEffectMethods} from "./scripts/effectMethods.mjs";
+import {EffectMethods} from "./scripts/effectMethods.mjs";
 
 // set up prototype functions.
-Hooks.once("setup", AppendedActiveEffectMethods._appendMethods);
+Hooks.once("setup", EffectMethods._appendMethods);
 
 // init msg.
 Hooks.once("init", () => {

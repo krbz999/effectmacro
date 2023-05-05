@@ -1,5 +1,5 @@
 import {MODULE} from "../constants.mjs";
-import {AppendedActiveEffectMethods} from "../effectMethods.mjs";
+import {EffectMethods} from "../effectMethods.mjs";
 
 export function onEffectToggled() {
   Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
@@ -11,7 +11,7 @@ export function onEffectToggled() {
   Hooks.on("updateActiveEffect", async (effect, update, context) => {
     if (effect.parent instanceof Item) return;
 
-    const run = AppendedActiveEffectMethods.isExecutor(effect.parent);
+    const run = EffectMethods.isExecutor(effect.parent);
     if (!run) return false;
 
     const path = `${MODULE}.${effect.id}.wasOn`;
@@ -44,7 +44,7 @@ export function onEffectToggled() {
   });
 
   Hooks.on("updateItem", async (item, update, context) => {
-    const run = AppendedActiveEffectMethods.isExecutor(item.parent);
+    const run = EffectMethods.isExecutor(item.parent);
     if (!run) return;
 
     const ids = Object.keys(context[MODULE] ?? {});
