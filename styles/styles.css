@@ -1,28 +1,17 @@
-form .effectmacro .form-group .form-fields [data-action='macro-add'] {
-  white-space: nowrap;
-  min-width: 8em;
-  height: calc(2px + var(--form-field-height));
-  display: flex;
-  align-items: center;
-  justify-content: center;
+fieldset.effectmacro .form-fields {
+  flex: 1;
 }
 
-.effectmacro .title {
-  font-weight: bold;
+fieldset.effectmacro .label {
+  padding-left: 5px;
 }
 
-form .effectmacro .form-group .form-fields {
-  flex: 5;
-  line-height: 20px;
-  padding: 0 5px;
-}
-
-form .effectmacro .form-group .form-fields > a {
+fieldset.effectmacro [data-action] {
   flex: 0;
-  margin: 3px;
+  padding: 5px;
 }
 
-form .effectmacro > .used-option:nth-child(even) > .form-fields {
+fieldset.effectmacro .used-option:nth-child(even) {
   background-color: #c0c0c080;
   border-radius: 5px;
 }

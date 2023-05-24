@@ -1,4 +1,4 @@
-import { MODULE } from "./constants.mjs";
+import {MODULE} from "./constants.mjs";
 
 export function registerSettings() {
   game.settings.register(MODULE, "restrictPermissions", {

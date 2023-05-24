@@ -1,5 +1,4 @@
 # Effect Macro
-
 A module that allows users to embed macros directly into effects.
 These macros are then called automatically when the appropriate trigger happens. The options are:
 
@@ -27,6 +26,7 @@ By default, these variables are pre-defined in any effect macro.
 * `scene`, the current scene where `token` exists, otherwise the currently active scene.
 * `origin`, the actor or item who is the origin of the effect (as seen under Source in the Effects tab of the actor), otherwise the owner of the effect.
 * `effect`, the active effect itself.
+* `speaker`, the "speaker" object normally used in chat messages (speaking as the actor).
 
 ## Added functions
 A set of async functions have been added to active effects.
@@ -37,4 +37,4 @@ A set of async functions have been added to active effects.
 * `ActiveEffect#updateMacro(type, script)` updates a macro of the given type on an effect. In most cases functionally identical to `createMacro`, and will remove the embedded macro if no script is provided. The provided script can be a function or a string.
 
 <h1>Compatibility in dnd5e</h1>
-<p>You should not expect this module to work with modules that overhaul or destroy core roll behaviour, particularly WIRE and MIDI. These modules are unsupported, and any compatiblity is nothing but a happy accident.</p>
+<p>You should not expect this module to work with modules that overhaul or destroy core roll behaviour, particularly WIRE, RSR, and MIDI. These modules are unsupported, and any compatiblity is nothing but a happy accident.</p>
