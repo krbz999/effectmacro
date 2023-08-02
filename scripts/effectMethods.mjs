@@ -90,13 +90,14 @@ export class EffectMethods {
    * @returns {object}                Object of helper variables.
    */
   static _getHelperVariables(effect) {
-    let actor = effect.parent;
+    let actor = effect.parent instanceof Actor ? effect.parent : effect.parent.parent ?? null;
     let character = game.user.character ?? null;
-    let token = actor.token?.object ?? actor.getActiveTokens()[0];
-    let scene = token?.scene ?? game.scenes.active;
-    let origin = effect.origin ? fromUuidSync(effect.origin) : actor;
-    let speaker = ChatMessage.getSpeaker({actor});
-    return {token, character, actor, speaker, scene, origin, effect};
+    let token = actor?.token?.object ?? actor?.getActiveTokens()[0] ?? null;
+    let scene = token?.scene ?? game.scenes.active ?? null;
+    let origin = effect.origin ? fromUuidSync(effect.origin) : null;
+    let speaker = actor ? ChatMessage.getSpeaker({actor}) : {};
+    let item = effect.parent instanceof Item ? effect.parent : null;
+    return {token, character, actor, speaker, scene, origin, effect, item};
   }
 
   /**

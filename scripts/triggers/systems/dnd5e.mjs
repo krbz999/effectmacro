@@ -65,14 +65,14 @@ export function dnd5eTriggers() {
     }
   });
 
-  Hooks.on("dnd5e.rollToolCheck", async (item, roll) => {
-    const effects = item.parent.effects.filter(effect => {
+  Hooks.on("dnd5e.rollToolCheck", async (actor, roll) => {
+    const effects = actor.effects.filter(effect => {
       const hasMacro = effect.hasMacro("dnd5e.rollToolCheck");
       const isOn = effect.modifiesActor;
       return hasMacro && isOn;
     });
     for (const effect of effects) {
-      await effect.callMacro("dnd5e.rollToolcheck", {item, roll});
+      await effect.callMacro("dnd5e.rollToolcheck", {roll});
     }
   });
 

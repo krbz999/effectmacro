@@ -3,13 +3,15 @@ import {EffectMethods} from "../effectMethods.mjs";
 
 export function onEffectToggled() {
   Hooks.on("preUpdateActiveEffect", (effect, update, context) => {
-    if (effect.parent instanceof Item) return;
+    const legacy = CONFIG.ActiveEffect.legacyTransferral;
+    if (legacy && (effect.parent instanceof Item)) return;
     const path = `${MODULE}.${effect.id}.wasOn`;
     foundry.utils.setProperty(context, path, effect.modifiesActor);
   });
 
   Hooks.on("updateActiveEffect", async (effect, update, context) => {
-    if (effect.parent instanceof Item) return;
+    const legacy = CONFIG.ActiveEffect.legacyTransferral;
+    if (legacy && (effect.parent instanceof Item)) return;
 
     const run = EffectMethods.isExecutor(effect.parent);
     if (!run) return false;
@@ -35,7 +37,7 @@ export function onEffectToggled() {
   });
 
   Hooks.on("preUpdateItem", (item, _, context) => {
-    item.parent?.effects.filter(eff => {
+    item.actor?.effects.filter(eff => {
       return eff.origin === item.uuid;
     }).forEach(e => {
       const path = `${MODULE}.${e.id}.wasOn`;

@@ -20,13 +20,14 @@ When an embedded macro is triggered, it is executed for the owner of the actor w
 
 ## Script Helpers
 By default, these variables are pre-defined in any effect macro.
-* `actor`, the owner of the effect.
+* `actor`, the owner of the effect (or `null` if no actor is involved).
 * `character`, the assigned character of the user who triggered the macro (if they have any), otherwise the owner of the effect.
-* `token`, the actor's token on the scene.
-* `scene`, the current scene where `token` exists, otherwise the currently active scene.
-* `origin`, the actor or item who is the origin of the effect (as seen under Source in the Effects tab of the actor), otherwise the owner of the effect.
+* `token`, the actor's token on the scene (or `null` if no actor or token is involved).
+* `scene`, the current scene where `token` exists, otherwise the currently active scene (if any, else `null`).
+* `origin`, the document that `ActiveEffect#origin` points to, if any (otherwise `null`).
 * `effect`, the active effect itself.
-* `speaker`, the "speaker" object normally used in chat messages (speaking as the actor).
+* `speaker`, the "speaker" object normally used in chat messages (speaking as the actor if they exist, otherwise an empty object).
+* `item`, the item on which the effect is embedded, if any (otherwise `null`).
 
 ## Added functions
 A set of async functions have been added to active effects.
@@ -35,6 +36,3 @@ A set of async functions have been added to active effects.
 * `ActiveEffect#removeMacro(type)` removes a macro of the given type from the effect.
 * `ActiveEffect#createMacro(type, script)` creates an embedded macro of the given type inside the effect. Identical to using the provided interface and writing a macro there. The provided script can be a function or a string.
 * `ActiveEffect#updateMacro(type, script)` updates a macro of the given type on an effect. In most cases functionally identical to `createMacro`, and will remove the embedded macro if no script is provided. The provided script can be a function or a string.
-
-<h1>Compatibility in dnd5e</h1>
-<p>You should not expect this module to work with modules that overhaul or destroy core roll behaviour, particularly WIRE, RSR, and MIDI. These modules are unsupported, and any compatiblity is nothing but a happy accident.</p>
