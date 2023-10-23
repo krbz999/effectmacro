@@ -1,162 +1,118 @@
 import {MODULE} from "../constants.mjs";
 import {EffectMethods} from "../effectMethods.mjs";
 
-export function registerCombatTriggers() {
-  // helper hook to get previous combatant and previous turn/round.
-  Hooks.on("preUpdateCombat", (combat, _, context) => {
+export class CombatTriggers {
+  /* Initialize module. */
+  static init() {
+    Hooks.on("preUpdateCombat", CombatTriggers.preUpdateCombat);
+    Hooks.on("updateCombatant", CombatTriggers.updateCombatant);
+    Hooks.on("updateCombat", CombatTriggers.updateCombat);
+    Hooks.on("deleteCombat", CombatTriggers.deleteCombat);
+  }
+
+  /**
+   * Execute all effects that affect an actor and contain this trigger.
+   * This method is called on all clients, but filters out those not to execute it.
+   * @param {Actor} actor     The actor with the effects.
+   * @param {string} hook     The trigger name.
+   */
+  static async _executeAppliedEffects(actor, hook) {
+    if (!EffectMethods.isExecutor(actor)) return;
+    for (const e of actor.appliedEffects.filter(e => e.hasMacro(hook))) await e.callMacro(hook);
+  }
+
+  /**
+   * Determine whether a combat was started and whether it moved forward in turns or rounds.
+   * @param {Combat} combat     The combat updated.
+   * @param {object} update     The update performed.
+   * @param {object} options    The update options.
+   * @returns {object<boolean:turnForward, boolean:combatStarted>}
+   */
+  static _determineCombatState(combat, update, options) {
+    let turnForward = true;
+    let combatStarted = true;
+
+    const cTurn = combat.current.turn;
+    const pTurn = foundry.utils.getProperty(options, `${MODULE}.previousTR.T`);
+    const cRound = combat.current.round;
+    const pRound = foundry.utils.getProperty(options, `${MODULE}.previousTR.R`);
+
+    // No change in turns or rounds, not started combat, or went backwards.
+    if ((update.turn === undefined) && (update.round === undefined)) turnForward = false;
+    if (!combat.started || !combat.isActive) turnForward = false;
+    if ((cRound < pRound) || ((cTurn < pTurn) && (cRound === pRound))) turnForward = false;
+
+    combatStarted = combat.started && !foundry.utils.getProperty(options, `${MODULE}.started`);
+
+    return {turnForward, combatStarted};
+  }
+
+  /**
+   * Save data on updated combats.
+   * @param {Combat} combat     The combat updated.
+   * @param {object} update     The update performed.
+   * @param {object} options    The update options.
+   */
+  static preUpdateCombat(combat, update, options) {
     const previousId = combat.combatant?.id;
     const path = `${MODULE}.previousCombatant`;
-    foundry.utils.setProperty(context, path, previousId);
+    foundry.utils.setProperty(options, path, previousId);
 
     const prevPath = `${MODULE}.previousTR`;
     const prevTR = {T: combat.turn, R: combat.round};
-    foundry.utils.setProperty(context, prevPath, prevTR);
+    foundry.utils.setProperty(options, prevPath, prevTR);
 
     const startedPath = `${MODULE}.started`;
     const prevStarted = combat.started;
-    foundry.utils.setProperty(context, startedPath, prevStarted);
-  });
+    foundry.utils.setProperty(options, startedPath, prevStarted);
+  }
 
-  // onTurnStart/End/Each
-  Hooks.on("updateCombat", async (combat, changes, context) => {
-    const cTurn = combat.current.turn;
-    const pTurn = foundry.utils.getProperty(context, `${MODULE}.previousTR.T`);
-    const cRound = combat.current.round;
-    const pRound = foundry.utils.getProperty(context, `${MODULE}.previousTR.R`);
-
-    // no change in turns nor rounds.
-    if (changes.turn === undefined && changes.round === undefined) return;
-    // combat not started or not active.
-    if (!combat.started || !combat.isActive) return;
-    // we went back.
-    if (cRound < pRound || (cTurn < pTurn && cRound === pRound)) return;
-
-    // retrieve combatants.
-    const currentCombatant = combat.combatant;
-    const previousId = foundry.utils.getProperty(context, `${MODULE}.previousCombatant`);
-    const wasStarted = foundry.utils.getProperty(context, `${MODULE}.started`);
-    const previousCombatant = wasStarted ? combat.combatants.get(previousId) : null;
-
-    // find active effects with relevant triggers.
-    const effectsStart = currentCombatant?.token?.actor?.effects.filter(eff => {
-      const hasMacro = eff.hasMacro("onTurnStart");
-      const isOn = eff.modifiesActor;
-      return hasMacro && isOn;
-    }) ?? [];
-    const effectsEnd = previousCombatant?.token?.actor?.effects.filter(eff => {
-      const hasMacro = eff.hasMacro("onTurnEnd");
-      const isOn = eff.modifiesActor;
-      return hasMacro && isOn;
-    }) ?? [];
-
-    // call all 'each turn' scripts.
-    for (const combatant of combat.combatants) {
-      if (combatant.isDefeated) continue;
-      if (!EffectMethods.isExecutor(combatant.token?.actor)) continue;
-      const effects = combatant.token.actor.effects.filter(eff => {
-        const hasMacro = eff.hasMacro("onEachTurn");
-        const isOn = eff.modifiesActor;
-        return hasMacro && isOn;
-      });
-      for (const eff of effects) {
-        await eff.callMacro("onEachTurn");
-      }
-    }
-
-    // call scripts.
-    if (previousCombatant && !previousCombatant.isDefeated) {
-      const run = EffectMethods.isExecutor(previousCombatant.token?.actor);
-      if (run) {
-        for (const eff of effectsEnd) {
-          await eff.callMacro("onTurnEnd");
-        }
-      }
-    }
-    if (currentCombatant && !currentCombatant.isDefeated) {
-      const run = EffectMethods.isExecutor(currentCombatant.token?.actor);
-      if (run) {
-        for (const eff of effectsStart) {
-          await eff.callMacro("onTurnStart");
-        }
-      }
-    }
-  });
-
-  // onCombatStart
-  Hooks.on("updateCombat", async (combat, _, context) => {
-    const was = foundry.utils.getProperty(context, `${MODULE}.started`);
-    const is = combat.started;
-    if (was || !is) return;
-
-    // all combatants that have 'onCombatStart' effects.
-    const combatants = combat.combatants.reduce((acc, c) => {
-      if (c.isDefeated) return acc;
-      const effects = c.actor?.effects.filter(eff => {
-        const hasMacro = eff.hasMacro("onCombatStart");
-        const isOn = eff.modifiesActor;
-        return hasMacro && isOn;
-      }) ?? [];
-      if (effects.length) acc.push([c, effects]);
-      return acc;
-    }, []);
-
-    // for each eligible combatant...
-    for (const [combatant, effects] of combatants) {
-      const run = EffectMethods.isExecutor(combatant.token?.actor);
-      if (!run) continue;
-
-      for (const eff of effects) {
-        await eff.callMacro("onCombatStart");
-      }
-    }
-  });
-
-  // onCombatEnd
-  Hooks.on("deleteCombat", async (combat) => {
-    // must be started or active combat that was ended.
-    if (!combat.started || !combat.isActive) return;
-
-    // all combatants that have 'onCombatEnd' effects.
-    const combatants = combat.combatants.reduce((acc, c) => {
-      if (c.isDefeated) return acc;
-      const effects = c.token?.actor?.effects.filter(eff => {
-        const hasMacro = eff.hasMacro("onCombatEnd");
-        const isOn = eff.modifiesActor;
-        return hasMacro && isOn;
-      }) ?? [];
-      if (effects.length) acc.push([c, effects]);
-      return acc;
-    }, []);
-
-    // for each eligible combatant...
-    for (const [combatant, effects] of combatants) {
-      const run = EffectMethods.isExecutor(combatant.token?.actor);
-      if (!run) continue;
-
-      for (const eff of effects) {
-        await eff.callMacro("onCombatEnd");
-      }
-    }
-  });
-
-  // onCombatantDefeated
-  Hooks.on("updateCombatant", async (combatant, update) => {
-    // must be combatant marked defeated.
+  /**
+   * On combatant defeated.
+   * @param {Combatant} combatant     The combatant updated.
+   * @param {object} update           The update performed.
+   */
+  static async updateCombatant(combatant, update) {
     if (!update.defeated) return;
+    const actor = combatant.actor;
+    const hook = "onCombatantDefeated";
+    return CombatTriggers._executeAppliedEffects(actor, hook);
+  }
 
-    // find effects that are "onCombatantDefeated".
-    const effects = combatant.token?.actor?.effects.filter(eff => {
-      const hasMacro = eff.hasMacro("onCombatantDefeated");
-      const isOn = eff.modifiesActor;
-      return hasMacro && isOn;
-    }) ?? [];
-    if (!effects.length) return;
+  /**
+   * On turn start, turn end, each turn, combat start.
+   * @param {Combat} combat     The combat updated.
+   * @param {object} update     The update performed.
+   * @param {object} options    The update options.
+   */
+  static async updateCombat(combat, update, options) {
 
-    const run = EffectMethods.isExecutor(combatant.token?.actor);
-    if (!run) return;
+    const {turnForward, combatStarted} = CombatTriggers._determineCombatState(combat, update, options);
+    const undefeated = combat.combatants.filter(c => !c.isDefeated);
 
-    for (const eff of effects) {
-      await eff.callMacro("onCombatantDefeated");
+    if (turnForward) {
+      // Retrieve combatants.
+      const previousId = foundry.utils.getProperty(options, `${MODULE}.previousCombatant`);
+      const previousCombatant = combatStarted ? combat.combatants.get(previousId) : null;
+
+      // Execute turn start and turn end triggers.
+      CombatTriggers._executeAppliedEffects(combat.combatant?.actor, "onTurnStart");
+      CombatTriggers._executeAppliedEffects(previousCombatant?.actor, "onTurnEnd");
+
+      // Execute all 'each turn' triggers.
+      for (const c of undefeated) CombatTriggers._executeAppliedEffects(c.actor, "onEachTurn");
     }
-  });
+
+    // Determine whether we have started a combat.
+    if (combatStarted) for (const c of undefeated) CombatTriggers._executeAppliedEffects(c.actor, "onCombatStart");
+  }
+
+  /**
+   * On combat ending (being deleted).
+   * @param {Combat} combat     The combat deleted.
+   */
+  static async deleteCombat(combat) {
+    if (!combat.started || !combat.isActive) return;
+    for (const c of combat.combatants) if (!c.isDefeated) CombatTriggers._executeAppliedEffects(c.actor, "onCombatEnd");
+  }
 }

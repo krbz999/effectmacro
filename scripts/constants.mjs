@@ -1,18 +1,33 @@
 export const MODULE = "effectmacro";
 export const TRIGGERS = {
   agnostic: [
-    "onCreate",
-    "onDelete",
-    "onToggle",
-    "onEnable",
-    "onDisable",
-    "onTurnStart",
-    "onTurnEnd",
-    "onEachTurn",
-    "onCombatStart",
-    "onCombatEnd",
-    "onCombatantDefeated",
-    "never"
+    {
+      label: "EFFECTMACRO.EffectTriggers",
+      triggers: [
+        "onCreate",
+        "onDelete",
+        "onToggle",
+        "onEnable",
+        "onDisable"
+      ]
+    },
+    {
+      label: "EFFECTMACRO.CombatTriggers",
+      triggers: [
+        "onTurnStart",
+        "onTurnEnd",
+        "onEachTurn",
+        "onCombatStart",
+        "onCombatEnd",
+        "onCombatantDefeated"
+      ]
+    },
+    {
+      label: "EFFECTMACRO.OtherTriggers",
+      triggers: [
+        "never"
+      ]
+    },
   ],
   dnd5e: [
     "dnd5e.rollAttack",
