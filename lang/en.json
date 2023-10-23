@@ -28,7 +28,7 @@
   "EFFECTMACRO.onTurnEnd": "On Combat Turn Ending",
   "EFFECTMACRO.onTurnStart": "On Combat Turn Starting",
   "EFFECTMACRO.OtherTriggers": "Other Triggers",
+  "EFFECTMACRO.SettingRestrictPermission": "Restrict Permissions",
   "EFFECTMACRO.SettingRestrictPermissionHint": "If enabled, non-GM clients will not be able to add, edit, or delete macros from an Active Effect.",
-  "EFFECTMACRO.SettingRestrictPermissionName": "Restrict Permissions",
   "EFFECTMACRO.SystemTriggers": "System Triggers"
 }

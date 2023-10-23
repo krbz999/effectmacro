@@ -1,16 +1,13 @@
 fieldset.effectmacro .form-fields {
   flex: 1;
 }
-
 fieldset.effectmacro .label {
   padding-left: 5px;
 }
-
 fieldset.effectmacro [data-action] {
   flex: 0;
   padding: 5px;
 }
-
 fieldset.effectmacro .used-option:nth-child(even) {
   background-color: #c0c0c080;
   border-radius: 5px;

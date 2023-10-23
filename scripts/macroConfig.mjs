@@ -45,12 +45,10 @@ export class EffectMacroConfig extends MacroConfig {
 }
 
 export class EffectConfigHandler {
-  /**
-   * Inject the html elements into the macro config. Runs on 'ready' due to the setting.
-   */
+  /* Inject the html elements into the macro config. */
   static registerMacroConfig() {
-    if (game.settings.get(MODULE, "restrictPermissions") && !game.user.isGM) return;
     Hooks.on("renderActiveEffectConfig", async (config, html, data) => {
+      if (game.settings.get(MODULE, "restrictPermissions") && !game.user.isGM) return;
 
       const used = [];
       const unused = [];

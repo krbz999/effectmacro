@@ -2,6 +2,7 @@ import {MODULE} from "../constants.mjs";
 import {EffectMethods} from "../effectMethods.mjs";
 
 export class EffectTriggers {
+  /* Initialize module. */
   static init() {
     Hooks.on("createActiveEffect", EffectTriggers.onCreateDelete.bind("onCreate"));
     Hooks.on("deleteActiveEffect", EffectTriggers.onCreateDelete.bind("onDelete"));
@@ -14,6 +15,12 @@ export class EffectTriggers {
     }
   }
 
+  /**
+   * Execute effect toggle triggers.
+   * @param {ActiveEffect} effect     The effect updated.
+   * @param {object} update           The update performed.
+   * @param {object} context          The update options.
+   */
   static async onUpdate(effect, update, context) {
     const legacy = CONFIG.ActiveEffect.legacyTransferral;
     if (legacy && (effect.parent instanceof Item)) return;
@@ -33,6 +40,12 @@ export class EffectTriggers {
     if (toggled && effect.hasMacro("onToggle")) await effect.callMacro("onToggle");
   }
 
+  /**
+   * Save relevant data on effect update.
+   * @param {ActiveEffect} effect     The effect updated.
+   * @param {object} update           The update performed.
+   * @param {object} context          The update options.
+   */
   static preUpdate(effect, update, context) {
     const legacy = CONFIG.ActiveEffect.legacyTransferral;
     if (legacy && (effect.parent instanceof Item)) return;
@@ -40,17 +53,33 @@ export class EffectTriggers {
     foundry.utils.setProperty(context, path, effect.modifiesActor);
   }
 
+  /**
+   * Execute effect creation / deletion triggers.
+   * @param {ActiveEffect} effect     The effect created or deleted.
+   */
   static async onCreateDelete(effect) {
     if (effect.modifiesActor && effect.hasMacro(this) && EffectMethods.isExecutor(effect.parent)) {
       return effect.callMacro(this);
     }
   }
 
-  static preUpdateItem(item, _, context) {
+  /**
+   * When an item is updated, read whether its effects have started or stopped applying.
+   * @param {Item} item           The item updated.
+   * @param {object} update       The update performed.
+   * @param {object} context      The update options.
+   */
+  static preUpdateItem(item, update, context) {
     const effects = item.actor?.effects.filter(e => e.origin === item.uuid) ?? [];
     effects.forEach(e => foundry.utils.setProperty(context, `${MODULE}.${e.id}.wasOn`, e.modifiesActor));
   }
 
+  /**
+   * Execute effect toggles if an item update results in an effect applying or not.
+   * @param {Item} item           The item updated.
+   * @param {object} update       The update performed.
+   * @param {object} context      The update options.
+   */
   static async updateItem(item, update, context) {
     const run = EffectMethods.isExecutor(item.actor);
     if (!run) return;
@@ -68,9 +97,7 @@ export class EffectTriggers {
 
       if (toggledOff && effect.hasMacro("onDisable")) await effect.callMacro("onDisable");
       if (toggledOn && effect.hasMacro("onEnable")) await effect.callMacro("onEnable");
-      if (toggled && effect.hasMacro("onToggle")) {
-        await effect.callMacro("onToggle");
-      }
+      if (toggled && effect.hasMacro("onToggle")) await effect.callMacro("onToggle");
     }
   }
 }

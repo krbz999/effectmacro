@@ -1,5 +1,7 @@
 export class SystemDND5E {
+  /* Initialize module. */
   static init() {
+    if (game.system.id !== "dnd5e") return;
     Hooks.on("dnd5e.restCompleted", SystemDND5E.restCompleted.bind("dnd5e.restCompleted"));
     Hooks.on("dnd5e.rollAbilitySave", SystemDND5E.rollAbilitySave.bind("dnd5e.rollAbilitySave"));
     Hooks.on("dnd5e.rollAbilityTest", SystemDND5E.rollAbilityTest.bind("dnd5e.rollAbilityTest"));
@@ -10,6 +12,12 @@ export class SystemDND5E {
     Hooks.on("dnd5e.rollToolCheck", SystemDND5E.rollToolCheck.bind("dnd5e.rollToolCheck"));
   }
 
+  /**
+   * Utility method to filter and then call applicable effects with a trigger.
+   * @param {Actor} actor         The actor with the effects.
+   * @param {string} hook         The trigger.
+   * @param {object} context      Parameters to pass the macro.
+   */
   static async _filterAndCall(actor, hook, context) {
     const effects = actor.effects.filter(e => e.hasMacro(hook) && e.modifiesActor);
     for (const e of effects) await e.callMacro(hook, context);
