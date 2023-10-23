@@ -19,8 +19,9 @@ export class SystemDND5E {
    * @param {object} context      Parameters to pass the macro.
    */
   static async _filterAndCall(actor, hook, context) {
-    const effects = actor.effects.filter(e => e.hasMacro(hook) && e.modifiesActor);
-    for (const e of effects) await e.callMacro(hook, context);
+    for (const e of actor.appliedEffects.filter(e => e.hasMacro(hook))) {
+      await e.callMacro(hook, context);
+    }
   }
 
   static rollAttack(item, roll, ammoUpdate) {

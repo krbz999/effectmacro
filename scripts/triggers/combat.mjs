@@ -26,7 +26,7 @@ export class CombatTriggers {
    * @param {Combat} combat     The combat updated.
    * @param {object} update     The update performed.
    * @param {object} options    The update options.
-   * @returns {object<boolean:turnForward, boolean:combatStarted}
+   * @returns {object<boolean:turnForward, boolean:combatStarted>}
    */
   static _determineCombatState(combat, update, options) {
     let turnForward = true;
