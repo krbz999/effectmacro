@@ -51,25 +51,31 @@ export class EffectConfigHandler {
   static registerMacroConfig() {
     if (game.settings.get(MODULE, "restrictPermissions") && !game.user.isGM) return;
     Hooks.on("renderActiveEffectConfig", async (config, html, data) => {
-      const keys = TRIGGERS.agnostic.concat(TRIGGERS[game.system.id] ?? []);
 
-      const templateData = keys.reduce((acc, key) => {
-        const label = `EFFECTMACRO.${key}`;
-        if (config.document.hasMacro(key)) acc.used.push({key, label});
-        else acc.unused.push({key, label});
-        return acc;
-      }, {used: [], unused: []});
+      const used = [];
+      const unused = [];
+
+      for (const obj of TRIGGERS.agnostic) {
+        const [triggers, yay] = obj.triggers.partition(key => config.document.hasMacro(key));
+        if (triggers.length) unused.push({label: obj.label, triggers: triggers});
+        used.push(...yay);
+      }
+
+      const [sys, yay] = (TRIGGERS[game.system.id] ?? []).partition(key => config.document.hasMacro(key));
+      if (sys.length) unused.push({label: "EFFECTMACRO.SystemTriggers", triggers: sys});
+      used.push(...yay);
+
+      unused.forEach(u => u.triggers = u.triggers.map(t => ({key: t, label: `EFFECTMACRO.${t}`})));
+
       const div = document.createElement("DIV");
       const template = "modules/effectmacro/templates/effect-sheet.hbs";
-      div.innerHTML = await renderTemplate(template, templateData);
+      div.innerHTML = await renderTemplate(template, {used, unused});
+
       div.querySelectorAll("[data-action]").forEach(n => {
-        const action = n.dataset.action;
-        if (action === "macro-add") {
-          n.addEventListener("click", EffectConfigHandler._onClickMacroAdd.bind(config));
-        } else if (action === "macro-edit") {
-          n.addEventListener("click", EffectConfigHandler._onClickMacroEdit.bind(config));
-        } else if (action === "macro-delete") {
-          n.addEventListener("click", EffectConfigHandler._onClickMacroDelete.bind(config));
+        switch (n.dataset.action) {
+          case "macro-add": n.addEventListener("click", EffectConfigHandler._onClickMacroAdd.bind(config)); break;
+          case "macro-edit": n.addEventListener("click", EffectConfigHandler._onClickMacroEdit.bind(config)); break;
+          case "macro-delete": n.addEventListener("click", EffectConfigHandler._onClickMacroDelete.bind(config)); break;
         }
       });
       html[0].querySelector("section[data-tab='details']").appendChild(div.firstElementChild);
