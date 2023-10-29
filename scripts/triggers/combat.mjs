@@ -93,7 +93,7 @@ export class CombatTriggers {
     if (turnForward) {
       // Retrieve combatants.
       const previousId = foundry.utils.getProperty(options, `${MODULE}.previousCombatant`);
-      const previousCombatant = combatStarted ? combat.combatants.get(previousId) : null;
+      const previousCombatant = !combatStarted ? combat.combatants.get(previousId) : null;
 
       // Execute turn start and turn end triggers.
       CombatTriggers._executeAppliedEffects(combat.combatant?.actor, "onTurnStart");
