@@ -1,3 +1,5 @@
+Interested in following along with development of any of my modules? Join the [Discord server](https://discord.gg/QAG8eWABGT). 
+
 # Effect Macro
 A module that allows users to embed macros directly into effects.
 These macros are then called automatically when the appropriate trigger happens. The options are:
