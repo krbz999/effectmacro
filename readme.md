@@ -24,6 +24,7 @@ The module will automatically iterate over all effects that *currently affect th
 
 ## Script Helpers
 By default, these variables are pre-defined in any effect macro.
+* `effect`: The effect itself.
 * `actor`: The actor who owns the effect (even if the effect is on an item). If no actor, then `null`.
 * `character`: The user's assigned actor. If no assigned actor, then `null`.
 * `token`: If the actor is synthetic (unlinked), then `token` is the is the token placeable on the actor's scene, otherwise the first token found on the currently viewed scene belonging to `actor`. If none found, then `null`.
