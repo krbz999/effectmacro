@@ -107,8 +107,8 @@ export class CombatTriggers {
 
     if (roundForward) {
       for (const c of undefeated) {
-        if (!combatStarted) CombatTriggers._executeAppliedEffects(c.actor, "onRoundEnd")
-        CombatTriggers._executeAppliedEffects(c.actor, "onRoundStart")
+        if (!combatStarted) CombatTriggers._executeAppliedEffects(c.actor, "onRoundEnd");
+        CombatTriggers._executeAppliedEffects(c.actor, "onRoundStart");
       }
     }
 
