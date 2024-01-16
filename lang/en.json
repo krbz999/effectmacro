@@ -27,6 +27,8 @@
   "EFFECTMACRO.onToggle": "On Effect Toggle (on or off)",
   "EFFECTMACRO.onTurnEnd": "On Combat Turn Ending",
   "EFFECTMACRO.onTurnStart": "On Combat Turn Starting",
+  "EFFECTMACRO.onRoundEnd": "On Combat Round Ending",
+  "EFFECTMACRO.onRoundStart": "On Combat Round Starting",
   "EFFECTMACRO.OtherTriggers": "Other Triggers",
   "EFFECTMACRO.SettingRestrictPermission": "Restrict Permissions",
   "EFFECTMACRO.SettingRestrictPermissionHint": "If enabled, non-GM clients will not be able to add, edit, or delete macros from an Active Effect.",

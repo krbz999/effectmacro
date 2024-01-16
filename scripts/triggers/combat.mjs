@@ -26,10 +26,11 @@ export class CombatTriggers {
    * @param {Combat} combat     The combat updated.
    * @param {object} update     The update performed.
    * @param {object} options    The update options.
-   * @returns {object<boolean:turnForward, boolean:combatStarted>}
+   * @returns {object<boolean:turnForward, boolean:roundForward, boolean:combatStarted>}
    */
   static _determineCombatState(combat, update, options) {
     let turnForward = true;
+    let roundForward = true;
     let combatStarted = true;
 
     const cTurn = combat.current.turn;
@@ -42,9 +43,10 @@ export class CombatTriggers {
     if (!combat.started || !combat.isActive) turnForward = false;
     if ((cRound < pRound) || ((cTurn < pTurn) && (cRound === pRound))) turnForward = false;
 
+    roundForward = turnForward && cRound > pRound
     combatStarted = combat.started && !foundry.utils.getProperty(options, `${MODULE}.started`);
 
-    return {turnForward, combatStarted};
+    return {turnForward, roundForward, combatStarted};
   }
 
   /**
@@ -87,7 +89,7 @@ export class CombatTriggers {
    */
   static async updateCombat(combat, update, options) {
 
-    const {turnForward, combatStarted} = CombatTriggers._determineCombatState(combat, update, options);
+    const {turnForward, roundForward, combatStarted} = CombatTriggers._determineCombatState(combat, update, options);
     const undefeated = combat.combatants.filter(c => !c.isDefeated);
 
     if (turnForward) {
@@ -101,6 +103,13 @@ export class CombatTriggers {
 
       // Execute all 'each turn' triggers.
       for (const c of undefeated) CombatTriggers._executeAppliedEffects(c.actor, "onEachTurn");
+    }
+
+    if (roundForward) {
+      for (const c of undefeated) {
+        if (!combatStarted) CombatTriggers._executeAppliedEffects(c.actor, "onRoundEnd")
+        CombatTriggers._executeAppliedEffects(c.actor, "onRoundStart")
+      }
     }
 
     // Determine whether we have started a combat.
