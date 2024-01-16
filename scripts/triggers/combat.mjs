@@ -43,7 +43,7 @@ export class CombatTriggers {
     if (!combat.started || !combat.isActive) turnForward = false;
     if ((cRound < pRound) || ((cTurn < pTurn) && (cRound === pRound))) turnForward = false;
 
-    roundForward = turnForward && cRound > pRound
+    roundForward = turnForward && (cRound > pRound);
     combatStarted = combat.started && !foundry.utils.getProperty(options, `${MODULE}.started`);
 
     return {turnForward, roundForward, combatStarted};
