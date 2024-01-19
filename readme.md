@@ -1,4 +1,4 @@
-Interested in following along with development of any of my modules? Join the [Discord server](https://discord.gg/QAG8eWABGT). 
+Interested in following along with development of any of my modules? Join the [Discord server](https://discord.gg/QAG8eWABGT).
 
 # Effect Macro
 A module that allows users to embed macros directly into effects.
@@ -10,6 +10,8 @@ These macros are then called automatically when the appropriate trigger happens.
 - When the actor who has the effect starts their turn.
 - When the actor who has the effect ends their turn.
 - At the start of any combatant's turn.
+- At the start of every round.
+- At the end of every round.
 - When the actor who has the effect is marked defeated in combat.
 - When combat is started.
 - When combat is ended.

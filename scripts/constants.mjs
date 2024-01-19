@@ -17,6 +17,8 @@ export const TRIGGERS = {
         "onTurnStart",
         "onTurnEnd",
         "onEachTurn",
+        "onRoundStart",
+        "onRoundEnd",
         "onCombatStart",
         "onCombatEnd",
         "onCombatantDefeated"
