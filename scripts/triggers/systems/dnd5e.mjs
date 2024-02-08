@@ -14,7 +14,7 @@ export class SystemDND5E {
 
   /**
    * Utility method to filter and then call applicable effects with a trigger.
-   * @param {Actor} actor         The actor with the effects.
+   * @param {Actor5e} actor       The actor with the effects.
    * @param {string} hook         The trigger.
    * @param {object} context      Parameters to pass the macro.
    */

@@ -3,8 +3,8 @@ import {MODULE} from "./constants.mjs";
 export class EffectMethods {
   /**
    * Call a specific type of script in an effect.
-   * @param {string} type         The trigger of the script (default "never").
-   * @param {object} context      Additional arguments to pass to the macro.
+   * @param {string} [type]         The trigger of the script (default "never").
+   * @param {object} [context]      Additional arguments to pass to the macro.
    */
   static callMacro = async function(type = "never", context = {}) {
     const script = this.getFlag(MODULE, `${type}.script`);
@@ -24,8 +24,8 @@ export class EffectMethods {
 
   /**
    * Return whether an effect has a script of this type.
-   * @param {string} type     The trigger to check for.
-   * @returns {boolean}       Whether the effect has a script of this type.
+   * @param {string} [type]     The trigger to check for.
+   * @returns {boolean}         Whether the effect has a script of this type.
    */
   static hasMacro = function(type = "never") {
     return !!this.getFlag(MODULE, `${type}.script`);
@@ -33,7 +33,7 @@ export class EffectMethods {
 
   /**
    * Remove a specific triggered script from this effect.
-   * @param {string} type         The script to remove.
+   * @param {string} [type]       The script to remove.
    * @returns {ActiveEffect}      The effect after being updated.
    */
   static removeMacro = async function(type = "never") {
@@ -44,8 +44,8 @@ export class EffectMethods {
 
   /**
    * Create a script on the effect.
-   * @param {string} type         The type of script to embed.
-   * @param {string} script       The macro command to embed.
+   * @param {string} [type]       The type of script to embed.
+   * @param {string} [script]     The macro command to embed.
    * @returns {ActiveEffect}      The effect after being updated.
    */
   static createMacro = async function(type = "never", script) {
@@ -62,7 +62,7 @@ export class EffectMethods {
 
   /**
    * Update a script on the effect.
-   * @param {string} type         The type of script to update.
+   * @param {string} [type]       The type of script to update.
    * @param {string} script       The new macro command to embed.
    * @returns {ActiveEffect}      The effect after being updated.
    */
@@ -95,7 +95,7 @@ export class EffectMethods {
     let token = actor?.token?.object ?? actor?.getActiveTokens()[0] ?? null;
     let scene = token?.scene ?? game.scenes.active ?? null;
     let origin = effect.origin ? fromUuidSync(effect.origin) : null;
-    let speaker = actor ? ChatMessage.getSpeaker({actor}) : {};
+    let speaker = actor ? ChatMessage.implementation.getSpeaker({actor}) : {};
     let item = effect.parent instanceof Item ? effect.parent : null;
     return {token, character, actor, speaker, scene, origin, effect, item};
   }
