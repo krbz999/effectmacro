@@ -16,9 +16,12 @@ export class EffectTriggers {
     Hooks.on("deleteActiveEffect", EffectTriggers.onCreateDelete.bind("onDelete"));
     Hooks.on("preUpdateActiveEffect", EffectTriggers.preUpdate);
     Hooks.on("updateActiveEffect", EffectTriggers.onUpdate);
+
+    // Item triggers.
     Hooks.on("preUpdateItem", EffectTriggers.preUpdateItem);
     Hooks.on("updateItem", EffectTriggers.updateItem);
     Hooks.on("deleteItem", EffectTriggers.deleteItem);
+    Hooks.on("createItem", EffectTriggers.createItem);
   }
 
   /**
@@ -120,5 +123,19 @@ export class EffectTriggers {
 
     const effects = item.effects.filter(e => e.modifiesActor && e.hasMacro("onDelete"));
     for (const effect of effects) await effect.callMacro("onDelete");
+  }
+
+  /**
+   * Execute effect creation triggers when the parent item is created. This only applies to non-legacy transfer systems.
+   * @param {Item} item           The item that was created.
+   * @param {object} options      Update options.
+   */
+  static async createItem(item, options) {
+    if (!item.isEmbedded || EffectTriggers.isLegacy) return;
+    const run = EffectMethods.isExecutor(item.actor);
+    if (!run) return;
+
+    const effects = item.effects.filter(e => e.modifiesActor && e.hasMacro("onCreate"));
+    for (const effect of effects) await effect.callMacro("onCreate");
   }
 }
