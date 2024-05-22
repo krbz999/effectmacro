@@ -10,10 +10,7 @@ export class EffectMethods {
     const script = this.getFlag(MODULE, `${type}.script`);
     if (!script) return ui.notifications.warn("EFFECTMACRO.NoSuchScript", {localize: true});
     const variables = EffectMethods._getHelperVariables(this);
-    const body = `return (async()=>{
-      ${script}
-    })();`;
-    const fn = Function(...Object.keys(variables), body);
+    const fn = new foundry.utils.AsyncFunction(...Object.keys(variables), `{${script}\n}`);
     try {
       await fn.call(context, ...Object.values(variables));
     } catch (err) {
