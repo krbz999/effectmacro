@@ -3,9 +3,9 @@
   {{#each used}}
   <div class="form-group used-option">
     <div class="form-fields">
-      <span class="label">{{localize (concat "EFFECTMACRO." this)}}</span>
-      <a data-action="macro-edit" data-key="{{this}}"><i class="fa-solid fa-edit"></i></a>
-      <a data-action="macro-delete" data-key="{{this}}"><i class="fa-solid fa-trash"></i></a>
+      <span class="label">{{localize label}}</span>
+      <a data-action="macro-edit" data-key="{{key}}"><i class="fa-solid fa-edit"></i></a>
+      <a data-action="macro-delete" data-key="{{key}}"><i class="fa-solid fa-trash"></i></a>
     </div>
   </div>
   {{/each}}
@@ -16,7 +16,7 @@
       <select class="unused-option">
         {{#each unused}}
         <optgroup label="{{localize label}}">
-          {{selectOptions triggers localize=true nameAttr="key" labelAttr="label"}}
+          {{selectOptions triggers localize=true valueAttr="key" labelAttr="label"}}
         </optgroup>
         {{/each}}
       </select>

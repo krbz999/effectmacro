@@ -99,6 +99,7 @@ export class EffectTriggers {
     const effects = ids.map(id => collection.get(id));
 
     for (const effect of effects) {
+      if (!effect) continue;
       const isOn = effect.modifiesActor;
       const wasOn = foundry.utils.getProperty(context, `${MODULE}.${effect.id}.wasOn`);
       const toggledOff = wasOn && !isOn;

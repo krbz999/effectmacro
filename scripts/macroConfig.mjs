@@ -56,12 +56,12 @@ export class EffectConfigHandler {
       for (const obj of TRIGGERS.agnostic) {
         const [triggers, yay] = obj.triggers.partition(key => config.document.hasMacro(key));
         if (triggers.length) unused.push({label: obj.label, triggers: triggers});
-        used.push(...yay);
+        used.push(...yay.map(k => ({key: k, label: `EFFECTMACRO.${k}`})));
       }
 
       const [sys, yay] = (TRIGGERS[game.system.id] ?? []).partition(key => config.document.hasMacro(key));
       if (sys.length) unused.push({label: "EFFECTMACRO.SystemTriggers", triggers: sys});
-      used.push(...yay);
+      used.push(...yay.map(k => ({key: k, label: `EFFECTMACRO.${k}`})));
 
       unused.forEach(u => u.triggers = u.triggers.map(t => ({key: t, label: `EFFECTMACRO.${t}`})));
 
@@ -84,10 +84,19 @@ export class EffectConfigHandler {
   /**
    * Handle clicking the 'delete macro' buttons.
    * @param {PointerEvent} event      The initiating click event.
-   * @returns {ActiveEffect}          The effect having a flag removed.
    */
   static async _onClickMacroDelete(event) {
     const key = event.currentTarget.dataset.key;
+
+    const confirm = await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: "EFFECTMACRO.DeletePrompt"
+      },
+      rejectClose: false,
+      modal: true
+    });
+    if (!confirm) return;
+
     await this.submit({preventClose: true});
     return this.document.removeMacro(key);
   }

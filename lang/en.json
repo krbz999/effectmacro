@@ -1,6 +1,7 @@
 {
   "EFFECTMACRO.AddAnother": "Add another",
   "EFFECTMACRO.CombatTriggers": "Combat Triggers",
+  "EFFECTMACRO.DeletePrompt": "Delete this macro?",
   "EFFECTMACRO.dnd5e.longRest": "On Long Rests",
   "EFFECTMACRO.dnd5e.rollAbilitySave": "On Saving Throws",
   "EFFECTMACRO.dnd5e.rollAbilityTest": "On Ability Checks",
@@ -11,6 +12,8 @@
   "EFFECTMACRO.dnd5e.rollSkill": "On Skill Checks",
   "EFFECTMACRO.dnd5e.rollToolCheck": "On Tool Checks",
   "EFFECTMACRO.dnd5e.shortRest": "On Short Rests",
+  "EFFECTMACRO.dnd5e.healActor": "On Being Healed",
+  "EFFECTMACRO.dnd5e.damageActor": "On Being Damaged",
   "EFFECTMACRO.EffectTriggers": "Effect Triggers",
   "EFFECTMACRO.ModuleTitle": "Effect Macro",
   "EFFECTMACRO.never": "Never Automatically",

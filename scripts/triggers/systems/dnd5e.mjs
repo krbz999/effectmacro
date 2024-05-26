@@ -1,3 +1,5 @@
+import {EffectMethods} from "../../effectMethods.mjs";
+
 export class SystemDND5E {
   /* Initialize module. */
   static init() {
@@ -10,6 +12,8 @@ export class SystemDND5E {
     Hooks.on("dnd5e.rollDeathSave", SystemDND5E.rollDeathSave.bind("dnd5e.rollDeathSave"));
     Hooks.on("dnd5e.rollSkill", SystemDND5E.rollSkill.bind("dnd5e.rollSkill"));
     Hooks.on("dnd5e.rollToolCheck", SystemDND5E.rollToolCheck.bind("dnd5e.rollToolCheck"));
+    Hooks.on("dnd5e.healActor", SystemDND5E.healActor.bind("dnd5e.healActor"));
+    Hooks.on("dnd5e.damageActor", SystemDND5E.damageActor.bind("dnd5e.damageActor"));
   }
 
   /**
@@ -19,6 +23,7 @@ export class SystemDND5E {
    * @param {object} context      Parameters to pass the macro.
    */
   static async _filterAndCall(actor, hook, context) {
+    if (!EffectMethods.isExecutor(actor)) return;
     for (const e of actor.appliedEffects.filter(e => e.hasMacro(hook))) {
       await e.callMacro(hook, context);
     }
@@ -54,5 +59,13 @@ export class SystemDND5E {
 
   static restCompleted(actor, data) {
     return SystemDND5E._filterAndCall(actor, data.longRest ? "dnd5e.longRest" : "dnd5e.shortRest", {data});
+  }
+
+  static healActor(actor, changes, update, userId) {
+    return SystemDND5E._filterAndCall(actor, this, {changes, update, userId});
+  }
+
+  static damageActor(actor, changes, update, userId) {
+    return SystemDND5E._filterAndCall(actor, this, {changes, update, userId});
   }
 }

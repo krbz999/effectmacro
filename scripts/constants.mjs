@@ -40,6 +40,8 @@ export const TRIGGERS = {
     "dnd5e.rollSkill",
     "dnd5e.rollToolCheck",
     "dnd5e.shortRest",
-    "dnd5e.longRest"
+    "dnd5e.longRest",
+    "dnd5e.healActor",
+    "dnd5e.damageActor"
   ]
 };
