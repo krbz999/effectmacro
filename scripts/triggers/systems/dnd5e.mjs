@@ -30,6 +30,7 @@ export class SystemDND5E {
   }
 
   static rollAttack(item, roll, ammoUpdate) {
+    if (!item) return;
     return SystemDND5E._filterAndCall(item.actor, this, {item, roll, ammoUpdate});
   }
 
@@ -50,6 +51,7 @@ export class SystemDND5E {
   }
 
   static rollDamage(item, roll) {
+    if (!item) return;
     return SystemDND5E._filterAndCall(item.actor, this, {item, roll});
   }
 
