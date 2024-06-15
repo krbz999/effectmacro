@@ -1,9 +1,9 @@
 import {MODULE} from "../constants.mjs";
-import {EffectMethods} from "../effectMethods.mjs";
+import {EffectMethods, callMacro, hasMacro} from "../effectMethods.mjs";
 
 export class EffectTriggers {
   /**
-   * Is legacy transfer on?
+   * Is legacy transfer of effects turned on?
    * @type {boolean}
    */
   static get isLegacy() {
@@ -43,9 +43,9 @@ export class EffectTriggers {
     const toggledOn = !wasOn && isOn;
     const toggled = toggledOff || toggledOn;
 
-    if (toggledOff && effect.hasMacro("onDisable")) await effect.callMacro("onDisable");
-    if (toggledOn && effect.hasMacro("onEnable")) await effect.callMacro("onEnable");
-    if (toggled && effect.hasMacro("onToggle")) await effect.callMacro("onToggle");
+    if (toggledOff && hasMacro.call(effect, "onDisable")) await callMacro(effect, "onDisable");
+    if (toggledOn && hasMacro.call(effect, "onEnable")) await callMacro(effect, "onEnable");
+    if (toggled && hasMacro.call(effect, "onToggle")) await callMacro(effect, "onToggle");
   }
 
   /**
@@ -62,11 +62,12 @@ export class EffectTriggers {
 
   /**
    * Execute effect creation / deletion triggers.
+   * @this {string}
    * @param {ActiveEffect} effect     The effect created or deleted.
    */
   static async onCreateDelete(effect) {
-    if (effect.modifiesActor && effect.hasMacro(this) && EffectMethods.isExecutor(effect.parent)) {
-      return effect.callMacro(this);
+    if (effect.modifiesActor && hasMacro.call(effect, this) && EffectMethods.isExecutor(effect.parent)) {
+      return callMacro(effect, this);
     }
   }
 
@@ -106,9 +107,9 @@ export class EffectTriggers {
       const toggledOn = !wasOn && isOn;
       const toggled = toggledOff || toggledOn;
 
-      if (toggledOff && effect.hasMacro("onDisable")) await effect.callMacro("onDisable");
-      if (toggledOn && effect.hasMacro("onEnable")) await effect.callMacro("onEnable");
-      if (toggled && effect.hasMacro("onToggle")) await effect.callMacro("onToggle");
+      if (toggledOff && hasMacro.call(effect, "onDisable")) await callMacro(effect, "onDisable");
+      if (toggledOn && hasMacro.call(effect, "onEnable")) await callMacroall(effect, "onEnable");
+      if (toggled && hasMacro.call(effect, "onToggle")) await callMacro(effect, "onToggle");
     }
   }
 
@@ -122,8 +123,8 @@ export class EffectTriggers {
     const run = EffectMethods.isExecutor(item.actor);
     if (!run) return;
 
-    const effects = item.effects.filter(e => e.modifiesActor && e.hasMacro("onDelete"));
-    for (const effect of effects) await effect.callMacro("onDelete");
+    const effects = item.effects.filter(e => e.modifiesActor && hasMacro.call(e, "onDelete"));
+    for (const effect of effects) await callMacro(effect, "onDelete");
   }
 
   /**
@@ -136,7 +137,7 @@ export class EffectTriggers {
     const run = EffectMethods.isExecutor(item.actor);
     if (!run) return;
 
-    const effects = item.effects.filter(e => e.modifiesActor && e.hasMacro("onCreate"));
-    for (const effect of effects) await effect.callMacro("onCreate");
+    const effects = item.effects.filter(e => e.modifiesActor && hasMacro.call(e, "onCreate"));
+    for (const effect of effects) await callMacro(effect, "onCreate");
   }
 }

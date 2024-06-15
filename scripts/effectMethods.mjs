@@ -1,85 +1,93 @@
 import {MODULE} from "./constants.mjs";
 
-export class EffectMethods {
-  /**
-   * Call a specific type of script in an effect.
-   * @param {string} [type]         The trigger of the script (default "never").
-   * @param {object} [context]      Additional arguments to pass to the macro.
-   */
-  static callMacro = async function(type = "never", context = {}) {
-    const script = this.getFlag(MODULE, `${type}.script`);
-    if (!script) return ui.notifications.warn("EFFECTMACRO.NoSuchScript", {localize: true});
-    const variables = EffectMethods._getHelperVariables(this);
-    const fn = new foundry.utils.AsyncFunction(...Object.keys(variables), `{${script}\n}`);
-    try {
-      await fn.call(context, ...Object.values(variables));
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  }
+/**
+ * Call a specific type of script in an effect.
+ * @param {string} [type]         The trigger of the script (default "never").
+ * @param {object} [context]      Additional arguments to pass to the macro.
+ */
+export async function callMacro(effect, type = "never", context = {}) {
+  return _callMacro.call(effect, type, context);
+}
 
-  /**
-   * Return whether an effect has a script of this type.
-   * @param {string} [type]     The trigger to check for.
-   * @returns {boolean}         Whether the effect has a script of this type.
-   */
-  static hasMacro = function(type = "never") {
-    return !!this.getFlag(MODULE, `${type}.script`);
+/**
+ * Internal method to call a specific type of script in an effect.
+ * @this {ActiveEffect}
+ * @param {string} [type]         The trigger of the script (default "never").
+ * @param {object} [context]      Additional arguments to pass to the macro.
+ */
+async function _callMacro(type = "never", context = {}) {
+  const script = this.getFlag(MODULE, `${type}.script`);
+  if (!script) {
+    ui.notifications.warn("EFFECTMACRO.NoSuchScript", {localize: true});
+    return;
   }
-
-  /**
-   * Remove a specific triggered script from this effect.
-   * @param {string} [type]       The script to remove.
-   * @returns {ActiveEffect}      The effect after being updated.
-   */
-  static removeMacro = async function(type = "never") {
-    const script = this.getFlag(MODULE, type);
-    if (!script) return null;
-    return this.unsetFlag(MODULE, type);
+  const variables = EffectMethods._getHelperVariables(this);
+  const fn = new foundry.utils.AsyncFunction(...Object.keys(variables), `{${script}\n}`);
+  try {
+    await fn.call(context, ...Object.values(variables));
+  } catch (err) {
+    console.error(err);
+    return null;
   }
+}
 
-  /**
-   * Create a script on the effect.
-   * @param {string} [type]       The type of script to embed.
-   * @param {string} [script]     The macro command to embed.
-   * @returns {ActiveEffect}      The effect after being updated.
-   */
-  static createMacro = async function(type = "never", script) {
-    if (!script) {
-      return ui.notifications.warn("EFFECTMACRO.NoScriptProvided", {localize: true});
-    } else if (script instanceof Function) {
-      return this.setFlag(MODULE, `${type}.script`, `(
+/**
+ * Return whether an effect has a script of this type.
+ * @this {ActiveEffect}
+ * @param {string} [type]     The trigger to check for.
+ * @returns {boolean}         Whether the effect has a script of this type.
+ */
+export function hasMacro(type = "never") {
+  return !!this.getFlag(MODULE, `${type}.script`);
+}
+
+/**
+ * Remove a specific triggered script from this effect.
+ * @this {ActiveEffect}
+ * @param {string} [type]       The script to remove.
+ * @returns {ActiveEffect}      The effect after being updated.
+ */
+export async function removeMacro(type = "never") {
+  const script = this.getFlag(MODULE, type);
+  if (!script) return null;
+  return this.unsetFlag(MODULE, type);
+}
+
+/**
+ * Create a script on the effect.
+ * @this {ActiveEffect}
+ * @param {string} [type]       The type of script to embed.
+ * @param {string} [script]     The macro command to embed.
+ * @returns {ActiveEffect}      The effect after being updated.
+ */
+export async function createMacro(type = "never", script) {
+  if (!script) {
+    ui.notifications.warn("EFFECTMACRO.NoScriptProvided", {localize: true});
+    return;
+  } else if (script instanceof Function) {
+    return this.setFlag(MODULE, `${type}.script`, `(
         ${script.toString()}
       )()`);
-    } else {
-      return this.setFlag(MODULE, `${type}.script`, script.toString());
-    }
+  } else {
+    return this.setFlag(MODULE, `${type}.script`, script.toString());
   }
+}
 
-  /**
-   * Update a script on the effect.
-   * @param {string} [type]       The type of script to update.
-   * @param {string} script       The new macro command to embed.
-   * @returns {ActiveEffect}      The effect after being updated.
-   */
-  static updateMacro = async function(type = "never", script) {
-    if (!script) return this.removeMacro(type);
-    else if (script.toString() !== this.getFlag(MODULE, `${type}.script`)) {
-      return this.createMacro(type, script);
-    }
+/**
+ * Update a script on the effect.
+ * @this {ActiveEffect}
+ * @param {string} [type]       The type of script to update.
+ * @param {string} script       The new macro command to embed.
+ * @returns {ActiveEffect}      The effect after being updated.
+ */
+export async function updateMacro(type = "never", script) {
+  if (!script) return removeMacro.call(this, type);
+  else if (script.toString() !== this.getFlag(MODULE, `${type}.script`)) {
+    return createMacro.call(this, type, script);
   }
+}
 
-  /**
-   * Append the new ActiveEffect methods to the prototype.
-   */
-  static _appendMethods() {
-    ActiveEffect.prototype.callMacro = EffectMethods.callMacro;
-    ActiveEffect.prototype.removeMacro = EffectMethods.removeMacro;
-    ActiveEffect.prototype.createMacro = EffectMethods.createMacro;
-    ActiveEffect.prototype.updateMacro = EffectMethods.updateMacro;
-    ActiveEffect.prototype.hasMacro = EffectMethods.hasMacro;
-  }
+export class EffectMethods {
 
   /**
    * Get helper variables for the script call.

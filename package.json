@@ -1,0 +1,25 @@
+{
+  "name": "effectmacro",
+  "version": "1.0.0",
+  "description": "Effect Macro",
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krbz999/effectmacro.git"
+  },
+  "keywords": [
+    "fvtt",
+    "module"
+  ],
+  "author": "Zhell",
+  "bugs": {
+    "url": "https://github.com/krbz999/effectmacro"
+  },
+  "homepage": "https://github.com/krbz999/effectmacro",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rollup": "^4.17.2"
+  }
+}

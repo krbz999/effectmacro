@@ -1,4 +1,4 @@
-import {EffectMethods} from "./effectMethods.mjs";
+import {callMacro} from "./effectMethods.mjs";
 import {EffectConfigHandler} from "./macroConfig.mjs";
 import {CombatTriggers} from "./triggers/combat.mjs";
 import {EffectTriggers} from "./triggers/effect.mjs";
@@ -10,6 +10,10 @@ class EffectMacro {
   /* Initialize module. */
   static init() {
     EffectMacro.registerSettings();
+
+    game.modules.get(EffectMacro.MODULE).api = {
+      callMacro: callMacro
+    };
   }
 
   /**
@@ -29,7 +33,6 @@ class EffectMacro {
 }
 
 Hooks.once("init", EffectMacro.init);
-Hooks.once("init", EffectMethods._appendMethods);
 Hooks.once("init", EffectTriggers.init);
 Hooks.once("init", CombatTriggers.init);
 Hooks.once("init", EffectConfigHandler.registerMacroConfig);

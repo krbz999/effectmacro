@@ -1,46 +1,64 @@
 import {MODULE, TRIGGERS} from "./constants.mjs";
+import {hasMacro, removeMacro} from "./effectMethods.mjs";
+const {HandlebarsApplicationMixin, DocumentSheetV2} = foundry.applications.api;
 
-export class EffectMacroConfig extends MacroConfig {
-  constructor(doc, options) {
-    super(doc, options);
-    this.type = options.type;
+export class EffectMacroConfig extends HandlebarsApplicationMixin(DocumentSheetV2) {
+  constructor({type, ...options}) {
+    super(options);
+    this.#type = type;
+  }
+
+  /**
+   * The macro type.
+   * @type {string}
+   */
+  #type = null;
+
+  /** @override */
+  static DEFAULT_OPTIONS = {
+    form: {
+      submitOnChange: false,
+      closeOnSubmit: true
+    },
+    window: {
+      icon: "fa-solid fa-code"
+    },
+    position: {
+      width: 600,
+      height: "auto"
+    },
+    actions: {}
+  };
+
+  /** @override */
+  static PARTS = Object.freeze({
+    main: {template: "modules/effectmacro/templates/macro-menu.hbs"}
+  });
+
+  /** @override */
+  get title() {
+    return game.i18n.format("EFFECTMACRO.MacroSheet", {name: this.document.name});
   }
 
   /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      template: "modules/effectmacro/templates/macro-menu.hbs",
-      classes: ["macro-sheet", "sheet", MODULE]
+  _initializeApplicationOptions(options) {
+    options = super._initializeApplicationOptions(options);
+    options.uniqueId = `${this.constructor.name}-${options.document.uuid}-${options.type}`;
+    return options;
+  }
+
+  /** @override */
+  async _prepareContext(options) {
+    const context = {};
+
+    context.name = `flags.effectmacro.${this.#type}.script`;
+    context.value = foundry.utils.getProperty(this.document, context.name) || "";
+
+    const label = `EFFECTMACRO.${this.#type}`;
+    context.field = new foundry.data.fields.JavaScriptField({
+      label: `${game.i18n.localize("Command")}: ${game.i18n.localize(label)}`
     });
-  }
-
-  /** @override */
-  get id() {
-    return `${MODULE}-${this.type}-${this.object.uuid.replaceAll(".", "-")}`;
-  }
-
-  /** @override */
-  async getData() {
-    const data = await super.getData();
-    data.img = this.object.icon;
-    data.name = this.object.name;
-    data.script = this.object.getFlag(MODULE, `${this.type}.script`) || "";
-    data.localeKey = `EFFECTMACRO.${this.type}`;
-    return data;
-  }
-
-  /** @override */
-  async _updateObject(event, formData) {
-    await this.object.sheet?.submit({preventClose: true});
-    return this.object.updateMacro(this.type, formData.command);
-  }
-
-  /** @override */
-  async close(options = {}) {
-    Object.entries(this.object.apps).forEach(([appId, config]) => {
-      if (config.id === this.id) delete this.object.apps[appId];
-    });
-    return super.close(options);
+    return context;
   }
 }
 
@@ -54,12 +72,12 @@ export class EffectConfigHandler {
       const unused = [];
 
       for (const obj of TRIGGERS.agnostic) {
-        const [triggers, yay] = obj.triggers.partition(key => config.document.hasMacro(key));
+        const [triggers, yay] = obj.triggers.partition(key => hasMacro.call(config.document, key));
         if (triggers.length) unused.push({label: obj.label, triggers: triggers});
         used.push(...yay.map(k => ({key: k, label: `EFFECTMACRO.${k}`})));
       }
 
-      const [sys, yay] = (TRIGGERS[game.system.id] ?? []).partition(key => config.document.hasMacro(key));
+      const [sys, yay] = (TRIGGERS[game.system.id] ?? []).partition(key => hasMacro.call(config.document, key));
       if (sys.length) unused.push({label: "EFFECTMACRO.SystemTriggers", triggers: sys});
       used.push(...yay.map(k => ({key: k, label: `EFFECTMACRO.${k}`})));
 
@@ -90,7 +108,8 @@ export class EffectConfigHandler {
 
     const confirm = await foundry.applications.api.DialogV2.confirm({
       window: {
-        title: "EFFECTMACRO.DeletePrompt"
+        title: "EFFECTMACRO.DeletePrompt",
+        icon: "fa-solid fa-code"
       },
       rejectClose: false,
       modal: true
@@ -98,32 +117,26 @@ export class EffectConfigHandler {
     if (!confirm) return;
 
     await this.submit({preventClose: true});
-    return this.document.removeMacro(key);
+    return removeMacro.call(this.document, key);
   }
 
   /**
    * Handle clicking the 'edit macro' buttons.
-   * @param {PointerEvent} event      The initiating click event.
-   * @returns {EffectMacroConfig}     The rendered effect macro editor.
+   * @param {PointerEvent} event                The initiating click event.
+   * @returns {Promise<EffectMacroConfig>}      The rendered effect macro editor.
    */
   static _onClickMacroEdit(event) {
     const key = event.currentTarget.dataset.key;
-    const existingApp = Object.values(this.document.apps).find(app => {
-      return app.id === `${MODULE}-${key}-${this.document.uuid.replaceAll(".", "-")}`;
-    });
-    if (!existingApp) return new EffectMacroConfig(this.document, {type: key}).render(true);
+    return new EffectMacroConfig({document: this.document, type: key}).render({force: true});
   }
 
   /**
    * Handle clicking the 'add macro' button.
-   * @param {PointerEvent} event      The initiating click event.
-   * @returns {EffectMacroConfig}     The rendered effect macro editor.
+   * @param {PointerEvent} event                The initiating click event.
+   * @returns {Promise<EffectMacroConfig>}      The rendered effect macro editor.
    */
   static _onClickMacroAdd(event) {
     const key = event.currentTarget.closest(".form-fields").querySelector(".unused-option").value;
-    const existingApp = Object.values(this.document.apps).find(app => {
-      return app.id === `${MODULE}-${key}-${this.document.uuid.replaceAll(".", "-")}`;
-    });
-    if (!existingApp) return new EffectMacroConfig(this.document, {type: key}).render(true);
+    return new EffectMacroConfig({document: this.document, type: key}).render({force: true});
   }
 }

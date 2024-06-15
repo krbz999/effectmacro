@@ -29,7 +29,7 @@ export const TRIGGERS = {
       triggers: [
         "never"
       ]
-    },
+    }
   ],
   dnd5e: [
     "dnd5e.rollAttack",

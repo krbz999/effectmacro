@@ -15,6 +15,7 @@
   "EFFECTMACRO.dnd5e.healActor": "On Being Healed",
   "EFFECTMACRO.dnd5e.damageActor": "On Being Damaged",
   "EFFECTMACRO.EffectTriggers": "Effect Triggers",
+  "EFFECTMACRO.MacroSheet": "Effect Macro: {name}",
   "EFFECTMACRO.ModuleTitle": "Effect Macro",
   "EFFECTMACRO.never": "Never Automatically",
   "EFFECTMACRO.NoScriptProvided": "You did not provide a function.",

@@ -1,17 +1,10 @@
-<form class="editable flexcol" autocomplete="off">
-  <header class="sheet-header">
-    <img src="{{img}}" data-tooltip="{{name}}" height="64" width="64">
-    <h1><input type="text" value="{{name}}" disabled></h1>
-  </header>
-
-  <div class="form-group stacked command">
-    <label>{{localize "Command"}}: {{localize localeKey}}</label>
-    <textarea name="command">{{script}}</textarea>
-  </div>
-
-  <footer class="sheet-footer flexrow">
+<div class="standard-form">
+  <fieldset>
+    {{formGroup field value=value name=name rows=30}}
+  </fieldset>
+  <footer class="sheet-footer">
     <button type="submit">
       <i class="fa-solid fa-save"></i> {{localize "Save"}}
     </button>
   </footer>
-</form>
+</div>

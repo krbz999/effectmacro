@@ -1,8 +1,8 @@
 import {MODULE} from "../constants.mjs";
-import {EffectMethods} from "../effectMethods.mjs";
+import {EffectMethods, callMacro, hasMacro} from "../effectMethods.mjs";
 
 export class CombatTriggers {
-  /* Initialize module. */
+  /* Initialize the module. */
   static init() {
     Hooks.on("preUpdateCombat", CombatTriggers.preUpdateCombat);
     Hooks.on("updateCombatant", CombatTriggers.updateCombatant);
@@ -18,7 +18,7 @@ export class CombatTriggers {
    */
   static async _executeAppliedEffects(actor, hook) {
     if (!EffectMethods.isExecutor(actor)) return;
-    for (const e of actor.appliedEffects.filter(e => e.hasMacro(hook))) await e.callMacro(hook);
+    for (const e of actor.appliedEffects.filter(e => hasMacro.call(e, hook))) await callMacro(e, hook);
   }
 
   /**

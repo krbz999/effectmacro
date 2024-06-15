@@ -1,7 +1,7 @@
-import {EffectMethods} from "../../effectMethods.mjs";
+import {EffectMethods, callMacro, hasMacro} from "../../effectMethods.mjs";
 
 export class SystemDND5E {
-  /* Initialize module. */
+  /* Initialize the submodule. */
   static init() {
     if (game.system.id !== "dnd5e") return;
     Hooks.on("dnd5e.restCompleted", SystemDND5E.restCompleted.bind("dnd5e.restCompleted"));
@@ -24,8 +24,8 @@ export class SystemDND5E {
    */
   static async _filterAndCall(actor, hook, context) {
     if (!EffectMethods.isExecutor(actor)) return;
-    for (const e of actor.appliedEffects.filter(e => e.hasMacro(hook))) {
-      await e.callMacro(hook, context);
+    for (const e of actor.appliedEffects.filter(e => hasMacro.call(e, hook))) {
+      await callMacro(e, hook, context);
     }
   }
 

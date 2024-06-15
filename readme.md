@@ -35,13 +35,12 @@ By default, these variables are pre-defined in any effect macro.
 * `speaker`: The 'speaker' object normally used in chat messages, speaking as the `actor` if they exist.
 * `item`: If the effect is on an item and not an actor, this is that, otherwise `null`.
 
-## Added functions
-A set of async functions have been added to active effects.
-* `ActiveEffect#callMacro(type, context={})` calls a macro embedded in the effect of the specific type. The `context` object can be used to pass additional parameters to the script, and can be referenced with `this`.
-* `ActiveEffect#hasMacro(type)` returns true or false whether or not an effect has a macro of the given type.
-* `ActiveEffect#removeMacro(type)` removes a macro of the given type from the effect.
-* `ActiveEffect#createMacro(type, script)` creates an embedded macro of the given type inside the effect. Identical to using the provided interface and writing a macro there. The provided script can be a function or a string.
-* `ActiveEffect#updateMacro(type, script)` updates a macro of the given type on an effect. In most cases functionally identical to `createMacro`, and will remove the embedded macro if no script is provided. The provided script can be a function or a string.
+## API
+An async function is available:
+```js
+game.modules.get("effectmacro").api.callMacro(effect, type="never", context={})
+```
+which calls the macro of that type off the effect, with the added optional context which can be referred to as `this`.
 
 ## System Specific Triggers
 The module works in every system that has Active Effect support, however it can leverage system-specific hooks as well, if added. These are the system-specific hooks added so far:
