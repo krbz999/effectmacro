@@ -1,6 +1,7 @@
 {
   "EFFECTMACRO.AddAnother": "Adicionar outro",
   "EFFECTMACRO.CombatTriggers": "Gatilhos de Combate",
+  "EFFECTMACRO.DeletePrompt": "Excluir este macro?",
   "EFFECTMACRO.dnd5e.longRest": "Em Descansos Longos",
   "EFFECTMACRO.dnd5e.rollAbilitySave": "Em Salvaguardas",
   "EFFECTMACRO.dnd5e.rollAbilityTest": "Em Testes de Atributo",
@@ -11,7 +12,10 @@
   "EFFECTMACRO.dnd5e.rollSkill": "Em Testes de Perícia",
   "EFFECTMACRO.dnd5e.rollToolCheck": "Em Testes com Ferramentas",
   "EFFECTMACRO.dnd5e.shortRest": "Em Descansos Curtos",
+  "EFFECTMACRO.dnd5e.healActor": "Ao ser Curado",
+  "EFFECTMACRO.dnd5e.damageActor": "Ao Sofrer Dano",
   "EFFECTMACRO.EffectTriggers": "Gatilhos de Efeitos",
+  "EFFECTMACRO.MacroSheet": "Macro de Efeito: {name}",
   "EFFECTMACRO.ModuleTitle": "Macro de Efeito",
   "EFFECTMACRO.never": "Nunca Automaticamente",
   "EFFECTMACRO.NoScriptProvided": "Você não forneceu uma função.",
