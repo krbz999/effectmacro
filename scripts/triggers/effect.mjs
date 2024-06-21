@@ -108,7 +108,7 @@ export class EffectTriggers {
       const toggled = toggledOff || toggledOn;
 
       if (toggledOff && hasMacro.call(effect, "onDisable")) await callMacro(effect, "onDisable");
-      if (toggledOn && hasMacro.call(effect, "onEnable")) await callMacroall(effect, "onEnable");
+      if (toggledOn && hasMacro.call(effect, "onEnable")) await callMacro(effect, "onEnable");
       if (toggled && hasMacro.call(effect, "onToggle")) await callMacro(effect, "onToggle");
     }
   }

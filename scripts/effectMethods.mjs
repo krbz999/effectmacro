@@ -2,6 +2,7 @@ import {MODULE} from "./constants.mjs";
 
 /**
  * Call a specific type of script in an effect.
+ * @param {ActiveEffect} effect   The triggering effect.
  * @param {string} [type]         The trigger of the script (default "never").
  * @param {object} [context]      Additional arguments to pass to the macro.
  */
