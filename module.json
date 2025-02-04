@@ -1,34 +1,42 @@
 {
-  "id": "effectmacro",
-  "title": "Effect Macro",
-  "version": "AUTOMATIC",
-  "authors": [
-    {
-      "name": "Zhell",
-      "url": "https://github.com/krbz999",
-      "discord": "zhell9201",
-      "ko-fi": "https://ko-fi.com/zhell",
-      "patreon": "https://patreon.com/zhell"
-    }
-  ],
-  "compatibility": {"minimum": "12", "maximum": "12", "verified": "12"},
-  "esmodules": ["scripts/module.mjs"],
-  "styles": ["styles/styles.css"],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json",
-      "flags": {}
+    "id": "effectmacro",
+    "title": "Effect Macro",
+    "version": "12.1.2",
+    "authors": [
+        {
+            "name": "Zhell",
+            "url": "https://github.com/krbz999",
+            "discord": "zhell9201",
+            "ko-fi": "https://ko-fi.com/zhell",
+            "patreon": "https://patreon.com/zhell"
+        }
+    ],
+    "compatibility": {
+        "minimum": "12",
+        "maximum": "12",
+        "verified": "12"
     },
-    {
-      "lang": "pt-BR",
-      "name": "Português (Brasil)",
-      "path": "lang/pt-BR.json",
-      "flags": {}
-    }
-  ],
-  "url": "https://github.com/krbz999/effectmacro",
-  "manifest": "https://github.com/krbz999/effectmacro/releases/latest/download/module.json",
-  "download": "AUTOMATIC"
+    "esmodules": [
+        "module.mjs"
+    ],
+    "styles": [
+        "styles/styles.css"
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json",
+            "flags": {}
+        },
+        {
+            "lang": "pt-BR",
+            "name": "Português (Brasil)",
+            "path": "lang/pt-BR.json",
+            "flags": {}
+        }
+    ],
+    "url": "https://github.com/krbz999/effectmacro",
+    "manifest": "https://github.com/krbz999/effectmacro/releases/latest/download/module.json",
+    "download": "https://github.com/krbz999/effectmacro/releases/download/v12.1.1/module.zip"
 }
