@@ -1,5 +1,5 @@
-import {MODULE} from "../constants.mjs";
-import {EffectMethods, callMacro, hasMacro} from "../effectMethods.mjs";
+import { MODULE } from "../constants.mjs";
+import { EffectMethods, callMacro, hasMacro } from "../effectMethods.mjs";
 
 export class CombatTriggers {
   /* Initialize the module. */
@@ -46,7 +46,7 @@ export class CombatTriggers {
     roundForward = turnForward && (cRound > pRound);
     combatStarted = combat.started && !foundry.utils.getProperty(options, `${MODULE}.started`);
 
-    return {turnForward, roundForward, combatStarted};
+    return { turnForward, roundForward, combatStarted };
   }
 
   /**
@@ -61,7 +61,7 @@ export class CombatTriggers {
     foundry.utils.setProperty(options, path, previousId);
 
     const prevPath = `${MODULE}.previousTR`;
-    const prevTR = {T: combat.turn, R: combat.round};
+    const prevTR = { T: combat.turn, R: combat.round };
     foundry.utils.setProperty(options, prevPath, prevTR);
 
     const startedPath = `${MODULE}.started`;
@@ -89,7 +89,7 @@ export class CombatTriggers {
    */
   static async updateCombat(combat, update, options) {
 
-    const {turnForward, roundForward, combatStarted} = CombatTriggers._determineCombatState(combat, update, options);
+    const { turnForward, roundForward, combatStarted } = CombatTriggers._determineCombatState(combat, update, options);
     const undefeated = combat.combatants.filter(c => !c.isDefeated);
 
     if (turnForward) {

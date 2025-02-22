@@ -1,9 +1,9 @@
-import {MODULE, TRIGGERS} from "./constants.mjs";
-import {hasMacro, removeMacro} from "./effectMethods.mjs";
-const {HandlebarsApplicationMixin, DocumentSheetV2} = foundry.applications.api;
+import { MODULE, TRIGGERS } from "./constants.mjs";
+import { hasMacro, removeMacro } from "./effectMethods.mjs";
+const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
 export class EffectMacroConfig extends HandlebarsApplicationMixin(DocumentSheetV2) {
-  constructor({type, ...options}) {
+  constructor({ type, ...options }) {
     super(options);
     this.#type = type;
   }
@@ -18,26 +18,26 @@ export class EffectMacroConfig extends HandlebarsApplicationMixin(DocumentSheetV
   static DEFAULT_OPTIONS = {
     form: {
       submitOnChange: false,
-      closeOnSubmit: true
+      closeOnSubmit: true,
     },
     window: {
-      icon: "fa-solid fa-code"
+      icon: "fa-solid fa-code",
     },
     position: {
       width: 600,
-      height: "auto"
+      height: "auto",
     },
-    actions: {}
+    actions: {},
   };
 
   /** @override */
   static PARTS = Object.freeze({
-    main: {template: "modules/effectmacro/templates/macro-menu.hbs"}
+    main: { template: "modules/effectmacro/templates/macro-menu.hbs" },
   });
 
   /** @override */
   get title() {
-    return game.i18n.format("EFFECTMACRO.MacroSheet", {name: this.document.name});
+    return game.i18n.format("EFFECTMACRO.MacroSheet", { name: this.document.name });
   }
 
   /** @override */
@@ -56,7 +56,7 @@ export class EffectMacroConfig extends HandlebarsApplicationMixin(DocumentSheetV
 
     const label = `EFFECTMACRO.${this.#type}`;
     context.field = new foundry.data.fields.JavaScriptField({
-      label: `${game.i18n.localize("Command")}: ${game.i18n.localize(label)}`
+      label: `${game.i18n.localize("Command")}: ${game.i18n.localize(label)}`,
     });
     return context;
   }
@@ -73,19 +73,19 @@ export class EffectConfigHandler {
 
       for (const obj of TRIGGERS.agnostic) {
         const [triggers, yay] = obj.triggers.partition(key => hasMacro.call(config.document, key));
-        if (triggers.length) unused.push({label: obj.label, triggers: triggers});
-        used.push(...yay.map(k => ({key: k, label: `EFFECTMACRO.${k}`})));
+        if (triggers.length) unused.push({ label: obj.label, triggers: triggers });
+        used.push(...yay.map(k => ({ key: k, label: `EFFECTMACRO.${k}` })));
       }
 
       const [sys, yay] = (TRIGGERS[game.system.id] ?? []).partition(key => hasMacro.call(config.document, key));
-      if (sys.length) unused.push({label: "EFFECTMACRO.SystemTriggers", triggers: sys});
-      used.push(...yay.map(k => ({key: k, label: `EFFECTMACRO.${k}`})));
+      if (sys.length) unused.push({ label: "EFFECTMACRO.SystemTriggers", triggers: sys });
+      used.push(...yay.map(k => ({ key: k, label: `EFFECTMACRO.${k}` })));
 
-      unused.forEach(u => u.triggers = u.triggers.map(t => ({key: t, label: `EFFECTMACRO.${t}`})));
+      unused.forEach(u => u.triggers = u.triggers.map(t => ({ key: t, label: `EFFECTMACRO.${t}` })));
 
       const div = document.createElement("DIV");
       const template = "modules/effectmacro/templates/effect-sheet.hbs";
-      div.innerHTML = await renderTemplate(template, {used, unused});
+      div.innerHTML = await renderTemplate(template, { used, unused });
 
       div.querySelectorAll("[data-action]").forEach(n => {
         switch (n.dataset.action) {
@@ -94,8 +94,9 @@ export class EffectConfigHandler {
           case "macro-delete": n.addEventListener("click", EffectConfigHandler._onClickMacroDelete.bind(config)); break;
         }
       });
-      html[0].querySelector("section[data-tab='details']").appendChild(div.firstElementChild);
-      config.setPosition({height: "auto"});
+      if (game.release.generation < 13) html = html[0];
+      html.querySelector("section[data-tab='details']").appendChild(div.firstElementChild);
+      if (game.release.generation < 13) config.setPosition({ height: "auto" });
     });
   }
 
@@ -109,14 +110,14 @@ export class EffectConfigHandler {
     const confirm = await foundry.applications.api.DialogV2.confirm({
       window: {
         title: "EFFECTMACRO.DeletePrompt",
-        icon: "fa-solid fa-code"
+        icon: "fa-solid fa-code",
       },
       rejectClose: false,
-      modal: true
+      modal: true,
     });
     if (!confirm) return;
 
-    await this.submit({preventClose: true});
+    await this.submit({ preventClose: true });
     return removeMacro.call(this.document, key);
   }
 
@@ -127,7 +128,7 @@ export class EffectConfigHandler {
    */
   static _onClickMacroEdit(event) {
     const key = event.currentTarget.dataset.key;
-    return new EffectMacroConfig({document: this.document, type: key}).render({force: true});
+    return new EffectMacroConfig({ document: this.document, type: key }).render({ force: true });
   }
 
   /**
@@ -137,6 +138,6 @@ export class EffectConfigHandler {
    */
   static _onClickMacroAdd(event) {
     const key = event.currentTarget.closest(".form-fields").querySelector(".unused-option").value;
-    return new EffectMacroConfig({document: this.document, type: key}).render({force: true});
+    return new EffectMacroConfig({ document: this.document, type: key }).render({ force: true });
   }
 }

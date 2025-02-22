@@ -1,4 +1,4 @@
-import {MODULE} from "./constants.mjs";
+import { MODULE } from "./constants.mjs";
 
 /**
  * Call a specific type of script in an effect.
@@ -19,7 +19,7 @@ export async function callMacro(effect, type = "never", context = {}) {
 async function _callMacro(type = "never", context = {}) {
   const script = this.getFlag(MODULE, `${type}.script`);
   if (!script) {
-    ui.notifications.warn("EFFECTMACRO.NoSuchScript", {localize: true});
+    ui.notifications.warn("EFFECTMACRO.NoSuchScript", { localize: true });
     return;
   }
   const variables = EffectMethods._getHelperVariables(this);
@@ -63,7 +63,7 @@ export async function removeMacro(type = "never") {
  */
 export async function createMacro(type = "never", script) {
   if (!script) {
-    ui.notifications.warn("EFFECTMACRO.NoScriptProvided", {localize: true});
+    ui.notifications.warn("EFFECTMACRO.NoScriptProvided", { localize: true });
     return;
   } else if (script instanceof Function) {
     return this.setFlag(MODULE, `${type}.script`, `(
@@ -101,9 +101,9 @@ export class EffectMethods {
     let token = actor?.token?.object ?? actor?.getActiveTokens()[0] ?? null;
     let scene = token?.scene ?? game.scenes.active ?? null;
     let origin = effect.origin ? fromUuidSync(effect.origin) : null;
-    let speaker = actor ? ChatMessage.implementation.getSpeaker({actor}) : {};
+    let speaker = actor ? ChatMessage.implementation.getSpeaker({ actor }) : {};
     let item = effect.parent instanceof Item ? effect.parent : null;
-    return {token, character, actor, speaker, scene, origin, effect, item};
+    return { token, character, actor, speaker, scene, origin, effect, item };
   }
 
   /**

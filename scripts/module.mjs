@@ -1,8 +1,8 @@
-import {callMacro} from "./effectMethods.mjs";
-import {EffectConfigHandler} from "./macroConfig.mjs";
-import {CombatTriggers} from "./triggers/combat.mjs";
-import {EffectTriggers} from "./triggers/effect.mjs";
-import {SystemDND5E} from "./triggers/systems/dnd5e.mjs";
+import { callMacro } from "./effectMethods.mjs";
+import { EffectConfigHandler } from "./macroConfig.mjs";
+import { CombatTriggers } from "./triggers/combat.mjs";
+import { EffectTriggers } from "./triggers/effect.mjs";
+import { SystemDND5E } from "./triggers/systems/dnd5e.mjs";
 
 class EffectMacro {
   static MODULE = "effectmacro";
@@ -12,7 +12,7 @@ class EffectMacro {
     EffectMacro.registerSettings();
 
     game.modules.get(EffectMacro.MODULE).api = {
-      callMacro: callMacro
+      callMacro: callMacro,
     };
   }
 
@@ -27,7 +27,7 @@ class EffectMacro {
       config: true,
       type: Boolean,
       default: false,
-      requiresReload: true
+      requiresReload: true,
     });
   }
 }

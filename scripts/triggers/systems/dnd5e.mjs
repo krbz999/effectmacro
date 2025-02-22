@@ -1,4 +1,4 @@
-import {EffectMethods, callMacro, hasMacro} from "../../effectMethods.mjs";
+import { EffectMethods, callMacro, hasMacro } from "../../effectMethods.mjs";
 
 export class SystemDND5E {
   /* Initialize the submodule. */
@@ -31,43 +31,43 @@ export class SystemDND5E {
 
   static rollAttack(item, roll, ammoUpdate) {
     if (!item) return;
-    return SystemDND5E._filterAndCall(item.actor, this, {item, roll, ammoUpdate});
+    return SystemDND5E._filterAndCall(item.actor, this, { item, roll, ammoUpdate });
   }
 
   static rollAbilitySave(actor, roll, abilityId) {
-    return SystemDND5E._filterAndCall(actor, this, {roll, abilityId});
+    return SystemDND5E._filterAndCall(actor, this, { roll, abilityId });
   }
 
   static rollDeathSave(actor, roll, updates) {
-    return SystemDND5E._filterAndCall(actor, this, {roll, updates});
+    return SystemDND5E._filterAndCall(actor, this, { roll, updates });
   }
 
   static rollAbilityTest(actor, roll, abilityId) {
-    return SystemDND5E._filterAndCall(actor, this, {roll, abilityId});
+    return SystemDND5E._filterAndCall(actor, this, { roll, abilityId });
   }
 
   static rollSkill(actor, roll, skillId) {
-    return SystemDND5E._filterAndCall(actor, this, {roll, skillId});
+    return SystemDND5E._filterAndCall(actor, this, { roll, skillId });
   }
 
   static rollDamage(item, roll) {
     if (!item) return;
-    return SystemDND5E._filterAndCall(item.actor, this, {item, roll});
+    return SystemDND5E._filterAndCall(item.actor, this, { item, roll });
   }
 
   static rollToolCheck(actor, roll, toolId) {
-    return SystemDND5E._filterAndCall(actor, this, {roll, toolId});
+    return SystemDND5E._filterAndCall(actor, this, { roll, toolId });
   }
 
   static restCompleted(actor, data) {
-    return SystemDND5E._filterAndCall(actor, data.longRest ? "dnd5e.longRest" : "dnd5e.shortRest", {data});
+    return SystemDND5E._filterAndCall(actor, data.longRest ? "dnd5e.longRest" : "dnd5e.shortRest", { data });
   }
 
   static healActor(actor, changes, update, userId) {
-    return SystemDND5E._filterAndCall(actor, this, {changes, update, userId});
+    return SystemDND5E._filterAndCall(actor, this, { changes, update, userId });
   }
 
   static damageActor(actor, changes, update, userId) {
-    return SystemDND5E._filterAndCall(actor, this, {changes, update, userId});
+    return SystemDND5E._filterAndCall(actor, this, { changes, update, userId });
   }
 }

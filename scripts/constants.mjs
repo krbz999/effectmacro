@@ -8,8 +8,8 @@ export const TRIGGERS = {
         "onDelete",
         "onToggle",
         "onEnable",
-        "onDisable"
-      ]
+        "onDisable",
+      ],
     },
     {
       label: "EFFECTMACRO.CombatTriggers",
@@ -21,15 +21,15 @@ export const TRIGGERS = {
         "onRoundEnd",
         "onCombatStart",
         "onCombatEnd",
-        "onCombatantDefeated"
-      ]
+        "onCombatantDefeated",
+      ],
     },
     {
       label: "EFFECTMACRO.OtherTriggers",
       triggers: [
-        "never"
-      ]
-    }
+        "never",
+      ],
+    },
   ],
   dnd5e: [
     "dnd5e.rollAttack",
@@ -42,6 +42,6 @@ export const TRIGGERS = {
     "dnd5e.shortRest",
     "dnd5e.longRest",
     "dnd5e.healActor",
-    "dnd5e.damageActor"
-  ]
+    "dnd5e.damageActor",
+  ],
 };

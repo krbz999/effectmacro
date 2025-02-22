@@ -1,5 +1,5 @@
-import {MODULE} from "../constants.mjs";
-import {EffectMethods, callMacro, hasMacro} from "../effectMethods.mjs";
+import { MODULE } from "../constants.mjs";
+import { EffectMethods, callMacro, hasMacro } from "../effectMethods.mjs";
 
 export class EffectTriggers {
   /**
