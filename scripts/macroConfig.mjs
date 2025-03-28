@@ -8,13 +8,17 @@ export class EffectMacroConfig extends HandlebarsApplicationMixin(DocumentSheetV
     this.#type = type;
   }
 
+  /* -------------------------------------------------- */
+
   /**
    * The macro type.
    * @type {string}
    */
   #type = null;
 
-  /** @override */
+  /* -------------------------------------------------- */
+
+  /** @inheritdoc */
   static DEFAULT_OPTIONS = {
     form: {
       submitOnChange: false,
@@ -30,24 +34,34 @@ export class EffectMacroConfig extends HandlebarsApplicationMixin(DocumentSheetV
     actions: {},
   };
 
-  /** @override */
-  static PARTS = Object.freeze({
-    main: { template: "modules/effectmacro/templates/macro-menu.hbs" },
-  });
+  /* -------------------------------------------------- */
 
-  /** @override */
+  /** @inheritdoc */
+  static PARTS = {
+    main: {
+      template: "modules/effectmacro/templates/macro-menu.hbs",
+    },
+  };
+
+  /* -------------------------------------------------- */
+
+  /** @inheritdoc */
   get title() {
     return game.i18n.format("EFFECTMACRO.MacroSheet", { name: this.document.name });
   }
 
-  /** @override */
+  /* -------------------------------------------------- */
+
+  /** @inheritdoc */
   _initializeApplicationOptions(options) {
     options = super._initializeApplicationOptions(options);
     options.uniqueId = `${this.constructor.name}-${options.document.uuid}-${options.type}`;
     return options;
   }
 
-  /** @override */
+  /* -------------------------------------------------- */
+
+  /** @inheritdoc */
   async _prepareContext(options) {
     const context = {};
 
@@ -58,7 +72,16 @@ export class EffectMacroConfig extends HandlebarsApplicationMixin(DocumentSheetV
     context.field = new foundry.data.fields.JavaScriptField({
       label: `${game.i18n.localize("Command")}: ${game.i18n.localize(label)}`,
     });
+
     return context;
+  }
+
+  /* -------------------------------------------------- */
+
+  /** @inheritdoc */
+  async _processSubmitData(event, form, submitData, options = {}) {
+    if (this.document.sheet.rendered) await this.document.sheet.submit();
+    return super._processSubmitData(event, form, submitData, options);
   }
 }
 
@@ -95,7 +118,9 @@ export class EffectConfigHandler {
         }
       });
       if (game.release.generation < 13) html = html[0];
-      html.querySelector("section[data-tab='details']").appendChild(div.firstElementChild);
+      const tab = html.querySelector("section[data-tab='details']");
+      tab.appendChild(div.firstElementChild);
+      if (game.release.generation >= 13) tab.classList.add("scrollable");
       if (game.release.generation < 13) config.setPosition({ height: "auto" });
     });
   }
