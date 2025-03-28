@@ -10,6 +10,8 @@ export async function callMacro(effect, type = "never", context = {}) {
   return _callMacro.call(effect, type, context);
 }
 
+/* -------------------------------------------------- */
+
 /**
  * Internal method to call a specific type of script in an effect.
  * @this {ActiveEffect}

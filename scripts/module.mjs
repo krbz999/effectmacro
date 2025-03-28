@@ -5,9 +5,17 @@ import { EffectTriggers } from "./triggers/effect.mjs";
 import { SystemDND5E } from "./triggers/systems/dnd5e.mjs";
 
 class EffectMacro {
+  /**
+   * Package id.
+   * @type {string}
+   */
   static MODULE = "effectmacro";
 
-  /* Initialize module. */
+  /* -------------------------------------------------- */
+
+  /**
+   * Initialize module.
+   */
   static init() {
     EffectMacro.registerSettings();
 
@@ -15,6 +23,8 @@ class EffectMacro {
       callMacro: callMacro,
     };
   }
+
+  /* -------------------------------------------------- */
 
   /**
    * Register the module settings.
@@ -25,8 +35,7 @@ class EffectMacro {
       hint: "EFFECTMACRO.SettingRestrictPermissionHint",
       scope: "world",
       config: true,
-      type: Boolean,
-      default: false,
+      type: new foundry.data.fields.BooleanField(),
       requiresReload: true,
     });
   }

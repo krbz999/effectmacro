@@ -1,2 +1,5 @@
-effectmacro.lock
+packs/
+*.lock
 node_modules/
+foundry
+foundry-config.yaml
