@@ -1,143 +1,158 @@
-import { MODULE } from "../constants.mjs";
-import { EffectMethods, callMacro, hasMacro } from "../effectMethods.mjs";
 
-export class EffectTriggers {
-  /**
-   * Is legacy transfer of effects turned on?
-   * @type {boolean}
-   */
-  static get isLegacy() {
-    return CONFIG.ActiveEffect.legacyTransferral;
+export default function init() {
+  Hooks.on("createActiveEffect", onCreateDelete.bind("onCreate"));
+  Hooks.on("deleteActiveEffect", onCreateDelete.bind("onDelete"));
+  Hooks.on("preUpdateActiveEffect", preUpdate);
+  Hooks.on("updateActiveEffect", onUpdate);
+
+  // Item triggers.
+  Hooks.on("preUpdateItem", preUpdateItem);
+  Hooks.on("updateItem", updateItem);
+  Hooks.on("deleteItem", deleteItem);
+  Hooks.on("createItem", createItem);
+}
+
+/* -------------------------------------------------- */
+
+/**
+ * Execute effect toggle triggers.
+ * @param {ActiveEffect} effect     The effect updated.
+ * @param {object} update           The update performed.
+ * @param {object} context          The update options.
+ */
+async function onUpdate(effect, update, context) {
+  if (CONFIG.ActiveEffect.legacyTransferral && (effect.parent instanceof Item)) return;
+
+  const run = effectmacro.utils.isExecutor(effect.parent);
+  if (!run) return false;
+
+  const path = `${effectmacro.id}.${effect.id}.wasOn`;
+  const isOn = effect.modifiesActor;
+  const wasOn = foundry.utils.getProperty(context, path);
+  const toggledOff = wasOn && !isOn;
+  const toggledOn = !wasOn && isOn;
+
+  if (toggledOff && effectmacro.utils.hasMacro(effect, "onDisable"))
+    await effectmacro.utils.callMacro(effect, "onDisable");
+
+  if (toggledOn && effectmacro.utils.hasMacro(effect, "onEnable"))
+    await effectmacro.utils.callMacro(effect, "onEnable");
+
+  if ((toggledOff || toggledOn) && effectmacro.utils.hasMacro(effect, "onToggle"))
+    await effectmacro.utils.callMacro(effect, "onToggle");
+}
+
+/* -------------------------------------------------- */
+
+/**
+ * Save relevant data on effect update.
+ * @param {ActiveEffect} effect     The effect updated.
+ * @param {object} update           The update performed.
+ * @param {object} context          The update options.
+ */
+function preUpdate(effect, update, context) {
+  if (CONFIG.ActiveEffect.legacyTransferral && (effect.parent instanceof Item)) return;
+  const path = `${effectmacro.id}.${effect.id}.wasOn`;
+  foundry.utils.setProperty(context, path, effect.modifiesActor);
+}
+
+/* -------------------------------------------------- */
+
+/**
+ * Execute effect creation / deletion triggers.
+ * @this {string}
+ * @param {ActiveEffect} effect     The effect created or deleted.
+ */
+async function onCreateDelete(effect) {
+  const u = effectmacro.utils;
+  if (effect.modifiesActor && u.hasMacro(effect, this) && u.isExecutor(effect.parent)) {
+    return u.callMacro(effect, this);
   }
+}
 
-  /* Initialize module. */
-  static init() {
-    Hooks.on("createActiveEffect", EffectTriggers.onCreateDelete.bind("onCreate"));
-    Hooks.on("deleteActiveEffect", EffectTriggers.onCreateDelete.bind("onDelete"));
-    Hooks.on("preUpdateActiveEffect", EffectTriggers.preUpdate);
-    Hooks.on("updateActiveEffect", EffectTriggers.onUpdate);
+/* -------------------------------------------------- */
 
-    // Item triggers.
-    Hooks.on("preUpdateItem", EffectTriggers.preUpdateItem);
-    Hooks.on("updateItem", EffectTriggers.updateItem);
-    Hooks.on("deleteItem", EffectTriggers.deleteItem);
-    Hooks.on("createItem", EffectTriggers.createItem);
-  }
+/**
+ * When an item is updated, read whether its effects have started or stopped applying.
+ * @param {Item} item           The item updated.
+ * @param {object} update       The update performed.
+ * @param {object} context      The update options.
+ */
+function preUpdateItem(item, update, context) {
+  if (!item.isEmbedded) return;
+  const collection = CONFIG.ActiveEffect.legacyTransferral
+    ? item.actor.effects.filter(e => e.origin === item.uuid)
+    : item.effects;
+  collection.forEach(e => foundry.utils.setProperty(context, `${effectmacro.id}.${e.id}.wasOn`, e.modifiesActor));
+}
 
-  /**
-   * Execute effect toggle triggers.
-   * @param {ActiveEffect} effect     The effect updated.
-   * @param {object} update           The update performed.
-   * @param {object} context          The update options.
-   */
-  static async onUpdate(effect, update, context) {
-    if (EffectTriggers.isLegacy && (effect.parent instanceof Item)) return;
+/* -------------------------------------------------- */
 
-    const run = EffectMethods.isExecutor(effect.parent);
-    if (!run) return false;
+/**
+ * Execute effect toggles if an item update results in an effect changing whether it affects an actor.
+ * @param {Item} item           The item updated.
+ * @param {object} update       The update performed.
+ * @param {object} context      The update options.
+ */
+async function updateItem(item, update, context) {
+  if (!item.isEmbedded) return;
+  const run = effectmacro.utils.isExecutor(item.actor);
+  if (!run) return;
 
-    const path = `${MODULE}.${effect.id}.wasOn`;
+  const u = effectmacro.utils;
+
+  const ids = Object.keys(context[effectmacro.id] ?? {});
+  if (!ids.length) return;
+  const collection = CONFIG.ActiveEffect.legacyTransferral ? item.actor.effects : item.effects;
+  const effects = ids.map(id => collection.get(id));
+
+  for (const effect of effects) {
+    if (!effect) continue;
     const isOn = effect.modifiesActor;
-    const wasOn = foundry.utils.getProperty(context, path);
+    const wasOn = foundry.utils.getProperty(context, `${effectmacro.id}.${effect.id}.wasOn`);
     const toggledOff = wasOn && !isOn;
     const toggledOn = !wasOn && isOn;
     const toggled = toggledOff || toggledOn;
 
-    if (toggledOff && hasMacro.call(effect, "onDisable")) await callMacro(effect, "onDisable");
-    if (toggledOn && hasMacro.call(effect, "onEnable")) await callMacro(effect, "onEnable");
-    if (toggled && hasMacro.call(effect, "onToggle")) await callMacro(effect, "onToggle");
+    if (toggledOff && u.hasMacro(effect, "onDisable"))
+      await u.callMacro(effect, "onDisable");
+
+    if (toggledOn && u.hasMacro(effect, "onEnable"))
+      await u.callMacro(effect, "onEnable");
+
+    if (toggled && u.hasMacro(effect, "onToggle"))
+      await u.callMacro(effect, "onToggle");
   }
+}
 
-  /**
-   * Save relevant data on effect update.
-   * @param {ActiveEffect} effect     The effect updated.
-   * @param {object} update           The update performed.
-   * @param {object} context          The update options.
-   */
-  static preUpdate(effect, update, context) {
-    if (EffectTriggers.isLegacy && (effect.parent instanceof Item)) return;
-    const path = `${MODULE}.${effect.id}.wasOn`;
-    foundry.utils.setProperty(context, path, effect.modifiesActor);
-  }
+/* -------------------------------------------------- */
 
-  /**
-   * Execute effect creation / deletion triggers.
-   * @this {string}
-   * @param {ActiveEffect} effect     The effect created or deleted.
-   */
-  static async onCreateDelete(effect) {
-    if (effect.modifiesActor && hasMacro.call(effect, this) && EffectMethods.isExecutor(effect.parent)) {
-      return callMacro(effect, this);
-    }
-  }
+/**
+ * Execute effect deletion triggers when the parent item is deleted. This only applies to non-legacy transfer systems.
+ * @param {Item} item     The item being deleted.
+ * @param {object} options      Update options.
+ */
+async function deleteItem(item, options) {
+  if (!item.isEmbedded || CONFIG.ActiveEffect.legacyTransferral) return;
+  const run = effectmacro.utils.isExecutor(item.actor);
+  if (!run) return;
 
-  /**
-   * When an item is updated, read whether its effects have started or stopped applying.
-   * @param {Item} item           The item updated.
-   * @param {object} update       The update performed.
-   * @param {object} context      The update options.
-   */
-  static preUpdateItem(item, update, context) {
-    if (!item.isEmbedded) return;
-    const collection = EffectTriggers.isLegacy ? item.actor.effects.filter(e => e.origin === item.uuid) : item.effects;
-    collection.forEach(e => foundry.utils.setProperty(context, `${MODULE}.${e.id}.wasOn`, e.modifiesActor));
-  }
+  const effects = item.effects.filter(e => e.modifiesActor && effectmacro.utils.hasMacro(e, "onDelete"));
+  for (const effect of effects) await effectmacro.utils.callMacro(effect, "onDelete");
+}
 
-  /**
-   * Execute effect toggles if an item update results in an effect changing whether it affects an actor.
-   * @param {Item} item           The item updated.
-   * @param {object} update       The update performed.
-   * @param {object} context      The update options.
-   */
-  static async updateItem(item, update, context) {
-    if (!item.isEmbedded) return;
-    const run = EffectMethods.isExecutor(item.actor);
-    if (!run) return;
+/* -------------------------------------------------- */
 
-    const ids = Object.keys(context[MODULE] ?? {});
-    if (!ids.length) return;
-    const collection = EffectTriggers.isLegacy ? item.actor.effects : item.effects;
-    const effects = ids.map(id => collection.get(id));
+/**
+ * Execute effect creation triggers when the parent item is created. This only applies to non-legacy transfer systems.
+ * @param {Item} item           The item that was created.
+ * @param {object} options      Update options.
+ */
+async function createItem(item, options) {
+  if (!item.isEmbedded || CONFIG.ActiveEffect.legacyTransferral) return;
+  const run = effectmacro.utils.isExecutor(item.actor);
+  if (!run) return;
 
-    for (const effect of effects) {
-      if (!effect) continue;
-      const isOn = effect.modifiesActor;
-      const wasOn = foundry.utils.getProperty(context, `${MODULE}.${effect.id}.wasOn`);
-      const toggledOff = wasOn && !isOn;
-      const toggledOn = !wasOn && isOn;
-      const toggled = toggledOff || toggledOn;
-
-      if (toggledOff && hasMacro.call(effect, "onDisable")) await callMacro(effect, "onDisable");
-      if (toggledOn && hasMacro.call(effect, "onEnable")) await callMacro(effect, "onEnable");
-      if (toggled && hasMacro.call(effect, "onToggle")) await callMacro(effect, "onToggle");
-    }
-  }
-
-  /**
-   * Execute effect deletion triggers when the parent item is deleted. This only applies to non-legacy transfer systems.
-   * @param {Item} item     The item being deleted.
-   * @param {object} options      Update options.
-   */
-  static async deleteItem(item, options) {
-    if (!item.isEmbedded || EffectTriggers.isLegacy) return;
-    const run = EffectMethods.isExecutor(item.actor);
-    if (!run) return;
-
-    const effects = item.effects.filter(e => e.modifiesActor && hasMacro.call(e, "onDelete"));
-    for (const effect of effects) await callMacro(effect, "onDelete");
-  }
-
-  /**
-   * Execute effect creation triggers when the parent item is created. This only applies to non-legacy transfer systems.
-   * @param {Item} item           The item that was created.
-   * @param {object} options      Update options.
-   */
-  static async createItem(item, options) {
-    if (!item.isEmbedded || EffectTriggers.isLegacy) return;
-    const run = EffectMethods.isExecutor(item.actor);
-    if (!run) return;
-
-    const effects = item.effects.filter(e => e.modifiesActor && hasMacro.call(e, "onCreate"));
-    for (const effect of effects) await callMacro(effect, "onCreate");
-  }
+  const effects = item.effects.filter(e => e.modifiesActor && effectmacro.utils.hasMacro(e, "onCreate"));
+  for (const effect of effects) await effectmacro.utils.callMacro(effect, "onCreate");
 }

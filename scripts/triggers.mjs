@@ -1,4 +1,3 @@
-export const MODULE = "effectmacro";
 export const TRIGGERS = {
   agnostic: [
     {

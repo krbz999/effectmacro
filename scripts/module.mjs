@@ -1,48 +1,15 @@
-import { callMacro } from "./effectMethods.mjs";
-import { EffectConfigHandler } from "./macroConfig.mjs";
-import { CombatTriggers } from "./triggers/combat.mjs";
-import { EffectTriggers } from "./triggers/effect.mjs";
-import { SystemDND5E } from "./triggers/systems/dnd5e.mjs";
+import * as applications from "./applications/_module.mjs";
+import * as hooks from "./hooks/_module.mjs";
+import * as utils from "./utils/utils.mjs";
+import * as triggers from "./triggers/_module.mjs";
 
-class EffectMacro {
-  /**
-   * Package id.
-   * @type {string}
-   */
-  static MODULE = "effectmacro";
+globalThis.effectmacro = {
+  id: "effectmacro",
+  applications,
+  utils,
+};
 
-  /* -------------------------------------------------- */
-
-  /**
-   * Initialize module.
-   */
-  static init() {
-    EffectMacro.registerSettings();
-
-    game.modules.get(EffectMacro.MODULE).api = {
-      callMacro: callMacro,
-    };
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
-   * Register the module settings.
-   */
-  static registerSettings() {
-    game.settings.register(EffectMacro.MODULE, "restrictPermissions", {
-      name: "EFFECTMACRO.SettingRestrictPermission",
-      hint: "EFFECTMACRO.SettingRestrictPermissionHint",
-      scope: "world",
-      config: true,
-      type: new foundry.data.fields.BooleanField(),
-      requiresReload: true,
-    });
-  }
-}
-
-Hooks.once("init", EffectMacro.init);
-Hooks.once("init", EffectTriggers.init);
-Hooks.once("init", CombatTriggers.init);
-Hooks.once("init", EffectConfigHandler.registerMacroConfig);
-Hooks.once("init", SystemDND5E.init);
+for (const [hook, fn] of Object.entries(hooks)) Hooks.on(hook, fn);
+triggers.combat();
+triggers.effect();
+for (const sys of Object.values(triggers.systems)) Hooks.once("setup", sys);

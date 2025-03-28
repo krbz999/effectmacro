@@ -35,13 +35,6 @@ By default, these variables are pre-defined in any effect macro.
 * `speaker`: The 'speaker' object normally used in chat messages, speaking as the `actor` if they exist.
 * `item`: If the effect is on an item and not an actor, this is that, otherwise `null`.
 
-## API
-An async function is available:
-```js
-game.modules.get("effectmacro").api.callMacro(effect, type="never", context={})
-```
-which calls the macro of that type off the effect, with the added optional context which can be referred to as `this`.
-
 ## System Specific Triggers
 The module works in every system that has Active Effect support, however it can leverage system-specific hooks as well, if added. These are the system-specific hooks added so far:
 * `dnd5e`. When you make an attack roll (`dnd5e.rollAttack`), when you roll damage (`dnd5e.rollDamage`), when you make a saving throw/death saving throw (`dnd5e.rollAbilitySave` and `dnd5e.rollDeathSave`), and when you make an ability check, skill check, tool check (`dnd5e.rollAbilityTest`, `dnd5e.rollSkill`, `dnd5e.rollToolCheck`), or when you take a rest (`dnd5e.shortRest`, `dnd5e.longRest`), or an actor is healed or damaged (`dnd5e.damageActor`, `dnd5e.healActor`). The arguments passed to the system hooks are passed to the macro as well and can be accessed with `this`.
