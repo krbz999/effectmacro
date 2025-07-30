@@ -1,9 +1,9 @@
 /**
  * Call a specific type of script in an effect.
- * @param {InstanceType<foundry["documents"]["ActiveEffect"]} effect    The effect.
- * @param {string} [type]       The trigger of the script (default "never").
- * @param {object} [context]    Additional arguments to pass to the macro.
- * @returns {Promise<any>}      A promise that resolves once the macro has executed.
+ * @param {foundry.documents.ActiveEffect} effect   The effect.
+ * @param {string} [type="never"]                   The trigger of the script.
+ * @param {object} [context={}]                     Additional arguments to pass to the macro.
+ * @returns {Promise<*>}                            A promise that resolves once the macro has executed.
  */
 export async function callMacro(effect, type = "never", context = {}) {
   return _callMacro(effect, type, context);
@@ -13,9 +13,10 @@ export async function callMacro(effect, type = "never", context = {}) {
 
 /**
  * Internal method to call a specific type of script in an effect.
- * @param {InstanceType<foundry["documents"]["ActiveEffect"]} effect    The effect.
- * @param {string} [type]         The trigger of the script (default "never").
- * @param {object} [context]      Additional arguments to pass to the macro.
+ * @param {foundry.documents.ActiveEffect} effect   The effect.
+ * @param {string} [type="never"]                   The trigger of the script.
+ * @param {object} [context={}]                     Additional arguments to pass to the macro.
+ * @returns {Promise<void|null>}
  */
 async function _callMacro(effect, type = "never", context = {}) {
   const script = effect.getFlag(effectmacro.id, `${type}.script`);
@@ -37,9 +38,9 @@ async function _callMacro(effect, type = "never", context = {}) {
 
 /**
  * Return whether an effect has a script of this type.
- * @param {InstanceType<foundry["documents"]["ActiveEffect"]} effect    The effect.
- * @param {string} [type]                                               The trigger to check for.
- * @returns {boolean}                                                   Whether the effect has a script of this type.
+ * @param {foundry.documents.ActiveEffect} effect   The effect.
+ * @param {string} [type="never"]                   The trigger to check for.
+ * @returns {boolean}                               Whether the effect has a script of this type.
  */
 export function hasMacro(effect, type = "never") {
   return !!effect.getFlag(effectmacro.id, `${type}.script`);
@@ -49,9 +50,9 @@ export function hasMacro(effect, type = "never") {
 
 /**
  * Remove a specific triggered script from this effect.
- * @param {InstanceType<foundry["documents"]["ActiveEffect"]} effect    The effect.
- * @param {string} [type]       The script to remove.
- * @returns {ActiveEffect}      The effect after being updated.
+ * @param {foundry.documents.ActiveEffect} effect   The effect.
+ * @param {string} [type="never"]                   The script to remove.
+ * @returns {Promise<ActiveEffect>}                 The effect after being updated.
  */
 export async function removeMacro(effect, type = "never") {
   const script = effect.getFlag(effectmacro.id, type);
@@ -63,10 +64,10 @@ export async function removeMacro(effect, type = "never") {
 
 /**
  * Create a script on the effect.
- * @param {InstanceType<foundry["documents"]["ActiveEffect"]} effect    The effect.
- * @param {string} [type]             The type of script to embed.
- * @param {string} [script]           The macro command to embed.
- * @returns {Promise<ActiveEffect>}   A promise that resolves to the updated effect.
+ * @param {foundry.documents.ActiveEffect} effect   The effect.
+ * @param {string} [type="never"]                   The type of script to embed.
+ * @param {string} script                           The macro command to embed.
+ * @returns {Promise<ActiveEffect>}                 A promise that resolves to the updated effect.
  */
 export async function createMacro(effect, type = "never", script) {
   if (!script) {
@@ -88,10 +89,10 @@ export async function createMacro(effect, type = "never", script) {
 
 /**
  * Update a script on the effect.
- * @param {InstanceType<foundry["documents"]["ActiveEffect"]} effect    The effect.
- * @param {string} [type]             The type of script to update.
- * @param {string} script             The new macro command to embed.
- * @returns {Promise<ActiveEffect>}   A promise that resolves to the updated effect.
+ * @param {foundry.documents.ActiveEffect} effect   The effect.
+ * @param {string} [type="never"]                   The type of script to update.
+ * @param {string} script                           The new macro command to embed.
+ * @returns {Promise<ActiveEffect>}                 A promise that resolves to the updated effect.
  */
 export async function updateMacro(effect, type = "never", script) {
   if (effect.sheet.rendered) await effect.sheet.submit();
@@ -106,20 +107,20 @@ export async function updateMacro(effect, type = "never", script) {
 
 /**
  * Get helper variables for the script call.
- * @param {InstanceType<foundry["documents"]["ActiveEffect"]>} effect   The effect having a macro called.
- * @returns {object}                                                    Object of helper variables.
+ * @param {foundry.documents.ActiveEffect} effect   The effect having a macro called.
+ * @returns {object}                                Object of helper variables.
  */
 export function getHelperVariables(effect) {
-  /** @type {InstanceType<foundry["documents"]["Actor"]>} */
+  /** @type {foundry.documents.Actor} */
   const actor = (effect.parent instanceof foundry.documents.Actor) ? effect.parent : (effect.parent.parent ?? null);
 
-  /** @type {InstanceType<foundry["documents"]["Actor"]>} */
+  /** @type {foundry.documents.Actor} */
   const character = game.user.character ?? null;
 
-  /** @type {InstanceType<foundry["canvas"]["placeables"]["Token"]>} */
+  /** @type {foundry.canvas.placeables.Token} */
   const token = actor?.token?.object ?? actor?.getActiveTokens()[0] ?? null;
 
-  /** @type {InstanceType<foundry["documents"]["Scene"]>} */
+  /** @type {foundry.documents.Scene} */
   const scene = token?.scene ?? game.scenes.active ?? null;
 
   const origin = effect.origin ? foundry.utils.fromUuidSync(effect.origin) : null;
@@ -127,7 +128,7 @@ export function getHelperVariables(effect) {
   /** @type {object} */
   const speaker = actor ? ChatMessage.implementation.getSpeaker({ actor }) : {};
 
-  /** @type {InstanceType<foundry["documents"]["Item"]>} */
+  /** @type {foundry.documents.Item} */
   const item = (effect.parent instanceof foundry.documents.Item) ? effect.parent : null;
   return { token, character, actor, speaker, scene, origin, effect, item };
 }
@@ -136,8 +137,8 @@ export function getHelperVariables(effect) {
 
 /**
  * Get whether you, the user, should run the scripts on this actor.
- * @param {Actor} actor     The actor who has the effects.
- * @returns {boolean}       Whether you are the proper user to execute the scripts.
+ * @param {Actor} actor   The actor who has the effects.
+ * @returns {boolean}     Whether you are the proper user to execute the scripts.
  */
 export function isExecutor(actor) {
   return getExecutor(actor) === game.user;
@@ -147,8 +148,8 @@ export function isExecutor(actor) {
 
 /**
  * Return the user that should execute a macro.
- * @param {InstanceType<foundry["documents"]["Actor"]>} actor   The actor that has the effect.
- * @returns {InstanceType<foundry["documents"]["User"]>|null}   The designated user, or `null` if none found.
+ * @param {foundry.documents.Actor} actor   The actor that has the effect.
+ * @returns {foundry.documents.User|null}   The designated user, or `null` if none found.
  */
 export function getExecutor(actor) {
   return game.users.getDesignatedUser(user => {

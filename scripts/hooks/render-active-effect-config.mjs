@@ -4,23 +4,21 @@ export default async function renderActiveEffectConfig(config, html, data) {
   if (game.settings.get(effectmacro.id, "restrictPermissions") && !game.user.isGM) return;
 
   const used = [];
-  const unused = [];
+  const options = [];
 
-  for (const obj of TRIGGERS.agnostic) {
-    const [triggers, yay] = obj.triggers.partition(key => effectmacro.utils.hasMacro(config.document, key));
-    if (triggers.length) unused.push({ label: obj.label, triggers: triggers });
-    used.push(...yay.map(k => ({ key: k, label: `EFFECTMACRO.${k}` })));
+  for (const { label, options: opts } of TRIGGERS) {
+    const group = label ? game.i18n.localize(label) : undefined;
+    for (const w of opts) {
+      const hasMacro = effectmacro.utils.hasMacro(config.document, w);
+      const option = { group, value: w, label: game.i18n.localize(`EFFECTMACRO.${w}`) };
+      if (hasMacro) used.push(option);
+      else options.push(option);
+    }
   }
-
-  const [sys, yay] = (TRIGGERS[game.system.id] ?? []).partition(key => effectmacro.utils.hasMacro(config.document, key));
-  if (sys.length) unused.push({ label: "EFFECTMACRO.SystemTriggers", triggers: sys });
-  used.push(...yay.map(k => ({ key: k, label: `EFFECTMACRO.${k}` })));
-
-  unused.forEach(u => u.triggers = u.triggers.map(t => ({ key: t, label: `EFFECTMACRO.${t}` })));
 
   const div = document.createElement("DIV");
   const template = "modules/effectmacro/templates/effect-sheet.hbs";
-  div.innerHTML = await renderTemplate(template, { used, unused });
+  div.innerHTML = await foundry.applications.handlebars.renderTemplate(template, { used, options });
 
   div.querySelectorAll("[data-action]").forEach(n => {
     switch (n.dataset.action) {
@@ -29,18 +27,15 @@ export default async function renderActiveEffectConfig(config, html, data) {
       case "macro-delete": n.addEventListener("click", _onClickMacroDelete.bind(config)); break;
     }
   });
-  if (game.release.generation < 13) html = html[0];
   const tab = html.querySelector("section[data-tab='details']");
   tab.appendChild(div.firstElementChild);
-  if (game.release.generation >= 13) tab.classList.add("scrollable");
-  if (game.release.generation < 13) config.setPosition({ height: "auto" });
 }
 
 /* -------------------------------------------------- */
 
 /**
  * Handle clicking the 'delete macro' buttons.
- * @param {PointerEvent} event      The initiating click event.
+ * @param {PointerEvent} event    The initiating click event.
  */
 async function _onClickMacroDelete(event) {
   const key = event.currentTarget.dataset.key;
@@ -63,8 +58,8 @@ async function _onClickMacroDelete(event) {
 
 /**
  * Handle clicking the 'edit macro' buttons.
- * @param {PointerEvent} event                The initiating click event.
- * @returns {Promise<MacroConfig>}      The rendered effect macro editor.
+ * @param {PointerEvent} event        The initiating click event.
+ * @returns {Promise<MacroConfig>}    The rendered effect macro editor.
  */
 function _onClickMacroEdit(event) {
   const key = event.currentTarget.dataset.key;
@@ -75,8 +70,8 @@ function _onClickMacroEdit(event) {
 
 /**
  * Handle clicking the 'add macro' button.
- * @param {PointerEvent} event                The initiating click event.
- * @returns {Promise<MacroConfig>}      The rendered effect macro editor.
+ * @param {PointerEvent} event        The initiating click event.
+ * @returns {Promise<MacroConfig>}    The rendered effect macro editor.
  */
 function _onClickMacroAdd(event) {
   const key = event.currentTarget.closest(".form-fields").querySelector(".unused-option").value;

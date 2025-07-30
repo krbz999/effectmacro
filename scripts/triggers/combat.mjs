@@ -10,8 +10,8 @@ export default function init() {
 /**
  * Execute all effects that affect an actor and contain this trigger.
  * This method is called on all clients, but filters out those not to execute it.
- * @param {Actor} actor     The actor with the effects.
- * @param {string} hook     The trigger name.
+ * @param {Actor} actor   The actor with the effects.
+ * @param {string} hook   The trigger name.
  */
 async function _executeAppliedEffects(actor, hook) {
   if (!effectmacro.utils.isExecutor(actor)) return;
@@ -76,8 +76,8 @@ function preUpdateCombat(combat, update, options) {
 
 /**
  * On combatant defeated.
- * @param {Combatant} combatant     The combatant updated.
- * @param {object} update           The update performed.
+ * @param {Combatant} combatant   The combatant updated.
+ * @param {object} update         The update performed.
  */
 async function updateCombatant(combatant, update) {
   if (!update.defeated) return;
@@ -126,7 +126,7 @@ async function updateCombat(combat, update, options) {
 
 /**
  * On combat ending (being deleted).
- * @param {Combat} combat     The combat deleted.
+ * @param {Combat} combat   The combat deleted.
  */
 async function deleteCombat(combat) {
   if (!combat.started || !combat.isActive) return;

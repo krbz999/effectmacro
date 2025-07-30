@@ -16,11 +16,12 @@ export default function init() {
 
 /**
  * Execute effect toggle triggers.
- * @param {ActiveEffect} effect     The effect updated.
- * @param {object} update           The update performed.
- * @param {object} context          The update options.
+ * @param {ActiveEffect} effect   The effect updated.
+ * @param {object} update         The update performed.
+ * @param {object} context        The update options.
  */
 async function onUpdate(effect, update, context) {
+  // TODO: remove in v14
   if (CONFIG.ActiveEffect.legacyTransferral && (effect.parent instanceof Item)) return;
 
   const run = effectmacro.utils.isExecutor(effect.parent);
@@ -46,9 +47,9 @@ async function onUpdate(effect, update, context) {
 
 /**
  * Save relevant data on effect update.
- * @param {ActiveEffect} effect     The effect updated.
- * @param {object} update           The update performed.
- * @param {object} context          The update options.
+ * @param {ActiveEffect} effect   The effect updated.
+ * @param {object} update         The update performed.
+ * @param {object} context        The update options.
  */
 function preUpdate(effect, update, context) {
   if (CONFIG.ActiveEffect.legacyTransferral && (effect.parent instanceof Item)) return;
@@ -61,7 +62,7 @@ function preUpdate(effect, update, context) {
 /**
  * Execute effect creation / deletion triggers.
  * @this {string}
- * @param {ActiveEffect} effect     The effect created or deleted.
+ * @param {ActiveEffect} effect   The effect created or deleted.
  */
 async function onCreateDelete(effect) {
   const u = effectmacro.utils;
@@ -74,9 +75,9 @@ async function onCreateDelete(effect) {
 
 /**
  * When an item is updated, read whether its effects have started or stopped applying.
- * @param {Item} item           The item updated.
- * @param {object} update       The update performed.
- * @param {object} context      The update options.
+ * @param {Item} item         The item updated.
+ * @param {object} update     The update performed.
+ * @param {object} context    The update options.
  */
 function preUpdateItem(item, update, context) {
   if (!item.isEmbedded) return;
@@ -90,9 +91,9 @@ function preUpdateItem(item, update, context) {
 
 /**
  * Execute effect toggles if an item update results in an effect changing whether it affects an actor.
- * @param {Item} item           The item updated.
- * @param {object} update       The update performed.
- * @param {object} context      The update options.
+ * @param {Item} item         The item updated.
+ * @param {object} update     The update performed.
+ * @param {object} context    The update options.
  */
 async function updateItem(item, update, context) {
   if (!item.isEmbedded) return;
@@ -129,8 +130,8 @@ async function updateItem(item, update, context) {
 
 /**
  * Execute effect deletion triggers when the parent item is deleted. This only applies to non-legacy transfer systems.
- * @param {Item} item     The item being deleted.
- * @param {object} options      Update options.
+ * @param {Item} item         The item being deleted.
+ * @param {object} options    Update options.
  */
 async function deleteItem(item, options) {
   if (!item.isEmbedded || CONFIG.ActiveEffect.legacyTransferral) return;
@@ -145,8 +146,8 @@ async function deleteItem(item, options) {
 
 /**
  * Execute effect creation triggers when the parent item is created. This only applies to non-legacy transfer systems.
- * @param {Item} item           The item that was created.
- * @param {object} options      Update options.
+ * @param {Item} item         The item that was created.
+ * @param {object} options    Update options.
  */
 async function createItem(item, options) {
   if (!item.isEmbedded || CONFIG.ActiveEffect.legacyTransferral) return;

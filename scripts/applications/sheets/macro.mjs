@@ -1,6 +1,6 @@
-const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin, DocumentSheet } = foundry.applications.api;
 
-export default class MacroConfig extends HandlebarsApplicationMixin(DocumentSheetV2) {
+export default class MacroConfig extends HandlebarsApplicationMixin(DocumentSheet) {
   constructor({ type, ...options }) {
     super(options);
     this.#type = type;
@@ -24,6 +24,7 @@ export default class MacroConfig extends HandlebarsApplicationMixin(DocumentShee
     },
     window: {
       icon: "fa-solid fa-code",
+      contentClasses: ["standard-form"],
     },
     position: {
       width: 600,
@@ -38,6 +39,9 @@ export default class MacroConfig extends HandlebarsApplicationMixin(DocumentShee
   static PARTS = {
     main: {
       template: "modules/effectmacro/templates/macro-menu.hbs",
+    },
+    footer: {
+      template: "templates/generic/form-footer.hbs",
     },
   };
 
@@ -70,6 +74,8 @@ export default class MacroConfig extends HandlebarsApplicationMixin(DocumentShee
     context.field = new foundry.data.fields.JavaScriptField({
       label: `${game.i18n.localize("Command")}: ${game.i18n.localize(label)}`,
     });
+
+    context.buttons = [{ type: "submit", label: "Save", icon: "fa-solid fa-save" }];
 
     return context;
   }

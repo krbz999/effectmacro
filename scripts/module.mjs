@@ -12,4 +12,4 @@ globalThis.effectmacro = {
 for (const [hook, fn] of Object.entries(hooks)) Hooks.on(hook, fn);
 triggers.combat();
 triggers.effect();
-for (const sys of Object.values(triggers.systems)) Hooks.once("setup", sys);
+// for (const sys of Object.values(triggers.systems)) Hooks.once("setup", sys);
