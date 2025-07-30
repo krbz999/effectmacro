@@ -11,9 +11,17 @@
       "patreon": "https://patreon.com/zhell"
     }
   ],
-  "compatibility": {"minimum": "12", "maximum": "12", "verified": "12"},
-  "esmodules": ["scripts/module.mjs"],
-  "styles": ["styles/styles.css"],
+  "compatibility": {
+    "minimum": "13",
+    "maximum": "13",
+    "verified": "13"
+  },
+  "esmodules": [
+    "scripts/module.mjs"
+  ],
+  "styles": [
+    "styles/styles.css"
+  ],
   "languages": [
     {
       "lang": "en",
@@ -30,5 +38,19 @@
   ],
   "url": "https://github.com/krbz999/effectmacro",
   "manifest": "https://github.com/krbz999/effectmacro/releases/latest/download/module.json",
-  "download": "AUTOMATIC"
+  "download": "AUTOMATIC",
+  "flags": {
+    "hotReload": {
+      "extensions": [
+        "css",
+        "hbs",
+        "json"
+      ],
+      "paths": [
+        "lang",
+        "styles",
+        "templates"
+      ]
+    }
+  }
 }

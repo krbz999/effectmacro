@@ -1,40 +1,41 @@
 {
-  "EFFECTMACRO.AddAnother": "Add another",
-  "EFFECTMACRO.CombatTriggers": "Combat Triggers",
-  "EFFECTMACRO.DeletePrompt": "Delete this macro?",
-  "EFFECTMACRO.dnd5e.longRest": "On Long Rests",
-  "EFFECTMACRO.dnd5e.rollAbilitySave": "On Saving Throws",
-  "EFFECTMACRO.dnd5e.rollAbilityTest": "On Ability Checks",
-  "EFFECTMACRO.dnd5e.rollAttack": "On Attack Rolls",
-  "EFFECTMACRO.dnd5e.rollDamage": "On Damage Rolls",
-  "EFFECTMACRO.dnd5e.rollDeathSave": "On Death Saving Throws",
-  "EFFECTMACRO.dnd5e.rollInitiative": "On Initiative Rolls",
-  "EFFECTMACRO.dnd5e.rollSkill": "On Skill Checks",
-  "EFFECTMACRO.dnd5e.rollToolCheck": "On Tool Checks",
-  "EFFECTMACRO.dnd5e.shortRest": "On Short Rests",
-  "EFFECTMACRO.dnd5e.healActor": "On Being Healed",
-  "EFFECTMACRO.dnd5e.damageActor": "On Being Damaged",
-  "EFFECTMACRO.EffectTriggers": "Effect Triggers",
-  "EFFECTMACRO.MacroSheet": "Effect Macro: {name}",
-  "EFFECTMACRO.ModuleTitle": "Effect Macro",
-  "EFFECTMACRO.never": "Never Automatically",
-  "EFFECTMACRO.NoScriptProvided": "You did not provide a function.",
-  "EFFECTMACRO.NoSuchScript": "No such script embedded in effect.",
-  "EFFECTMACRO.onCombatantDefeated": "On Combatant Marked Defeated",
-  "EFFECTMACRO.onCombatEnd": "On Combat Ending",
-  "EFFECTMACRO.onCombatStart": "On Combat Starting",
-  "EFFECTMACRO.onCreate": "On Effect Creation",
-  "EFFECTMACRO.onDelete": "On Effect Deletion",
-  "EFFECTMACRO.onDisable": "On Effect Toggle (off)",
-  "EFFECTMACRO.onEachTurn": "On Each Combat Turn",
-  "EFFECTMACRO.onEnable": "On Effect Toggle (on)",
-  "EFFECTMACRO.onToggle": "On Effect Toggle (on or off)",
-  "EFFECTMACRO.onTurnEnd": "On Combat Turn Ending",
-  "EFFECTMACRO.onTurnStart": "On Combat Turn Starting",
-  "EFFECTMACRO.onRoundEnd": "On Combat Round Ending",
-  "EFFECTMACRO.onRoundStart": "On Combat Round Starting",
-  "EFFECTMACRO.OtherTriggers": "Other Triggers",
-  "EFFECTMACRO.SettingRestrictPermission": "Restrict Permissions",
-  "EFFECTMACRO.SettingRestrictPermissionHint": "If enabled, non-GM clients will not be able to add, edit, or delete macros from an Active Effect.",
-  "EFFECTMACRO.SystemTriggers": "System Triggers"
+  "EFFECTMACRO": {
+    "AddAnother": "Add",
+
+    "CombatTriggers": "Combat",
+    "CombatantTriggers": "Combatant",
+    "EffectTriggers": "Effect",
+    "never": "When called by external methods",
+
+    "onCombatantDefeated": "When the combatant is marked 'Defeated'",
+    "onTurnEnd": "When the combatant ends its turn",
+    "onTurnStart": "When the combatant starts its turn",
+
+    "onCombatEnd": "When the combat ends",
+    "onCombatStart": "When the combat starts",
+    "onEachTurn": "When the combat proceeds to the next turn",
+    "onRoundEnd": "When the combat round ends",
+    "onRoundStart": "When the combat round starts",
+
+    "onCreate": "When the effect is created",
+    "onDelete": "When the effect is deleted",
+    "onDisable": "When the effect is disabled",
+    "onEnable": "When the effect is enabled",
+    "onToggle": "When the effect is disabled or enabled",
+
+    "DeletePrompt": "Delete this macro?",
+    "MacroSheet": "Effect Macro: {name}",
+
+    "ModuleTitle": "Effect Macro",
+    "NoScriptProvided": "You did not provide a function.",
+    "NoSuchScript": "No such script embedded in effect.",
+
+    "SettingRestrictPermission": "Restrict Permissions",
+    "SettingRestrictPermissionHint": "If enabled, non-GM clients will not be able to add, edit, or delete macros from an Active Effect.",
+
+    "effectSheet": {
+      "used": "These are the macros configured to be executed automatically by the 'Effect Macro' module.",
+      "unused": "Select the trigger and configure a new macro to be executed automatically by the 'Effect Macro' module."
+    }
+  }
 }
