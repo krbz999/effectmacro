@@ -18,12 +18,16 @@ export class DND5ETriggers {
     effectTriggers.options.push(
       "dnd5e.applyDamage",
       "dnd5e.shortRest",
-      "dnd5e.longRest"
+      "dnd5e.longRest",
+      "dnd5e.beginConcentrating",
+      "dnd5e.endConcentration",
+      "dnd5e.rollHitDie"
     );
 
     combatantTriggers.options.push(
       "dnd5e.rollAttack",
-      "dnd5e.rollDamage"
+      "dnd5e.rollDamage",
+      "dnd5e.rollInitiative"
     );
 
     // Add new section for roll-based triggers
@@ -34,7 +38,8 @@ export class DND5ETriggers {
         "dnd5e.rollDeathSave",
         "dnd5e.rollAbilityCheck",
         "dnd5e.rollSkill",
-        "dnd5e.rollToolCheck"
+        "dnd5e.rollToolCheck",
+        "dnd5e.rollConcentration"
       ]
     });
 
@@ -45,8 +50,13 @@ export class DND5ETriggers {
     Hooks.on("dnd5e.rollAbilityCheck", DND5ETriggers._rollAbilityCheck);
     Hooks.on("dnd5e.rollSkill", DND5ETriggers._rollSkill);
     Hooks.on("dnd5e.rollToolCheck", DND5ETriggers._rollToolCheck);
+    Hooks.on("dnd5e.rollInitiative", DND5ETriggers._rollInitiative);
+    Hooks.on("dnd5e.rollConcentration", DND5ETriggers._rollConcentration);
+    Hooks.on("dnd5e.rollHitDie", DND5ETriggers._rollHitDie);
     Hooks.on("dnd5e.restCompleted", DND5ETriggers._restCompleted);
     Hooks.on("dnd5e.applyDamage", DND5ETriggers._applyDamage);
+    Hooks.on("dnd5e.beginConcentrating", DND5ETriggers._beginConcentrating);
+    Hooks.on("dnd5e.endConcentration", DND5ETriggers._endConcentration);
   }
 
   /**
@@ -123,6 +133,32 @@ export class DND5ETriggers {
   }
 
   /**
+   * On initiative roll.
+   */
+  static _rollInitiative(actor, combatants) {
+    if (!actor) return;
+    return DND5ETriggers._filterAndCall(actor, "dnd5e.rollInitiative", { combatants });
+  }
+
+  /**
+   * On concentration roll.
+   */
+  static _rollConcentration(rolls, data) {
+    const actor = data.subject;
+    if (!actor) return;
+    return DND5ETriggers._filterAndCall(actor, "dnd5e.rollConcentration", { rolls, data });
+  }
+
+  /**
+   * On hit die roll.
+   */
+  static _rollHitDie(rolls, data) {
+    const actor = data.subject;
+    if (!actor) return;
+    return DND5ETriggers._filterAndCall(actor, "dnd5e.rollHitDie", { rolls, data });
+  }
+
+  /**
    * On rest completed.
    */
   static _restCompleted(actor, result, config) {
@@ -135,5 +171,21 @@ export class DND5ETriggers {
    */
   static _applyDamage(actor, amount, options) {
     return DND5ETriggers._filterAndCall(actor, "dnd5e.applyDamage", { amount, options });
+  }
+
+  /**
+   * On begin concentrating.
+   */
+  static _beginConcentrating(actor, item, effect, activity) {
+    if (!actor) return;
+    return DND5ETriggers._filterAndCall(actor, "dnd5e.beginConcentrating", { item, effect, activity });
+  }
+
+  /**
+   * On end concentration.
+   */
+  static _endConcentration(actor, effect) {
+    if (!actor) return;
+    return DND5ETriggers._filterAndCall(actor, "dnd5e.endConcentration", { effect });
   }
 }
