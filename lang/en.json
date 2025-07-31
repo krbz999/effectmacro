@@ -5,6 +5,7 @@
     "CombatTriggers": "Combat",
     "CombatantTriggers": "Combatant",
     "EffectTriggers": "Effect",
+    "RollTriggers": "Roll",
     "never": "When called by external methods",
 
     "onCombatantDefeated": "When the combatant is marked 'Defeated'",
@@ -22,6 +23,19 @@
     "onDisable": "When the effect is disabled",
     "onEnable": "When the effect is enabled",
     "onToggle": "When the effect is disabled or enabled",
+
+    "dnd5e.applyDamage": "When damage is applied",
+    "dnd5e.longRest": "When a long rest is completed",
+    "dnd5e.rollAbilityCheck": "When an ability check is made",
+    "dnd5e.rollAbilitySave": "When a saving throw is made",
+    "dnd5e.rollAbilityTest": "When an ability check is made",
+    "dnd5e.rollAttack": "When an attack roll is made",
+    "dnd5e.rollDamage": "When a damage roll is made",
+    "dnd5e.rollDeathSave": "When a death saving throw is made",
+    "dnd5e.rollSavingThrow": "When a saving throw is made",
+    "dnd5e.rollSkill": "When a skill check is made",
+    "dnd5e.rollToolCheck": "When a tool check is made",
+    "dnd5e.shortRest": "When a short rest is completed",
 
     "DeletePrompt": "Delete this macro?",
     "MacroSheet": "Effect Macro: {name}",
