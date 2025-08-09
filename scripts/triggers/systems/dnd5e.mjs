@@ -1,46 +1,46 @@
-import { TRIGGERS } from '../../triggers.mjs';
+import { TRIGGERS } from "../../triggers.mjs";
 
 export default function init() {
-  if (game.system.id !== 'dnd5e') return;
+  if (game.system.id !== "dnd5e") return;
 
   // Add D&D 5e system triggers
   TRIGGERS.push({
-    label: 'EFFECTMACRO.SystemTriggers',
+    label: "EFFECTMACRO.SystemTriggers",
     options: [
-      'dnd5e.rollAttack',
-      'dnd5e.rollDamage',
-      'dnd5e.rollSavingThrow',
-      'dnd5e.rollDeathSave',
-      'dnd5e.rollAbilityCheck',
-      'dnd5e.rollSkill',
-      'dnd5e.rollToolCheck',
-      'dnd5e.rollInitiative',
-      'dnd5e.rollConcentration',
-      'dnd5e.rollHitDie',
-      'dnd5e.shortRest',
-      'dnd5e.longRest',
-      'dnd5e.healActor',
-      'dnd5e.damageActor',
-      'dnd5e.beginConcentrating',
-      'dnd5e.endConcentration'
+      "dnd5e.rollAttack",
+      "dnd5e.rollDamage",
+      "dnd5e.rollSavingThrow",
+      "dnd5e.rollDeathSave",
+      "dnd5e.rollAbilityCheck",
+      "dnd5e.rollSkill",
+      "dnd5e.rollToolCheck",
+      "dnd5e.rollInitiative",
+      "dnd5e.rollConcentration",
+      "dnd5e.rollHitDie",
+      "dnd5e.shortRest",
+      "dnd5e.longRest",
+      "dnd5e.healActor",
+      "dnd5e.damageActor",
+      "dnd5e.beginConcentrating",
+      "dnd5e.endConcentration"
     ]
   });
 
-  Hooks.on('dnd5e.rollAttack', rollAttack);
-  Hooks.on('dnd5e.rollDamage', rollDamage);
-  Hooks.on('dnd5e.rollSavingThrow', rollSavingThrow);
-  Hooks.on('dnd5e.rollDeathSave', rollDeathSave);
-  Hooks.on('dnd5e.rollAbilityCheck', rollAbilityCheck);
-  Hooks.on('dnd5e.rollSkill', rollSkill);
-  Hooks.on('dnd5e.rollToolCheck', rollToolCheck);
-  Hooks.on('dnd5e.rollInitiative', rollInitiative);
-  Hooks.on('dnd5e.rollConcentration', rollConcentration);
-  Hooks.on('dnd5e.rollHitDie', rollHitDie);
-  Hooks.on('dnd5e.restCompleted', restCompleted);
-  Hooks.on('dnd5e.healActor', healActor);
-  Hooks.on('dnd5e.damageActor', damageActor);
-  Hooks.on('dnd5e.beginConcentrating', beginConcentrating);
-  Hooks.on('dnd5e.endConcentration', endConcentration);
+  Hooks.on("dnd5e.rollAttack", rollAttack);
+  Hooks.on("dnd5e.rollDamage", rollDamage);
+  Hooks.on("dnd5e.rollSavingThrow", rollSavingThrow);
+  Hooks.on("dnd5e.rollDeathSave", rollDeathSave);
+  Hooks.on("dnd5e.rollAbilityCheck", rollAbilityCheck);
+  Hooks.on("dnd5e.rollSkill", rollSkill);
+  Hooks.on("dnd5e.rollToolCheck", rollToolCheck);
+  Hooks.on("dnd5e.rollInitiative", rollInitiative);
+  Hooks.on("dnd5e.rollConcentration", rollConcentration);
+  Hooks.on("dnd5e.rollHitDie", rollHitDie);
+  Hooks.on("dnd5e.restCompleted", restCompleted);
+  Hooks.on("dnd5e.healActor", healActor);
+  Hooks.on("dnd5e.damageActor", damageActor);
+  Hooks.on("dnd5e.beginConcentrating", beginConcentrating);
+  Hooks.on("dnd5e.endConcentration", endConcentration);
 }
 
 /* -------------------------------------------------- */
@@ -69,7 +69,7 @@ async function _executeAppliedEffects(actor, hook, context = {}) {
 async function rollAttack(rolls, data) {
   const actor = data.subject?.item?.actor;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollAttack', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollAttack", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -82,7 +82,7 @@ async function rollAttack(rolls, data) {
 async function rollDamage(rolls, data) {
   const actor = data.subject?.item?.actor;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollDamage', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollDamage", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -95,7 +95,7 @@ async function rollDamage(rolls, data) {
 async function rollSavingThrow(rolls, data) {
   const actor = data.subject;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollSavingThrow', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollSavingThrow", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -108,7 +108,7 @@ async function rollSavingThrow(rolls, data) {
 async function rollDeathSave(rolls, data) {
   const actor = data.subject;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollDeathSave', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollDeathSave", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -121,7 +121,7 @@ async function rollDeathSave(rolls, data) {
 async function rollAbilityCheck(rolls, data) {
   const actor = data.subject;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollAbilityCheck', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollAbilityCheck", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -134,7 +134,7 @@ async function rollAbilityCheck(rolls, data) {
 async function rollSkill(rolls, data) {
   const actor = data.subject;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollSkill', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollSkill", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -147,7 +147,7 @@ async function rollSkill(rolls, data) {
 async function rollToolCheck(rolls, data) {
   const actor = data.subject;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollToolCheck', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollToolCheck", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -159,7 +159,7 @@ async function rollToolCheck(rolls, data) {
  */
 async function rollInitiative(actor, combatants) {
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollInitiative', { combatants });
+  return _executeAppliedEffects(actor, "dnd5e.rollInitiative", { combatants });
 }
 
 /* -------------------------------------------------- */
@@ -172,7 +172,7 @@ async function rollInitiative(actor, combatants) {
 async function rollConcentration(rolls, data) {
   const actor = data.subject;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollConcentration', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollConcentration", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -185,7 +185,7 @@ async function rollConcentration(rolls, data) {
 async function rollHitDie(rolls, data) {
   const actor = data.subject;
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.rollHitDie', { rolls, data });
+  return _executeAppliedEffects(actor, "dnd5e.rollHitDie", { rolls, data });
 }
 
 /* -------------------------------------------------- */
@@ -197,7 +197,7 @@ async function rollHitDie(rolls, data) {
  * @param {object} config   The rest configuration.
  */
 async function restCompleted(actor, result, config) {
-  const hook = config.type === 'long' ? 'dnd5e.longRest' : 'dnd5e.shortRest';
+  const hook = config.type === "long" ? "dnd5e.longRest" : "dnd5e.shortRest";
   return _executeAppliedEffects(actor, hook, { result, config });
 }
 
@@ -210,7 +210,7 @@ async function restCompleted(actor, result, config) {
  * @param {object} updates      The actor updates.
  */
 async function healActor(actor, amount, updates) {
-  return _executeAppliedEffects(actor, 'dnd5e.healActor', { amount, updates });
+  return _executeAppliedEffects(actor, "dnd5e.healActor", { amount, updates });
 }
 
 /* -------------------------------------------------- */
@@ -222,7 +222,7 @@ async function healActor(actor, amount, updates) {
  * @param {object} updates      The actor updates.
  */
 async function damageActor(actor, amount, updates) {
-  return _executeAppliedEffects(actor, 'dnd5e.damageActor', { amount, updates });
+  return _executeAppliedEffects(actor, "dnd5e.damageActor", { amount, updates });
 }
 
 /* -------------------------------------------------- */
@@ -236,7 +236,7 @@ async function damageActor(actor, amount, updates) {
  */
 async function beginConcentrating(actor, item, effect, activity) {
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.beginConcentrating', { item, effect, activity });
+  return _executeAppliedEffects(actor, "dnd5e.beginConcentrating", { item, effect, activity });
 }
 
 /* -------------------------------------------------- */
@@ -248,5 +248,5 @@ async function beginConcentrating(actor, item, effect, activity) {
  */
 async function endConcentration(actor, effect) {
   if (!actor) return;
-  return _executeAppliedEffects(actor, 'dnd5e.endConcentration', { effect });
+  return _executeAppliedEffects(actor, "dnd5e.endConcentration", { effect });
 }
