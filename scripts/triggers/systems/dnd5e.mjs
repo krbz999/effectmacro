@@ -22,8 +22,8 @@ export default function init() {
       "dnd5e.healActor",
       "dnd5e.damageActor",
       "dnd5e.beginConcentrating",
-      "dnd5e.endConcentration"
-    ]
+      "dnd5e.endConcentration",
+    ],
   });
 
   Hooks.on("dnd5e.rollAttack", rollAttack);
@@ -48,9 +48,9 @@ export default function init() {
 /**
  * Execute all effects that affect an actor and contain this trigger.
  * This method is called on all clients, but filters out those not to execute it.
- * @param {Actor} actor     The actor with the effects.
- * @param {string} hook     The trigger name.
- * @param {object} context  Additional context to pass to the macro.
+ * @param {foundry.documents.Actor} actor   The actor with the effects.
+ * @param {string} hook                     The trigger name.
+ * @param {object} context                  Additional context to pass to the macro.
  */
 async function _executeAppliedEffects(actor, hook, context = {}) {
   if (!effectmacro.utils.isExecutor(actor)) return;
@@ -154,8 +154,8 @@ async function rollToolCheck(rolls, data) {
 
 /**
  * On initiative roll.
- * @param {Actor} actor         The actor rolling initiative.
- * @param {Combatant[]} combatants  The combatants being updated.
+ * @param {foundry.documents.Actor} actor   The actor rolling initiative.
+ * @param {Combatant[]} combatants          The combatants being updated.
  */
 async function rollInitiative(actor, combatants) {
   if (!actor) return;
@@ -192,9 +192,9 @@ async function rollHitDie(rolls, data) {
 
 /**
  * On rest completed.
- * @param {Actor} actor     The actor completing the rest.
- * @param {object} result   The rest result data.
- * @param {object} config   The rest configuration.
+ * @param {foundry.documents.Actor} actor   The actor completing the rest.
+ * @param {object} result                   The rest result data.
+ * @param {object} config                   The rest configuration.
  */
 async function restCompleted(actor, result, config) {
   const hook = config.type === "long" ? "dnd5e.longRest" : "dnd5e.shortRest";
@@ -205,9 +205,9 @@ async function restCompleted(actor, result, config) {
 
 /**
  * On actor healed.
- * @param {Actor} actor         The actor being healed.
- * @param {number} amount       The amount healed.
- * @param {object} updates      The actor updates.
+ * @param {foundry.documents.Actor} actor   The actor being healed.
+ * @param {number} amount                   The amount healed.
+ * @param {object} updates                  The actor updates.
  */
 async function healActor(actor, amount, updates) {
   return _executeAppliedEffects(actor, "dnd5e.healActor", { amount, updates });
@@ -217,9 +217,9 @@ async function healActor(actor, amount, updates) {
 
 /**
  * On actor damaged.
- * @param {Actor} actor         The actor taking damage.
- * @param {number} amount       The amount of damage.
- * @param {object} updates      The actor updates.
+ * @param {foundry.documents.Actor} actor   The actor taking damage.
+ * @param {number} amount                   The amount of damage.
+ * @param {object} updates                  The actor updates.
  */
 async function damageActor(actor, amount, updates) {
   return _executeAppliedEffects(actor, "dnd5e.damageActor", { amount, updates });
@@ -229,10 +229,10 @@ async function damageActor(actor, amount, updates) {
 
 /**
  * On concentration beginning.
- * @param {Actor} actor         The actor beginning concentration.
- * @param {Item} item           The item requiring concentration.
- * @param {ActiveEffect} effect The concentration effect.
- * @param {Activity} activity   The activity being performed.
+ * @param {foundry.documents.Actor} actor           The actor beginning concentration.
+ * @param {foundry.documents.Item} item             The item requiring concentration.
+ * @param {foundry.documents.ActiveEffect} effect   The concentration effect.
+ * @param {Activity} activity                       The activity being performed.
  */
 async function beginConcentrating(actor, item, effect, activity) {
   if (!actor) return;
@@ -243,8 +243,8 @@ async function beginConcentrating(actor, item, effect, activity) {
 
 /**
  * On concentration ending.
- * @param {Actor} actor         The actor ending concentration.
- * @param {ActiveEffect} effect The concentration effect ending.
+ * @param {foundry.documents.Actor} actor           The actor ending concentration.
+ * @param {foundry.documents.ActiveEffect} effect   The concentration effect ending.
  */
 async function endConcentration(actor, effect) {
   if (!actor) return;
