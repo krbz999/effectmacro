@@ -1,3 +1,5 @@
 <section>
-  {{formGroup field value=value name=name rows=30}}
+  <p>{{field.label}}</p>
+  {{formInput field value=value name=name}}
+  {{> "templates/generic/form-footer.hbs"}}
 </section>
