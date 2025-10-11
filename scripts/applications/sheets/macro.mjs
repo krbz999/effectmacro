@@ -1,18 +1,13 @@
 const { HandlebarsApplicationMixin, DocumentSheet } = foundry.applications.api;
 
 export default class MacroConfig extends HandlebarsApplicationMixin(DocumentSheet) {
-  constructor({ type, ...options }) {
-    super(options);
-    this.#type = type;
-  }
-
-  /* -------------------------------------------------- */
-
   /**
    * The macro type.
    * @type {string}
    */
-  #type = null;
+  get type() {
+    return this.options.type;
+  }
 
   /* -------------------------------------------------- */
 
@@ -25,12 +20,13 @@ export default class MacroConfig extends HandlebarsApplicationMixin(DocumentShee
     window: {
       icon: "fa-solid fa-code",
       contentClasses: ["standard-form"],
+      resizable: true,
     },
     position: {
       width: 600,
-      height: "auto",
+      height: 600,
     },
-    actions: {},
+    type: null,
   };
 
   /* -------------------------------------------------- */
@@ -39,9 +35,8 @@ export default class MacroConfig extends HandlebarsApplicationMixin(DocumentShee
   static PARTS = {
     main: {
       template: "modules/effectmacro/templates/macro-menu.hbs",
-    },
-    footer: {
-      template: "templates/generic/form-footer.hbs",
+      templates: ["templates/generic/form-footer.hbs"],
+      root: true,
     },
   };
 
@@ -56,9 +51,9 @@ export default class MacroConfig extends HandlebarsApplicationMixin(DocumentShee
 
   /** @inheritdoc */
   _initializeApplicationOptions(options) {
-    options = super._initializeApplicationOptions(options);
-    options.uniqueId = `${this.constructor.name}-${options.document.uuid}-${options.type}`;
-    return options;
+    const appOptions = super._initializeApplicationOptions(options);
+    appOptions.uniqueId = `${this.constructor.name}-${options.document.uuid}-${options.type}`;
+    return appOptions;
   }
 
   /* -------------------------------------------------- */
@@ -67,10 +62,10 @@ export default class MacroConfig extends HandlebarsApplicationMixin(DocumentShee
   async _prepareContext(options) {
     const context = {};
 
-    context.name = `flags.effectmacro.${this.#type}.script`;
+    context.name = `flags.effectmacro.${this.type}.script`;
     context.value = foundry.utils.getProperty(this.document, context.name) || "";
 
-    const label = `EFFECTMACRO.${this.#type}`;
+    const label = `EFFECTMACRO.${this.type}`;
     context.field = new foundry.data.fields.JavaScriptField({
       label: `${game.i18n.localize("Command")}: ${game.i18n.localize(label)}`,
     });
