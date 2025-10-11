@@ -3,28 +3,40 @@ import { TRIGGERS } from "../../triggers.mjs";
 export default function init() {
   if (game.system.id !== "dnd5e") return;
 
-  // Add D&D 5e system triggers
-  TRIGGERS.push({
-    label: "EFFECTMACRO.SystemTriggers",
-    options: [
-      "dnd5e.rollAttack",
-      "dnd5e.rollDamage",
-      "dnd5e.rollSavingThrow",
-      "dnd5e.rollDeathSave",
-      "dnd5e.rollAbilityCheck",
-      "dnd5e.rollSkill",
-      "dnd5e.rollToolCheck",
-      "dnd5e.rollInitiative",
-      "dnd5e.rollConcentration",
-      "dnd5e.rollHitDie",
-      "dnd5e.shortRest",
-      "dnd5e.longRest",
-      "dnd5e.healActor",
-      "dnd5e.damageActor",
-      "dnd5e.beginConcentrating",
-      "dnd5e.endConcentration",
-    ],
-  });
+  // Add D&D 5e system triggers - organized by category
+  TRIGGERS.push(
+    {
+      label: "EFFECTMACRO.dnd5e.RollTriggers",
+      options: [
+        "dnd5e.rollAttack",
+        "dnd5e.rollDamage",
+        "dnd5e.rollSavingThrow",
+        "dnd5e.rollDeathSave",
+        "dnd5e.rollAbilityCheck",
+        "dnd5e.rollSkill",
+        "dnd5e.rollToolCheck",
+        "dnd5e.rollInitiative",
+        "dnd5e.rollConcentration",
+        "dnd5e.rollHitDie"
+      ]
+    },
+    {
+      label: "EFFECTMACRO.dnd5e.RestTriggers",
+      options: [
+        "dnd5e.shortRest",
+        "dnd5e.longRest"
+      ]
+    },
+    {
+      label: "EFFECTMACRO.dnd5e.ChangeTriggers",
+      options: [
+        "dnd5e.healActor",
+        "dnd5e.damageActor",
+        "dnd5e.beginConcentrating",
+        "dnd5e.endConcentration"
+      ]
+    }
+  );
 
   Hooks.on("dnd5e.rollAttack", rollAttack);
   Hooks.on("dnd5e.rollDamage", rollDamage);
@@ -55,8 +67,7 @@ export default function init() {
 async function _executeAppliedEffects(actor, hook, context = {}) {
   if (!effectmacro.utils.isExecutor(actor)) return;
 
-  for (const e of actor.appliedEffects.filter(e => effectmacro.utils.hasMacro(e, hook)))
-    await effectmacro.utils.callMacro(e, hook, context);
+  for (const e of actor.appliedEffects.filter((e) => effectmacro.utils.hasMacro(e, hook))) await effectmacro.utils.callMacro(e, hook, context);
 }
 
 /* -------------------------------------------------- */

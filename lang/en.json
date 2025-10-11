@@ -25,6 +25,10 @@
     "onToggle": "When the effect is disabled or enabled",
 
     "dnd5e": {
+      "RollTriggers": "Rolls",
+      "RestTriggers": "Rests",
+      "ChangeTriggers": "Changes",
+
       "beginConcentrating": "When concentration begins",
       "damageActor": "When the actor receives damage",
       "endConcentration": "When concentration ends",
