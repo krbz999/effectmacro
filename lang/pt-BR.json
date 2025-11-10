@@ -5,6 +5,7 @@
     "CombatTriggers": "Combate",
     "CombatantTriggers": "Combatente",
     "EffectTriggers": "Efeito",
+    "SystemTriggers": "Sistema",
     "never": "Quando chamado por métodos externos",
 
     "onCombatantDefeated": "Quando o combatente é marcado como 'Derrotado'",
@@ -23,6 +24,31 @@
     "onEnable": "Quando o efeito é habilitado",
     "onToggle": "Quando o efeito é desabilitado ou habilitado",
 
+    "dnd5e": {
+      "ChangeTriggers": "Mudanças",
+      "RestTriggers": "Descansos",
+      "RollTriggers": "Rolagens",
+
+      "beginConcentrating": "Quando a Concentração começar",
+      "damageActor": "Quando o ator sofrer dano",
+      "endConcentration": "Quando a Concentração terminar",
+      "healActor": "Quando o ator for curado",
+      "longRest": "Quando um Descanso Longo for concluído",
+      "rollAbilityCheck": "Quando um Teste de Atributo for feito",
+      "rollAbilitySave": "Quando uma Salvaguarda for feita",
+      "rollAbilityTest": "Quando um Teste de Atributo for feito",
+      "rollAttack": "Quando uma jogada de ataque for feita",
+      "rollConcentration": "Quando uma Salvaguarda de Concentração for feita",
+      "rollDamage": "Quando uma jogada de dano for feita",
+      "rollDeathSave": "Quando uma Salvaguarda Contra Morte for feita",
+      "rollHitDie": "Quando um dado de vida for rolado",
+      "rollInitiative": "Quando uma jogada de Iniciativa for feita",
+      "rollSavingThrow": "Quando uma Salvaguarda for feita",
+      "rollSkill": "Quando um Teste de Perícia for feito",
+      "rollToolCheck": "Quando um Teste de Ferramenta for feito",
+      "shortRest": "Quando um Descanso Curto for concluído"
+    },
+    
     "DeletePrompt": "Excluir esta macro?",
     "MacroSheet": "Effect Macro: {name}",
 
