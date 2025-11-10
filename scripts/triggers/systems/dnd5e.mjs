@@ -67,7 +67,8 @@ export default function init() {
 async function _executeAppliedEffects(actor, hook, context = {}) {
   if (!effectmacro.utils.isExecutor(actor)) return;
 
-  for (const e of actor.appliedEffects.filter((e) => effectmacro.utils.hasMacro(e, hook))) await effectmacro.utils.callMacro(e, hook, context);
+  for (const e of actor.appliedEffects.filter((e) => effectmacro.utils.hasMacro(e, hook)))
+    await effectmacro.utils.callMacro(e, hook, context);
 }
 
 /* -------------------------------------------------- */
